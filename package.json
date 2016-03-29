@@ -1,0 +1,19 @@
+{
+  "name": "freebird-base",
+  "version": "0.0.0",
+  "description": "Base classes for freebird",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freebirdjs/freebird-base.git"
+  },
+  "author": "Simen Li",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/freebirdjs/freebird-base/issues"
+  },
+  "homepage": "https://github.com/freebirdjs/freebird-base#readme"
+}
