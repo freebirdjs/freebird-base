@@ -1,21 +1,54 @@
-var fun1 = function (x1, args) {
-    console.log(x1);
-    console.log(args);
+var _ = require('lodash');
+// var utl = require('lwmqn-util');
+var utl = require('./lib/utils');
 
-    var len = args.length;
-    var cb = args[len - 1];
-    if (typeof cb === 'function')
-        cb();
-};
+var net = {
+        enabled: true,       // @fb device registered
+        joinTime: 3,       // @fb device registered
+        timestamp: 100,      // @activity
+        traffic: {              // netcore should tackle this at TRX
+            in: { hits: 0, bytes: 0 },  // how many messages received, how many bytes received in
+            out: { hits: 0, bytes: 0 }, // how many messages transmitted, how many bytes transmitted out
+        },
+        role: 'router',           // [opt] developer gives
+        parent: '0x1234',         // [opt] developer gives, permanent address, '0' for netcore
+        maySleep: true,      // [opt] developer gives
+        sleepPeriod: 60,    // [opt] seconds
+        status: 'online',         // [fb] 'online', 'offline', 'sleep'
+        address: {              // developer gives
+            permanent: '0xABCD',
+            dynamic: '192.168.1.1'
+        },
+    };
 
-var fun2 = function (p1, p2, p3, cb) {
-    console.log('arguments');
-    console.log(arguments);
-    return fun1('hello', arguments);
-};
+var nnet = {
+        enabled: true,       // @fb device registered
+        joinTime: 3,       // @fb device registered
+        timestamp: 101,      // @activity
+        traffic: {              // netcore should tackle this at TRX
+            in: { hits: 3, bytes: 0 },  // how many messages received, how many bytes received in
+            out: { hits: 0, bytes: 0 }, // how many messages transmitted, how many bytes transmitted out
+        },
+        role: 'router',           // [opt] developer gives
+        parent: '0x1234',         // [opt] developer gives, permanent address, '0' for netcore
+        maySleep: true,      // [opt] developer gives
+        sleepPeriod: 60,    // [opt] seconds
+        status: 'online',         // [fb] 'online', 'offline', 'sleep'
+        address: {              // developer gives
+            permanent: '0xABCD',
+            dynamic: '192.168.1.1'
+        },
+        hi: { hi1: 1 },
+        x: 'hello'
+    };
 
-var fun3 = function () 
-
-fun2('p1', 'p2', 'p3', function () {
-    console.log('done');
-});
+// var x = _.toPairs(net);
+var x = utl.buildPathValuePairs(net);
+var y = utl.getDevNetDiff(nnet, net);
+var z = _.merge(net, y);
+var k = utl.getDevNetDiff(nnet, net);
+delete y.timestamp;
+delete y.traffic;
+console.log(net);
+console.log(k);
+console.log(y);
