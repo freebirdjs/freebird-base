@@ -42,13 +42,16 @@ var nnet = {
         x: 'hello'
     };
 
-// var x = _.toPairs(net);
-var x = utl.buildPathValuePairs(net);
-var y = utl.getDevNetDiff(nnet, net);
-var z = _.merge(net, y);
-var k = utl.getDevNetDiff(nnet, net);
-delete y.timestamp;
-delete y.traffic;
-console.log(net);
-console.log(k);
-console.log(y);
+var x = _.pick(nnet, 'traffic');
+console.log(x);
+console.log(x.traffic === nnet.traffic);
+// // var x = _.toPairs(net);
+// var x = utl.buildPathValuePairs(net);
+// var y = utl.getDevNetDiff(nnet, net);
+// var z = _.merge(net, y);
+// var k = utl.getDevNetDiff(nnet, net);
+// delete y.timestamp;
+// delete y.traffic;
+// console.log(net);
+// console.log(k);
+// console.log(y);
