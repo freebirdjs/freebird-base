@@ -8,6 +8,8 @@ var EventEmitter = require('events'),
     Netcore = require('../lib/netcore.js'),
     _ = require('lodash');
 
+var fb = Object.create(new EventEmitter());
+
 var ncname = 'mync';
 var controller = {};
 var protocol = {
@@ -17,7 +19,7 @@ var protocol = {
 var opt = {};
 
 var nc = new Netcore(ncname, controller, protocol, opt);
-
+nc._fb = fb;
 
 describe('Constructor Testing', function () {
     it('Constructor - no args', function () {
@@ -45,14 +47,13 @@ describe('Constructor Testing', function () {
     });
 });
 
-
 describe('Constructor Base Property Check', function () {
     it('_fb', function () {
-        should(nc._fb).be.null;
+        should(nc._fb).be.equal(fb);
     });
 
     it('_joinTimer', function () {
-        should(nc._joinTimer).be.null;
+        should(nc._joinTimer).be.eql(null);
     });
 
     it('_joinTicks', function () {
@@ -76,36 +77,36 @@ describe('Constructor Base Property Check', function () {
     });
 
     it('cookRawDev', function () {
-        should(nc.cookRawDev).be.null;
+        should(nc.cookRawDev).be.eql(null);
     });
 
     it('cookRawGad', function () {
-        should(nc.cookRawGad).be.null;
+        should(nc.cookRawGad).be.eql(null);
     });
 
     it('_drivers.net', function () {
-        should(nc._drivers.net.start).be.null;
-        should(nc._drivers.net.stop).be.null;
-        should(nc._drivers.net.reset).be.null;
-        should(nc._drivers.net.permitJoin).be.null;
-        should(nc._drivers.net.remove).be.null;
-        should(nc._drivers.net.ban).be.null;
-        should(nc._drivers.net.unban).be.null;
-        should(nc._drivers.net.ping).be.ping;
+        should(nc._drivers.net.start).be.eql(null);
+        should(nc._drivers.net.stop).be.eql(null);
+        should(nc._drivers.net.reset).be.eql(null);
+        should(nc._drivers.net.permitJoin).be.eql(null);
+        should(nc._drivers.net.remove).be.eql(null);
+        should(nc._drivers.net.ban).be.eql(null);
+        should(nc._drivers.net.unban).be.eql(null);
+        should(nc._drivers.net.ping).be.eql(null);
     });
 
     it('_drivers.dev', function () {
-        should(nc._drivers.dev.read).be.null;
-        should(nc._drivers.dev.write).be.null;
-        should(nc._drivers.dev.identify).be.null;
+        should(nc._drivers.dev.read).be.eql(null);
+        should(nc._drivers.dev.write).be.eql(null);
+        should(nc._drivers.dev.identify).be.eql(null);
     });
 
     it('_drivers.gad', function () {
-        should(nc._drivers.gad.read).be.null;
-        should(nc._drivers.gad.write).be.null;
-        should(nc._drivers.gad.exec).be.null;
-        should(nc._drivers.gad.setReportCfg).be.null;
-        should(nc._drivers.gad.getReportCfg).be.null;
+        should(nc._drivers.gad.read).be.eql(null);
+        should(nc._drivers.gad.write).be.eql(null);
+        should(nc._drivers.gad.exec).be.eql(null);
+        should(nc._drivers.gad.setReportCfg).be.eql(null);
+        should(nc._drivers.gad.getReportCfg).be.eql(null);
     });
 });
 
@@ -302,7 +303,7 @@ describe('Check Signature', function () {
 
     it('unban(permAddr, callback)', function () {
         (function () { nc.unban(function (err) { /*console.log(err);*/ }); }).should.throw();
-        (function () { nc.unban('x', function (err) { /*console.log(err);*/ }); }).should.not.throw();
+        (function () { nc.unban('xxxx', function (err) { /*console.log(err);*/ }); }).should.not.throw();
     });
 
     it('ping(permAddr, callback)', function () {
@@ -402,4 +403,252 @@ describe('Check Signature', function () {
         (function () { nc.getReportCfg("xxxx", "xxx", function (err) { /*console.log(err);*/ }); }).should.throw();
         (function () { nc.getReportCfg("xxxx", "xxx", 'dd', function (err) { /*console.log(err);*/ }); }).should.not.throw();
     });
+
+
+    it('_registerDrivers(space, drvs)', function () {
+        (function () { nc._registerDrivers(function (err) { /*console.log(err);*/ }); }).should.throw();
+        (function () { nc._registerDrivers("xxxx"); }).should.throw();
+        (function () { nc._registerDrivers([], {}); }).should.throw();
+        (function () { nc._registerDrivers(1, {}); }).should.throw();
+        (function () { nc._registerDrivers({}, {}); }).should.throw();
+        (function () { nc._registerDrivers("xxxx", "xxx"); }).should.throw();
+        (function () { nc._registerDrivers("xxxx", []); }).should.throw();
+        (function () { nc._registerDrivers("xxxx", {}); }).should.not.throw();
+        (function () { nc._registerDrivers("xxxx", function (err) { /*console.log(err);*/ }); }).should.throw();
+    });
 });
+
+describe('Functional Test', function () {
+    it('getBlacklist()', function () {
+        nc.getBlacklist().should.eql([]);
+    });
+
+    it('_block()', function () {
+        nc._block('abc').should.equal(nc);
+    });
+
+    it('isBlacklisted()', function () {
+        nc.isBlacklisted('abc').should.equal(true);
+        nc.isBlacklisted('abc1').should.equal(false);
+        nc.getBlacklist().should.eql([ 'abc' ]);
+        nc._block('cde').should.equal(nc);
+        nc.getBlacklist().should.eql([ 'abc', 'cde' ]);
+    });
+
+    it('_unblock()', function () {
+        nc._unblock('abc').should.equal(nc);
+        nc.getBlacklist().should.eql([ 'cde' ]);
+    });
+
+    it('clearBlacklist()', function () {
+        nc.clearBlacklist().should.equal(nc);
+        nc.getBlacklist().should.eql([]);
+    });
+
+    it('_fbEmit(evt, data) - registered', function (done) {
+        fb.once('test', function (data) {
+            if (data.d === 3)
+                data.done();
+        });
+        nc._fbEmit('test', { d: 3, done: done }).should.equal(true);
+    });
+
+    it('_fbEmit(evt, data) - registered', function () {
+        nc._fb = null;
+        nc._fbEmit('test', { d: 3 }).should.equal(false);
+    });
+
+    it('_fbEmit(evt, data) - registered, nc:error', function (done) {
+        nc._fb = fb;
+        fb.once('_nc:error', function (err) {
+            if (err.info.d === 3)
+                err.info.done();
+        });
+        nc._fbEmit('_nc:error', { error: new Error('x'), d: 3, done: done }).should.equal(true);
+    });
+
+    it('_incTxBytes()', function () {
+        nc._incTxBytes(10).should.equal(10);
+        nc._net.traffic.out.hits.should.equal(1);
+    });
+
+    it('_incRxBytes()', function () {
+        nc._incRxBytes(20).should.equal(20);
+        nc._incRxBytes(20).should.equal(40);
+        nc._net.traffic.in.hits.should.equal(2);
+    });
+
+
+    it('_startJoinTimer()', function (done) {
+        this.timeout(15000);
+
+        var fun1 = function (data) {
+            if (data.timeLeft === 0) {
+                done();
+                fb.removeListener('_nc:permitJoin', fun1);
+            }
+        };
+        fb.on('_nc:permitJoin', fun1);
+
+        nc._startJoinTimer(1);
+    });
+
+    it('_clearJoinTimer()', function (done) {
+        this.timeout(15000);
+        var fun2 = function (data) {
+            if (data.timeLeft === 0) {
+                fb.removeListener('_nc:permitJoin', fun2);
+                done();
+            }
+        };
+        fb.on('_nc:permitJoin', fun2);
+        nc._startJoinTimer(10);
+        nc._clearJoinTimer();
+    });
+
+    it('_findDriver(type, name)', function () {
+        var drv1 = function () {};
+        should(nc._findDriver('net', 'start')).be.equal(null);
+        nc._drivers.net.start = drv1;
+        should(nc._findDriver('net', 'start')).be.equal(drv1);
+        nc._drivers.net.start = null;
+
+        should(nc._findDriver('dev', 'read')).be.equal(null);
+        nc._drivers.dev.read = drv1;
+        should(nc._findDriver('dev', 'read')).be.equal(drv1);
+        nc._drivers.dev.read = null;
+
+        should(nc._findDriver('gad', 'read')).be.equal(null);
+        nc._drivers.gad.read = drv1;
+        should(nc._findDriver('gad', 'read')).be.equal(drv1);
+        nc._drivers.gad.read = null;
+    });
+
+
+    it('_checkBadDrivers()', function () {
+        should(nc._checkBadDrivers()).eql([
+            'net.start', 'net.stop', 'net.reset', 'net.permitJoin', 'net.remove',
+            'net.ping', 'dev.read', 'dev.write', 'gad.read', 'gad.write'
+        ]);
+    });
+
+    it('isRegistered()', function () {
+        nc._fb = null;
+        should(nc.isRegistered()).eql(false);
+        nc._fb = fb;
+        should(nc.isRegistered()).eql(true);
+    });
+
+    it('isJoinable()', function () {
+        should(nc.isJoinable()).eql(false);
+        nc._startJoinTimer(3);
+        should(nc.isJoinable()).eql(true);
+    });
+
+    it('isEnabled()', function () {
+        should(nc.isEnabled()).eql(true);
+        // disable should wait for permitJoin implementation
+        // nc.disable();
+        // should(nc.isEnabled()).eql(false);
+        // nc.enable();
+        // should(nc.isEnabled()).eql(true);
+    });
+
+    it('enable()', function () {
+        should(nc.enable()).equal(nc);
+        should(nc.isEnabled()).eql(true);
+    });
+
+    it('disable()', function () {
+        should(nc.disable()).equal(nc);
+        // disable should wait for permitJoin implementation
+    });
+
+    it('dump()', function () {
+        should(nc.dump()).be.eql({
+            name: 'mync',
+            enabled: true,
+            protocol: { phy: 'myphy', nwk: 'mynwk' },
+            startTime: 0,
+            defaultJoinTime: 180,
+            traffic: { in: { hits: 2, bytes: 40 }, out: { hits: 1, bytes: 10 } }
+        });
+    });
+
+    it('getName()', function () {
+        should(nc.getName()).equal(ncname);
+    });
+
+    it('getTraffic()', function () {
+        should(nc.getTraffic()).eql({ in: { hits: 2, bytes: 40 }, out: { hits: 1, bytes: 10 } });
+    });
+
+    it('resetTxTraffic()', function () {
+        should(nc.resetTxTraffic()).equal(nc);
+        should(nc.getTraffic()).eql({ in: { hits: 2, bytes: 40 }, out: { hits: 0, bytes: 0 } });
+    });
+
+    it('resetRxTraffic()', function () {
+        should(nc.resetRxTraffic()).equal(nc);
+        should(nc.getTraffic()).eql({ in: { hits: 0, bytes: 0 }, out: { hits: 0, bytes: 0 } });
+    });
+
+    it('_registerDrivers()', function () {
+        var x = function () {};
+        should(nc._registerDrivers('net', { x: x })).equal(nc);
+        should(nc._findDriver('net', 'x')).equal(x);
+    });
+
+    it('registerNetDrivers()', function () {
+        var y = function () {};
+        should(nc.registerNetDrivers({ y: y })).equal(nc);
+        should(nc._findDriver('net', 'y')).equal(y);
+    });
+
+    it('registerDevDrivers()', function () {
+        var z = function () {};
+        should(nc.registerDevDrivers({ z: z })).equal(nc);
+        should(nc._findDriver('dev', 'z')).equal(z);
+    });
+
+    it('registerGadDrivers()', function () {
+        var m = function () {};
+        should(nc.registerGadDrivers({ m: m })).equal(nc);
+        should(nc._findDriver('gad', 'm')).equal(m);
+    });
+
+    it('commitDevIncoming(permAddr, rawDev) - not banned', function (done) {
+        var p = '0x1234',
+            r = {};
+        fb.once('_nc:devIncoming', function (data) {
+            if (data.permAddr === p && data.raw === r)
+                done();
+        });
+
+        nc.commitDevIncoming(p, r);
+    });
+
+    it('commitDevIncoming(permAddr, rawDev) - banned', function (done) {
+        var p = '0x1234',
+            r = {};
+        nc.ban(p);
+        fb.once('_nc:bannedDevIncoming', function (data) {
+            if (data.permAddr === p && data.raw === r)
+                done();
+        });
+
+        nc.commitDevIncoming(p, r);
+    });
+
+    it('commitDevIncoming(permAddr, rawDev) - disable', function () {
+        var p = '0x1234',
+            r = {};
+        nc._net.enabled = false;
+        should(nc.commitDevIncoming(p, r)).be.equal(false);
+        nc._net.enabled = true;
+        should(nc.commitDevIncoming(p, r)).be.equal(true);
+        nc.unban(p);
+        should(nc.commitDevIncoming(p, r)).be.equal(true);
+    });
+});
+
