@@ -650,5 +650,112 @@ describe('Functional Test', function () {
         nc.unban(p);
         should(nc.commitDevIncoming(p, r)).be.equal(true);
     });
-});
 
+    it('commitGadIncoming(permAddr, auxId, rawGad) - not banned', function (done) {
+        var p = '0x1234',
+            aux = 3,
+            r = {};
+        fb.once('_nc:gadIncoming', function (data) {
+            if (data.permAddr === p && data.raw === r && data.auxId === aux)
+                done();
+        });
+
+        nc.commitGadIncoming(p, aux, r);
+    });
+
+    it('commitGadIncoming(permAddr, auxId, rawGad) - banned', function (done) {
+        var p = '0x1234',
+            aux = 3,
+            r = {};
+        nc.ban(p);
+        fb.once('_nc:bannedGadIncoming', function (data) {
+            if (data.permAddr === p && data.raw === r && data.auxId === aux)
+                done();
+        });
+
+        nc.commitGadIncoming(p,aux, r);
+    });
+
+    it('commitGadIncoming(permAddr, auxId, rawGad) - disable', function () {
+        var p = '0x1234',
+            aux = 3,
+            r = {};
+        nc._net.enabled = false;
+        should(nc.commitGadIncoming(p, aux, r)).be.equal(false);
+        nc._net.enabled = true;
+        should(nc.commitGadIncoming(p, aux, r)).be.equal(true);
+        nc.unban(p);
+        should(nc.commitGadIncoming(p, aux, r)).be.equal(true);
+    });
+
+    it('commitDevReporting(permAddr, devAttrs) - not banned', function (done) {
+        var p = '0x1234',
+            attrs = {};
+        fb.once('_nc:devReporting', function (data) {
+            if (data.permAddr === p && data.data === attrs)
+                done();
+        });
+
+        nc.commitDevReporting(p, attrs);
+    });
+
+    it('commitDevReporting(permAddr, devAttrs) - banned', function (done) {
+        var p = '0x1234',
+            attrs = {};
+        nc.ban(p);
+        fb.once('_nc:bannedDevReporting', function (data) {
+            if (data.permAddr === p && data.data === attrs)
+                done();
+        });
+
+        nc.commitDevReporting(p, attrs);
+    });
+
+    it('commitDevReporting(permAddr, devAttrs) - disable', function () {
+        var p = '0x1234',
+            attrs = {};
+        nc._net.enabled = false;
+        should(nc.commitDevReporting(p, attrs)).be.equal(false);
+        nc._net.enabled = true;
+        should(nc.commitDevReporting(p, attrs)).be.equal(true);
+        nc.unban(p);
+        should(nc.commitDevReporting(p, attrs)).be.equal(true);
+    });
+
+    it('commitGadReporting(permAddr, auxId, gadAttrs) - not banned', function (done) {
+        var p = '0x1234',
+            aux = 3,
+            r = {};
+        fb.once('_nc:gadReporting', function (data) {
+            if (data.permAddr === p && data.data === r && data.auxId === aux)
+                done();
+        });
+
+        nc.commitGadReporting(p, aux, r);
+    });
+
+    it('commitGadReporting(permAddr, auxId, rawGad) - banned', function (done) {
+        var p = '0x1234',
+            aux = 3,
+            r = {};
+        nc.ban(p);
+        fb.once('_nc:bannedGadReporting', function (data) {
+            if (data.permAddr === p && data.data === r && data.auxId === aux)
+                done();
+        });
+
+        nc.commitGadReporting(p,aux, r);
+    });
+
+    it('commitGadReporting(permAddr, auxId, rawGad) - disable', function () {
+        var p = '0x1234',
+            aux = 3,
+            r = {};
+        nc._net.enabled = false;
+        should(nc.commitGadReporting(p, aux, r)).be.equal(false);
+        nc._net.enabled = true;
+        should(nc.commitGadReporting(p, aux, r)).be.equal(true);
+        nc.unban(p);
+        should(nc.commitGadReporting(p, aux, r)).be.equal(true);
+    });
+});
