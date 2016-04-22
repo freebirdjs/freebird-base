@@ -406,7 +406,132 @@ describe('Device test', function () {
                     done();
         });
     });
+
+    it('event check - disable()', function (done) {
+        dev1._id = 3;   // registered
+
+        fb.once('_dev:netChanged', function (d) {
+            if (d.data.enabled === false)
+                done();
+        });
+
+        dev1.disable();
+    });
+
+    it('event check - enable()', function (done) {
+        fb.once('_dev:netChanged', function (d) {
+            if (d.data.enabled === true)
+                done();
+        });
+
+        dev1.enable();
+    });
+
+    it('event check - setNetInfo()', function (done) {
+        fb.once('_dev:netChanged', function (d) {
+            if (d.data.status === 'online')
+                done();
+        });
+
+        dev1.setNetInfo({ status: 'online' });
+    });
+
+    it('event check - setNetInfo()', function (done) {
+        fb.once('_dev:netChanged', function (d) {
+            if (d.data.role === 'hi' && d.data.address.dynamic === '12345')
+                done();
+        });
+
+        dev1.setNetInfo({ role: 'hi', address: { dynamic: '12345' } });
+    });
+
+    it('event check - setNetInfo()', function (done) {
+        fb.once('_dev:netChanged', function (d) {
+            if (d.data.address.dynamic === '54321')
+                done();
+        });
+
+        dev1.setNetInfo({ role: 'hi', address: { dynamic: '54321' } });
+    });
+
+    it('event check - setProps()', function (done) {
+        fb.once('_dev:propsChanged', function (d) {
+            if (d.data.name === 'yo')
+                done();
+        });
+
+        dev1.setProps({ name: 'yo' });
+    });
+
+    it('event check - setProps()', function (done) {
+        fb.once('_dev:propsChanged', function (d) {
+            if (d.data.name === 'hi' && d.data.location === 'nowhere')
+                done();
+        });
+
+        dev1.setProps({ name: 'hi', location: 'nowhere' });
+    });
+
+    it('event check - setProps()', function (done) {
+        fb.once('_dev:propsChanged', function (d) {
+            // console.log(d.data);
+            if (d.data.location === 'here')
+                done();
+        });
+
+        dev1.setProps({ name: 'hi', location: 'here' });
+    });
+
+    it('event check - setAttrs()', function (done) {
+        fb.once('_dev:attrsChanged', function (d) {
+            if (d.data.manufacturer === 'yo')
+                done();
+        });
+
+        dev1.setAttrs({ manufacturer: 'yo' });
+    });
+
+    it('event check - setAttrs()', function (done) {
+        fb.once('_dev:attrsChanged', function (d) {
+            // console.log(d.data);
+            if (d.data.manufacturer === 'hi' && d.data.version.hw === 'v1')
+                done();
+        });
+
+        dev1.setAttrs({ manufacturer: 'hi', version: { hw: 'v1' } });
+    });
+
+    it('event check - setAttrs()', function (done) {
+        fb.once('_dev:attrsChanged', function (d) {
+            // console.log(d.data);
+            if (d.data.version.hw === 'v2')
+                done();
+        });
+
+        dev1.setAttrs({ manufacturer: 'hi', version: { hw: 'v2' } });
+    });
+
+    it('event check - resetTxTraffic()', function (done) {
+        fb.once('_dev:netChanged', function (d) {
+            // console.log(d.data);
+            if (d.data.traffic.out.hits === 0 && d.data.traffic.out.bytes === 0)
+                done();
+        });
+
+        dev1.resetTxTraffic();
+    });
+
+    it('event check - resetRxTraffic()', function (done) {
+        fb.once('_dev:netChanged', function (d) {
+            // console.log(d.data);
+            if (d.data.traffic.in.hits === 0 && d.data.traffic.in.bytes === 0)
+                done();
+        });
+
+        dev1.resetRxTraffic();
+    });
 });
+
 
 /*************************************************************************************************/
 /*** Utilities                                                                                 ***/
