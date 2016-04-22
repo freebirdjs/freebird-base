@@ -532,7 +532,177 @@ describe('Device test', function () {
     });
 });
 
+describe('Gadget test', function () {
+    var rawDev1 = mockDevGen();
+    var dev1 = new Device(nc, rawDev1);
+    var rawGad1 = mockGadGen();
+    var gad1 = new Gadget(dev1, rawGad1.auxId, rawGad1);
+    var rawGad2 = mockGadGen();
+    var gad2 = new Gadget(dev1, rawGad2.auxId, rawGad2);
 
+    nc.cookRawDev(dev1, rawDev1, function () {});
+    nc.cookRawGad(gad1, rawGad1, function () {});
+
+    dev1.enable();
+
+    it('enable()', function () {
+        should(gad1.isEnabled()).be.equal(false);
+        should(gad1.enable()).be.equal(gad1);
+        should(gad1.isEnabled()).be.equal(true);
+    });
+
+    it('disable()', function () {
+        should(gad1.isEnabled()).be.equal(true);
+        should(gad1.disable()).be.equal(gad1);
+        should(gad1.isEnabled()).be.equal(false);
+    });
+
+    it('isRegistered()', function () {
+        should(gad1.isRegistered()).be.equal(false);
+        gad1._id = 3;
+        should(gad1.isRegistered()).be.equal(true);
+        gad1._id = null;
+        should(gad1.isRegistered()).be.equal(false);
+    });
+
+    it('getId()', function () {
+        should(gad1.getId()).be.equal(null);
+        gad1._id = 3;
+        should(gad1.getId()).be.equal(3);
+        gad1._id = null;
+        should(gad1.getId()).be.equal(null);
+    });
+
+    it('getDev()', function () {
+        should(gad1.getDev()).be.equal(dev1);
+        should(gad2.getDev()).be.equal(dev1);
+    });
+
+    it('getRawGad()', function () {
+        should(gad1.getRawGad()).be.equal(rawGad1);
+        should(gad2.getRawGad()).be.equal(rawGad2);
+    });
+
+    it('getPermAddr()', function () {
+        // console.log(gad1.getPermAddr());
+        should(gad1.getPermAddr()).be.equal(dev1.getPermAddr());
+    });
+
+    it('getAuxId()', function () {
+        should(gad1.getAuxId()).be.equal(rawGad1.auxId);
+        should(gad2.getAuxId()).be.equal(rawGad2.auxId);
+    });
+
+    it('getNetcore()', function () {
+        should(gad1.getNetcore()).be.equal(nc);
+        should(gad2.getNetcore()).be.equal(nc);
+    });
+
+    it('getLocation()', function () {
+        dev1.setProps({ location: 'myhome' });
+        // console.log(gad1.getLocation());
+        should(gad1.getLocation()).be.equal(dev1.getProps('location').location);
+        should(gad2.getLocation()).be.equal(dev1.getProps('location').location);
+    });
+
+    it('getPanelInfo()', function () {
+        should(gad1.getPanelInfo()).be.eql({ profile: gad1._panel.profile, class: 'test', enabled: false });
+    });
+
+    it('getPanelInfo()', function () {
+        should(gad1.getPanelInfo('class')).be.eql({ class: 'test' });
+    });
+
+    it('getProps()', function () {
+        should(gad1.getProps()).be.eql({ name: 'unknown', description: ''});
+    });
+
+    it('getAttrs()', function () {
+        // console.log(gad1.getAttrs());
+        should(gad1.getAttrs()).be.eql(rawGad1.attrs);
+    });
+
+    it('setPanelInfo()', function () {
+        should(gad1.setPanelInfo({ class: 'test2' })).be.equal(gad1);
+        should(gad1.getPanelInfo('class')).be.eql({ class: 'test2' });
+
+        should(gad1.setPanelInfo({ class: 'test2', profile: 'M' })).be.equal(gad1);
+        should(gad1.getPanelInfo([ 'class', 'profile' ])).be.eql({ class: 'test2', profile: 'M' });
+    });
+
+    it('setProps()', function () {
+        should(gad1.setProps({ name: 'test2' })).be.equal(gad1);
+        should(gad1.getProps('name')).be.eql({ name: 'test2' });
+
+        should(gad1.setProps({ name: 'test2', description: 'hihi' })).be.equal(gad1);
+        should(gad1.getProps([ 'name', 'description' ])).be.eql({ name: 'test2', description: 'hihi' });
+    });
+
+    it('setAttrs()', function () {
+        should(gad1.setAttrs({ name: 'test2' })).be.equal(gad1);
+        should(gad1.getAttrs('name')).be.eql({ name: 'test2' });
+
+        should(gad1.setAttrs({ name: 'test2', description: 'hihi' })).be.equal(gad1);
+        should(gad1.getAttrs([ 'name', 'description' ])).be.eql({ name: 'test2', description: 'hihi' });
+    });
+
+
+    it('dump()', function () {
+        should(gad1.dump()).be.eql({
+            id: gad1.getId(),
+            dev: {
+                id: gad1.getDev().getId(),
+                permAddr: gad1.getPermAddr()
+            },
+            auxId: gad1.getAuxId(),
+            panel: gad1.getPanelInfo(),
+            props: gad1.getProps(),
+            attrs: gad1.getAttrs()
+        });
+    });
+
+
+    it('read()', function (done) {
+        gad1.enable();
+        // console.log(gad1.isEnabled());
+        gad1.read('P', function (err, d) {
+            if (d === 'read')
+                done();
+        });
+    });
+
+    it('write()', function (done) {
+        // console.log(gad1.isEnabled());
+        gad1.write('x', 'x', function (err, d) {
+            if (d === 'written')
+                done();
+        });
+    });
+
+    it('exec()', function (done) {
+        // console.log(gad1.isEnabled());
+        gad1.exec('x', ['x'], function (err, d) {
+            if (d === 'exec')
+                done();
+        });
+    });
+
+    it('setReportCfg()', function (done) {
+        // console.log(gad1.isEnabled());
+        gad1.setReportCfg('x', {}, function (err, d) {
+            if (d === 'reportcfg')
+                done();
+        });
+    });
+
+    it('getReportCfg()', function (done) {
+        // console.log(gad1.isEnabled());
+        gad1.getReportCfg('x', function (err, d) {
+            if (d === 'reportcfg')
+                done();
+        });
+    });
+});
 /*************************************************************************************************/
 /*** Utilities                                                                                 ***/
 /*************************************************************************************************/
