@@ -21,6 +21,7 @@
     "lwmqn-util": "0.0.6"
   },
   "devDependencies": {
+    "chance": "^1.0.2",
     "should": "^8.3.0"
   }
 }
