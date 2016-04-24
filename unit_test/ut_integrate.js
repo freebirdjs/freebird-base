@@ -702,6 +702,66 @@ describe('Gadget test', function () {
                 done();
         });
     });
+
+
+    it('disable() - evt check', function (done) {
+        fb.on('_gad:panelChanged', function (d) {
+            if (d.data.enabled === false && gad1.isEnabled() === false)
+                done();
+        });
+        gad1._id = 3;   // assume registered
+        gad1.disable();
+    });
+
+    it('enable() - evt check', function (done) {
+        fb.on('_gad:panelChanged', function (d) {
+            if (d.data.enabled === true && gad1.isEnabled() === true)
+                done();
+        });
+        gad1.enable();
+    });
+
+    it('setPanelInfo() - evt check', function (done) {
+        fb.on('_gad:panelChanged', function (d) {
+            if (d.data.profile === 'hi')
+                done();
+        });
+        gad1.setPanelInfo({ profile: 'hi' });
+    });
+
+    it('setPanelInfo() - evt check', function (done) {
+        fb.on('_gad:panelChanged', function (d) {
+            if (d.data.class === 'hello')
+                done();
+        });
+        gad1.setPanelInfo({ profile: 'hi', class: 'hello' });
+    });
+
+    it('setProps() - evt check', function (done) {
+        fb.on('_gad:propsChanged', function (d) {
+            if (d.data.description === 'hi')
+                done();
+        });
+        gad1.setProps({ description: 'hi' });
+    });
+
+    it('setProps() - evt check', function (done) {
+        fb.on('_gad:propsChanged', function (d) {
+            if (d.data.some === 'yo')
+                done();
+        });
+        gad1.setProps({ description: 'hi', some: 'yo' });
+    });
+
+    it('setAttrs() - evt check', function (done) {
+        fb.on('_gad:attrsChanged', function (d) {
+            if (d.data.description === 'hi')
+                done();
+        });
+        gad1.setAttrs({ description: 'hi' });
+    });
+
+
 });
 /*************************************************************************************************/
 /*** Utilities                                                                                 ***/
