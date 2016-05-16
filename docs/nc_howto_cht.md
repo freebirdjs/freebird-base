@@ -25,13 +25,14 @@ Freebird 使用兩種統一資料模型來表示實際的裝置與物品。裝�
 
 ## 3. Netcore 開發者的責任
 
-1. 需實作 cookRawDev() 與 cookRawGad() 兩支介面方法，告訴 freebird 如何將底層的 device 或 gadget 的 raw data objects 轉換成 Device Class 與 Gadget Class 的物件。在實作的內容中，開發者必須使用到 dev.setNetInfo()、 dev.setAttrs()、 gad.setPanelInfo() 以及 gad.setAttrs() 來完成裝置與物品的設定  
-2. 需實作網路管理、裝置控制與物品控制的驅動程式，這三類的驅動程式必須分別使用 netcore 的方法 nc.registerNetDrivers()、nc.registerDevDrivers() 以及 nc.registerGadDrivers() 來將驅動程式向 netcore 註冊。 當 netcore 啟動時 (start())，會檢查驅動程式是否齊備，若不齊備，netcore 將會拋出錯誤，以提醒開發者必須善盡驅動程式實作的責任  
-3. 當底層有新裝置進入網路時，開發者必須調 nc.commitDevIncoming() 通知 netcore 有裝置入網  
-4. 當裝置入網時，開發者有責任依據某些規則，一一地找出裝置上的應用有哪些，並產生一一對應的 gadget raw data，然後調用 nc.commitGadIncoming() 通知 netcore  
-5. 當有裝置離開網路，開發者有責任告訴 netcore 是哪一個裝置離開了，這必須透過調用 nc.commitDevLeaving() 來完成  
-6. 當底層接收到有關 device 的屬性變化或通知時，必須使用 commitDevReporting() 向 netcore 報告  
-7. 當底層接收到有關 gadget(應用) 的屬性變化或通知時，必須使用 commitGadReporting () 向 netcore 報告  
+1. 每次當 netcore 準備好時，開發者應調用 nc.commitReady() 以通知 freebird 它已經就緒 (當底層全新開機、重開機、軟/硬重置，底層須使用此 API 往上通知)
+2. 需實作 cookRawDev() 與 cookRawGad() 兩支介面方法，告訴 freebird 如何將底層的 device 或 gadget 的 raw data objects 轉換成 Device Class 與 Gadget Class 的物件。在實作的內容中，開發者必須使用到 dev.setNetInfo()、 dev.setAttrs()、 gad.setPanelInfo() 以及 gad.setAttrs() 來完成裝置與物品的設定  
+3. 需實作網路管理、裝置控制與物品控制的驅動程式，這三類的驅動程式必須分別使用 netcore 的方法 nc.registerNetDrivers()、nc.registerDevDrivers() 以及 nc.registerGadDrivers() 來將驅動程式向 netcore 註冊。 當 netcore 啟動時 (start())，會檢查驅動程式是否齊備，若不齊備，netcore 將會拋出錯誤，以提醒開發者必須善盡驅動程式實作的責任  
+4. 當底層有新裝置進入網路時，開發者必須調 nc.commitDevIncoming() 通知 netcore 有裝置入網  
+5. 當裝置入網時，開發者有責任依據某些規則，一一地找出裝置上的應用有哪些，並產生一一對應的 gadget raw data，然後調用 nc.commitGadIncoming() 通知 netcore  
+6. 當有裝置離開網路，開發者有責任告訴 netcore 是哪一個裝置離開了，這必須透過調用 nc.commitDevLeaving() 來完成  
+7. 當底層接收到有關 device 的屬性變化或通知時，必須使用 commitDevReporting() 向 netcore 報告  
+8. 當底層接收到有關 gadget(應用) 的屬性變化或通知時，必須使用 commitGadReporting () 向 netcore 報告  
 
 一旦開發者滿足了這些要求，netcore 就能在 freebird 框架中順利工作
 
