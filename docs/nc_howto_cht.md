@@ -33,6 +33,7 @@ Freebird 使用兩種統一資料模型來表示實際的裝置與物品。裝�
 6. 當有裝置離開網路，開發者有責任告訴 netcore 是哪一個裝置離開了，這必須透過調用 nc.commitDevLeaving() 來完成  
 7. 當底層接收到有關 device 的屬性變化或通知時，必須使用 commitDevReporting() 向 netcore 報告  
 8. 當底層接收到有關 gadget(應用) 的屬性變化或通知時，必須使用 commitGadReporting () 向 netcore 報告  
+9. 當底層接受到有關 device 的 net 相關變化時，應調用 nc.commitDevNetChanging() 向 netcore 報告。此處所指之 net 相關變化包括 { role, parent, maySleep, sleepPeriod, address: { dynamic } }  
 
 一旦開發者滿足了這些要求，netcore 就能在 freebird 框架中順利工作
 
