@@ -247,6 +247,7 @@ describe('Check Signature', function () {
                 throw err;
         }); }).should.not.throw();
 
+        // [TOOD] functional
         mydev.disable();
         (function () { return mydev.read('xxx'); }).should.not.throw();
 
