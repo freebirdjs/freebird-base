@@ -228,7 +228,6 @@ controller.on('gadget_reporting_event', function (gadAttrChanges) {
     * [write()](#API_write)
     * [identify()](#API_identify)
     * [ping()](#API_ping)
-    * [recoverFromRecord()](#API_recoverFromRecord)
 
 <a name="Gadget"></a>
 ## 6. Gadget Class
@@ -257,4 +256,3 @@ controller.on('gadget_reporting_event', function (gadAttrChanges) {
     * [exec()](#API_exec)
     * [getReportCfg()](#API_getReportCfg)
     * [setReportCfg()](#API_setReportCfg)
-    * [recoverFromRecord()](#API_recoverFromRecord)
