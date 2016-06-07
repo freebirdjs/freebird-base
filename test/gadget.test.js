@@ -86,7 +86,11 @@ ncMock = {
         this._net.enabled = false;
     },
     ping: function () {},
-    gadExec: function () {}
+    gadRead: function () {},
+    gadWrite: function () {},
+    gadExec: function () {},
+    setReportCfg: function () {},
+    getReportCfg: function () {}
 };
 
 fb.on('_gad:error', function (err) {
@@ -483,6 +487,80 @@ describe('APIs Signature Check', function() {
         });
     });
 
+    describe('#getReportCfg', function() {
+        it('should throw if input attrName is not a string', function () {
+            expect(function () { return mygad.getReportCfg(1); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(null); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(true); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(function () {}); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg([ 'a', 1, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg([ 'a', null, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg([ 'a', true, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg([]); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+        });
+
+        it('should not throw if input attrName is a string', function () {
+            expect(function () { return mygad.getReportCfg('xxx'); }).not.to.throw(Error);
+        });
+    });
+
+    describe('#setReportCfg', function() {
+        it('should throw if input attrName is not a string', function () {
+            expect(function () { return mygad.setReportCfg(1); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(null); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(true); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(function () {}); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg([ 'a', 1, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg([ 'a', null, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg([ 'a', true, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg([]); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+        });
+
+        it('should throw if input cfg is not given or cfg is not an object', function () {
+            expect(function () { return mygad.setReportCfg('xxx'); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('xxx', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('xxx', 'x'); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('xxx', true); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('xxx', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('xxx', []); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('xxx', function () {}); }).to.throw(TypeError);
+        });
+
+        it('should not throw if input attrName is a string and cfg is given', function () {
+            expect(function () { return mygad.setReportCfg('xxx', {}); }).not.to.throw(Error);
+        });
+    });
+
+    describe('#_dangerouslyAppendAttrs', function() {
+        it('should throw if input attrs is not an object', function () {
+            expect(function () { return mygad._dangerouslyAppendAttrs(1); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs(null); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs(NaN); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs(true); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs(function () {}); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs([ 'a', 1, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs([ 'a', null, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs([ 'a', true, 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs(); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs('xxx'); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs([]); }).to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+        });
+
+        it('should not throw if input attrs is an object', function () {
+            expect(function () { return mygad._dangerouslyAppendAttrs({}); }).not.to.throw(TypeError);
+            expect(function () { return mygad._dangerouslyAppendAttrs({ a: 1 }); }).not.to.throw(TypeError);
+        });
+    });
 
     // This recovery test should left to the last one
     describe('#recoverFromRecord', function() {
