@@ -385,6 +385,35 @@ describe('Remote operations should throw if netcore is disabled', function() {
     });
 });
 
-describe.skip('APIs functional check', function() {
+describe('Remote operations should throw if device is disabled', function() {
+    var mydev = dev;
+    describe('#read', function() {
+        it('should throw if device is disabled', function () {
+            mydev.disable();
+            ncMock.enable();
+            expect(function () { return mydev.read('xxx', function (err) { if (err) throw err; }); }).to.throw(Error);
+        });
+    });
 
+    describe('#write', function() {
+        it('should throw if device is disabled', function () {
+            expect(function () { return mydev.write('xxx', 1, function (err) { if (err) throw err; }); }).to.throw(Error);
+        });
+    });
+
+    describe('#identify', function() {
+        it('should throw if device is disabled', function () {
+            expect(function () { return mydev.identify(function (err) { if (err) throw err; }); }).to.throw(Error);
+        });
+    });
+
+    describe('#ping', function() {
+        it('should throw if device is disabled', function () {
+            expect(function () { return mydev.ping(function (err) { if (err) throw err; }); }).to.throw(Error);
+        });
+    });
+});
+
+describe.skip('APIs functional check', function() {
+    // Test in integration part
 });
