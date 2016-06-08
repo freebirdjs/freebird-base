@@ -191,8 +191,8 @@ controller.on('gadget_reporting_event', function (gadAttrChanges) {
     * [devRead()](#API_devRead)
     * [devWrite()](#API_devWrite)
     * [identify()](#API_identify)
-    * [gadRead()](#API_gadRead)
 
+    * [gadRead()](#API_gadRead)
     * [gadWrite()](#API_gadWrite)
     * [gadExec()](#API_gadExec)
     * [getReportCfg()](#API_getReportCfg)
