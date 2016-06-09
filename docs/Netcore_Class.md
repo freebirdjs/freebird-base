@@ -502,7 +502,7 @@ Commit ready to tell the netcore that the network controller is ready. Everytime
 ********************************************
 <a name="API_commitDevNetChanging"></a>
 ### .commitDevNetChanging(permAddr, changes)
-Enable this device. Transportation is working.  
+Commit the network status when a device changes its status.  
   
 **Arguments:**  
 
@@ -521,7 +521,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_commitDevIncoming"></a>
 ### .commitDevIncoming(permAddr, rawDev)
-Enable this device. Transportation is working.  
+Commit a device incoming message to netcore when a device comes in.  
   
 **Arguments:**  
 
@@ -540,7 +540,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_commitDevLeaving"></a>
 ### .commitDevLeaving(permAddr)
-Enable this device. Transportation is working.  
+Commit a device leaving message to netcore when a device leave from the network.  
   
 **Arguments:**  
 
@@ -559,7 +559,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_commitGadIncoming"></a>
 ### .commitGadIncoming(permAddr, auxId, rawGad)
-Enable this device. Transportation is working.  
+Commit a gadget incoming message to netcore when a gadget comes in.  
   
 **Arguments:**  
 
@@ -578,7 +578,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_commitDevReporting"></a>
 ### .commitDevReporting(permAddr, devAttrs)
-Enable this device. Transportation is working.  
+Commit a device reporting message to netcore when a device reports its attribtue(s).  
   
 **Arguments:**  
 
@@ -597,7 +597,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_commitGadReporting"></a>
 ### .commitGadReporting(permAddr, auxId, gadAttrs)
-Enable this device. Transportation is working.  
+Commit a gadget reporting message to netcore when a gadget reports its attribtue(s).  
   
 **Arguments:**  
 
@@ -616,7 +616,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_dangerouslyCommitGadReporting"></a>
 ### .dangerouslyCommitGadReporting(permAddr, auxId, gadAttrs)
-Enable this device. Transportation is working.  
+Dangerously commit a gadget reporting message to netcore when a gadget reports its attribtue(s). This will restructure the attrs data in the gadget instance. Use this API when you do know what you are doing.  
   
 **Arguments:**  
 
@@ -654,7 +654,7 @@ Start the network controller.
 ********************************************
 <a name="API_stop"></a>
 ### .stop(callback)
-Enable this device. Transportation is working.  
+Stop the network controller.  
   
 **Arguments:**  
 
@@ -673,7 +673,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_reset"></a>
 ### .reset(mode, callback)
-Enable this device. Transportation is working.  
+Reset the network controller.  
   
 **Arguments:**  
 
@@ -692,7 +692,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_permitJoin"></a>
 ### .permitJoin(duration, callback)
-Enable this device. Transportation is working.  
+Let the network controller allow devices to join its network.  
   
 **Arguments:**  
 
@@ -711,7 +711,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_remove"></a>
 ### .remove(permAddr, callback)
-Enable this device. Transportation is working.  
+Remove a remote device from the network.  
   
 **Arguments:**  
 
@@ -730,7 +730,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_ban"></a>
 ### .ban(permAddr, callback)
-Enable this device. Transportation is working.  
+Ban a device from the network. Once a device is banned, it can never join the network till you unban it.  
   
 **Arguments:**  
 
@@ -749,7 +749,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_unban"></a>
 ### .unban(permAddr, callback)
-Enable this device. Transportation is working.  
+Unban a device.  
   
 **Arguments:**  
 
@@ -768,7 +768,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_ping"></a>
 ### .ping(permAddr, callback)
-Enable this device. Transportation is working.  
+Ping a remote device.  
   
 **Arguments:**  
 
@@ -787,7 +787,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_devRead"></a>
 ### .devRead(permAddr, attrName, callback)
-Enable this device. Transportation is working.  
+Read an attribute from the remote device.  
   
 **Arguments:**  
 
@@ -806,7 +806,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_devWrite"></a>
 ### .devWrite(permAddr, attrName, val, callback)
-Enable this device. Transportation is working.  
+Write a value to an attribute to the remote device.  
   
 **Arguments:**  
 
@@ -825,7 +825,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_identify"></a>
 ### .identify(permAddr, callback)
-Enable this device. Transportation is working.  
+Identify a remote device. If the remote device does not support this feature, invoking this API will be ineffective.  
   
 **Arguments:**  
 
@@ -844,7 +844,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_gadRead"></a>
 ### .gadRead(permAddr, auxId, attrName, callback)
-Enable this device. Transportation is working.  
+Read an attribute from a gadget on the remote device.  
   
 **Arguments:**  
 
@@ -863,7 +863,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_gadWrite"></a>
 ### .gadWrite(permAddr, auxId, attrName, val, callback)
-Enable this device. Transportation is working.  
+Write a value to an attribute to a gadget on the remote device.  
   
 **Arguments:**  
 
@@ -882,7 +882,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_gadExec"></a>
 ### .gadExec(permAddr, auxId, attrName, args, callback)
-Enable this device. Transportation is working.  
+Issue a remote process call to a gadget on the remote device.  
   
 **Arguments:**  
 
@@ -901,7 +901,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_getReportCfg"></a>
 ### .getReportCfg(permAddr, auxId, attrName, callback)
-Enable this device. Transportation is working.  
+Get the report configuration from a gadget on the remote device.  
   
 **Arguments:**  
 
@@ -920,7 +920,7 @@ Enable this device. Transportation is working.
 ********************************************
 <a name="API_setReportCfg"></a>
 ### .setReportCfg(permAddr, auxId, attrName, cfg, callback)
-Enable this device. Transportation is working.  
+Set the report configuration to a gadget on the remote device.  
   
 **Arguments:**  
 
