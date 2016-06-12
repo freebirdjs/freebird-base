@@ -26,7 +26,6 @@
     * [getReportCfg()](#API_getReportCfg)
     * [setReportCfg()](#API_setReportCfg)
 
-
 ********************************************
 <a name="API_Device"></a>
 ### new Gadget(dev, auxId, rawGad)
