@@ -50,7 +50,7 @@ nc.cookRawDev = function(dev, rawDev, callback) {
 nc.cookRawGad = function(gad, rawGad, callback) {
     gad.setPanelInfo({
         profile: rawGad.devId < 2 ? 'HA' : 'SE',
-        class: 'test'
+        className: 'test'
     });
 
     gad.setAttrs(rawGad.attrs);
@@ -606,11 +606,11 @@ describe('Gadget test', function () {
     });
 
     it('getPanelInfo()', function () {
-        should(gad1.getPanelInfo()).be.eql({ profile: gad1._panel.profile, class: 'test', enabled: false });
+        should(gad1.getPanelInfo()).be.eql({ profile: gad1._panel.profile, className: 'test', enabled: false });
     });
 
     it('getPanelInfo()', function () {
-        should(gad1.getPanelInfo('class')).be.eql({ class: 'test' });
+        should(gad1.getPanelInfo('className')).be.eql({ className: 'test' });
     });
 
     it('getProps()', function () {
@@ -623,11 +623,11 @@ describe('Gadget test', function () {
     });
 
     it('setPanelInfo()', function () {
-        should(gad1.setPanelInfo({ class: 'test2' })).be.equal(gad1);
-        should(gad1.getPanelInfo('class')).be.eql({ class: 'test2' });
+        should(gad1.setPanelInfo({ className: 'test2' })).be.equal(gad1);
+        should(gad1.getPanelInfo('className')).be.eql({ className: 'test2' });
 
-        should(gad1.setPanelInfo({ class: 'test2', profile: 'M' })).be.equal(gad1);
-        should(gad1.getPanelInfo([ 'class', 'profile' ])).be.eql({ class: 'test2', profile: 'M' });
+        should(gad1.setPanelInfo({ className: 'test2', profile: 'M' })).be.equal(gad1);
+        should(gad1.getPanelInfo([ 'className', 'profile' ])).be.eql({ className: 'test2', profile: 'M' });
     });
 
     it('setProps()', function () {
@@ -731,10 +731,10 @@ describe('Gadget test', function () {
 
     it('setPanelInfo() - evt check', function (done) {
         fb.on('_gad:panelChanged', function (d) {
-            if (d.data.class === 'hello')
+            if (d.data.className === 'hello')
                 done();
         });
-        gad1.setPanelInfo({ profile: 'hi', class: 'hello' });
+        gad1.setPanelInfo({ profile: 'hi', className: 'hello' });
     });
 
     it('setProps() - evt check', function (done) {

@@ -20,8 +20,8 @@ Freebird 使用兩種統一資料模型來表示實際的裝置與物品。裝�
 * 物品類別(Gadget Class)  
     - 關於一個 gadget 內的資料，首重應用方面的資訊，你可以使用 gadget 的方法 sePanelInfo() 來設定它的網路資訊  
     - gadget 的應用，必定有與其狀態相關的屬性。它到底具有哪些屬性，則必須依照 panelInfo() 所定義的 class 來決定  
-    - class 應遵照 IPSO 所提供的 18 種 Objects 來定義其名  
-    - 一旦開發者決定了 class，則還有填滿其屬性的責任，要填滿屬性，必須使用 gadget 的方法 setAttrs() 來設定  
+    - className 應遵照 IPSO 所提供的 18 種 Objects 來定義其名  
+    - 一旦開發者決定了 className，則還有填滿其屬性的責任，要填滿屬性，必須使用 gadget 的方法 setAttrs() 來設定  
 
 ## 3. Netcore 開發者的責任
 
@@ -75,16 +75,16 @@ Freebird 使用兩種統一資料模型來表示實際的裝置與物品。裝�
 要設定物品的 panel information，請使用 gad.setPanelInfo()；欲設定物品屬性，則使用 gad.setAttrs()。 
 
 ### dev.setPanelInfo(info)
-* Panel info 的意思是，一個物品的身上好像都有一塊牌子，上面載明了自己是什麼東西，該物件目前只有兩個欄位，一個是 profile，可填可不填。另一個是 class，為必填，因為它將說明這個 gadget 到底會對應到實際上的什麼東西，例如一顆燈、一個溫度感測器、或是一個電源開關。  
+* Panel info 的意思是，一個物品的身上好像都有一塊牌子，上面載明了自己是什麼東西，該物件目前只有兩個欄位，一個是 profile，可填可不填。另一個是 className，為必填，因為它將說明這個 gadget 到底會對應到實際上的什麼東西，例如一顆燈、一個溫度感測器、或是一個電源開關。  
   
 
 | Property     | Type    | Mandatory | Description                                   |
 |--------------|---------|-----------|-----------------------------------------------|
 | profile      | String  | optional  | Server name                                   |
-| class        | String  | required  | Permanent address                             |
+| className    | String  | required  | Permanent address                             |
   
 
-* 目前接受的 class 共有 18 種 (IPSO定義)，它們分別是字串
+* 目前接受的 className 共有 18 種 (IPSO定義)，它們分別是字串
     - 'dIn' (數位輸入), 'dOut' (數位輸出)  
     - 'aIn' (類比輸入), 'aOut' (類比輸出)  
     - 'generic' (通用型感測器), 'illuminance' (照度感測器), 'presence' (障礙感測器), 'temperature' (溫度感測器), 'humidity' (濕度感測器)  
@@ -92,4 +92,4 @@ Freebird 使用兩種統一資料模型來表示實際的裝置與物品。裝�
     - 'actuation' (作動器), 'setPoint' (刻度設定器), 'loadCtrl' (負載控制器), 'lightCtrl' (燈控), 'pwrCtrl' (電源開關)  
     - 'accelerometer' (加速計), 'magnetometer' (磁力儀), 'barometer' (晴雨錶)
 
-* 有一些實際的感測器，若找不到對應，則採用 'generic' class ，然後利用其實例屬性 appType 欄位來指明真正用途，例如 appType = 'currentSensor'  ([TODO] 是否要製表?)
+* 有一些實際的感測器，若找不到對應，則採用 'generic' className ，然後利用其實例屬性 appType 欄位來指明真正用途，例如 appType = 'currentSensor'  ([TODO] 是否要製表?)

@@ -54,7 +54,7 @@ To set panel information for a gadget, use its method setPanelInfo() to do this.
 | Property     | Type    | Mandatory | Description                                   |
 |--------------|---------|-----------|-----------------------------------------------|
 | profile      | String  | optional  | Server name                                   |
-| class        | String  | required  | Permanent address                             |
+| className    | String  | required  | Permanent address                             |
 
 
 ## 5. cookRawDev()
@@ -111,7 +111,7 @@ this.cookRawGad = function (gad, rawGad, callback) {
 
     gad.setPanelInfo({
         profile: 'home',
-        class: 'presence',
+        className: 'presence',
     });
 
     gad.setAttrs({

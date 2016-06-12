@@ -13,7 +13,7 @@ Base classes used in freebird framework.
 <a name="Overiew"></a>
 ## 1. Overview
 
-**freebird-base** is the base classes for freebird framework. When you are willing to create your own netcore to operates well with freebird, you can simply install this module, and use createNetcore() method to help you with implementing the network drivers.
+**freebird-base** is base classes used in [freebird]() framework. If you are willing to create your own netcore with freebird, just simply install this module and use `createNetcore()` method to get a netcore instance. After you got the instance, you should follow some rules to accomplish your own implementations on it, such as network drivers, to meet the minimum requirements for your netcore to operate well with freebird framework.  
 
 <a name="Installation"></a>
 ## 2. Installation
@@ -40,3 +40,4 @@ The documentation of [Device Class]().
 ## 6. Gadget Class
 
 The documentation of [Gadget Class]().
+
