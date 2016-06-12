@@ -219,9 +219,9 @@ describe('Device Constructor', function() {
     });
 
     describe('#getPanelInfo', function() {
-        it('should equal to { enabled: false, profile: "", className: "" }', function () {
+        it('should equal to { enabled: false, profile: "", classId: "" }', function () {
             mygad.disable();
-            expect(mygad.getPanelInfo()).to.be.eql({ enabled: false, profile: '', className: '' });
+            expect(mygad.getPanelInfo()).to.be.eql({ enabled: false, profile: '', classId: '' });
         });
     });
 

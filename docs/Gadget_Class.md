@@ -268,7 +268,7 @@ Get panel information of this gadget. The panel information is a data object tha
     |-----------|---------|--------------------------------------------------------------|
     | enabled   | Boolean | Indicate whether this gadget is enabled                      |
     | profile   | String  | Profile of this gadget, can be any string, such as 'Home'    |
-    | className | String  | Gadget class to tell what kind of application is this gadget |
+    | classId   | String  | Gadget class to tell what kind of application is this gadget |
 
   
 **Arguments:**  

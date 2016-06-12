@@ -179,7 +179,7 @@ describe('Constructor Testing', function () {
     });
 
     it('getPanelInfo', function () {
-        mygad.getPanelInfo().should.be.eql({ enabled: false, profile: '', className: '' });
+        mygad.getPanelInfo().should.be.eql({ enabled: false, profile: '', classId: '' });
     });
 
     it('getProps', function () {
@@ -210,12 +210,12 @@ describe('Constructor Testing', function () {
 
     // test setter in functional tests
     // it('setPanelInfo', function () {
-    //     mygad.setPanelInfo({ enabled: true, profile: 'my', className: 'test' }).should.be.equal(mygad);
-    //     mygad.getPanelInfo().should.be.eql({ enabled: false, profile: 'my', className: 'test' });
+    //     mygad.setPanelInfo({ enabled: true, profile: 'my', classId: 'test' }).should.be.equal(mygad);
+    //     mygad.getPanelInfo().should.be.eql({ enabled: false, profile: 'my', classId: 'test' });
     // });
 
     // it('setProps', function () {
-    //     mygad.setPanelInfo({ enabled: true, profile: 'my', className: 'test' }).should.be.equal(mygad);
-    //     mygad.getPanelInfo().should.be.eql({ enabled: false, profile: 'my', className: 'test' });
+    //     mygad.setPanelInfo({ enabled: true, profile: 'my', classId: 'test' }).should.be.equal(mygad);
+    //     mygad.getPanelInfo().should.be.eql({ enabled: false, profile: 'my', classId: 'test' });
     // });
 });
