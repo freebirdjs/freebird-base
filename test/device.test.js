@@ -1,6 +1,6 @@
 var EventEmitter = require('events'),
     util = require('util'),
-    _ = require('lodash'),
+    _ = require('busyman'),
     expect = require('chai').expect,
     Device = require('../lib/device.js');
 

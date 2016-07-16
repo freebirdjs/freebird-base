@@ -1,6 +1,6 @@
 var EventEmitter = require('events'),
     util = require('util'),
-    _ = require('lodash'),
+    _ = require('busyman'),
     expect = require('chai').expect,
     Device = require('../lib/device.js'),
     Gadget = require('../lib/gadget.js');
@@ -93,9 +93,9 @@ ncMock = {
     getReportCfg: function () {}
 };
 
-fb.on('_gad:error', function (err) {
-    console.log(err);
-});
+// fb.on('_gad:error', function (err) {
+//     console.log(err);
+// });
 
 /*************************************************************************************************/
 /*** Device Mockup Generation                                                                  ***/
