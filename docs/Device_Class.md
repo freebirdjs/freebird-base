@@ -1,58 +1,71 @@
-<a name="Device"></a>
-## 5. Device Class
+# Device Class
+The Device Class defines a device which can have many gadgets(applications) on it. A device is a real machine-node in the network, such as a CC2530 ZigBee SoC, a CC2540 BLE SoC, a ESP8266 WiFi SoC, and a MT7688 WiFi module. This document will show you what methods does a device have.  
 
-    * [new Device()](#API_Device)
-    * [enable()](#API_enable)
-    * [disable()](#API_disable)
-    * [isEnabled()](#API_isEnabled)
-    * [isRegistered()](#API_isRegistered)
-    * [getNetcore()](#API_getNetcore)
-    * [getRawDev()](#API_getRawDev)
-    * [getId()](#API_getId)
-    * [getAddr()](#API_getAddr)
-    * [getPermAddr()](#API_getPermAddr)
-    * [getStatus()](#API_getStatus)
-    * [getGadTable()](#API_getGadTable)
-    * [getTraffic()](#API_getTraffic)
+## APIs
+
+* [v new Device()](#API_Device)
+* [v isEnabled()](#API_isEnabled)
+* [v isRegistered()](#API_isRegistered)
+
+* Getters
+    * [v getNetcore()](#API_getNetcore)
+    * [v getRawDev()](#API_getRawDev)
+    * [v getId()](#API_getId)
+    * [v getAddr()](#API_getAddr)
+    * [v getPermAddr()](#API_getPermAddr)
+    * [v getStatus()](#API_getStatus)
+    * [v getGadTable()](#API_getGadTable)
+    * [v getTraffic()](#API_getTraffic)
     * [getNetInfo()](#API_getNetInfo)
     * [getProps()](#API_getProps)
     * [getAttrs()](#API_getAttrs)
+* Setters
     * [setNetInfo()](#API_setNetInfo)
     * [setProps()](#API_setProps)
     * [setAttrs()](#API_setAttrs)
-    * [resetTxTraffic()](#API_resetTxTraffic)
-    * [resetRxTraffic()](#API_resetRxTraffic)
-    * [dump()](#API_dump)
-    * [refresh()](#API_refresh)
-    * [read()](#API_read)
-    * [write()](#API_write)
-    * [identify()](#API_identify)
-    * [ping()](#API_ping)
+
+* [v enable()](#API_enable)
+* [v disable()](#API_disable)
+* [resetTxTraffic()](#API_resetTxTraffic)
+* [resetRxTraffic()](#API_resetRxTraffic)
+* [read()](#API_read)
+* [write()](#API_write)
+* [identify()](#API_identify)
+* [ping()](#API_ping)
+* [refresh()](#API_refresh)
+* [dump()](#API_dump)
 
 ********************************************
 <a name="API_Device"></a>
-### new Device(netcore, rawDev)
+### new Device(netcore[, rawDev])
 New a device instance.  
   
 **Arguments:**  
 
-1. `netcore` (_String | Number_): Object id  
-2. `rawDev` (_String | Number_): Object Instance id  
+1. `netcore` (_Object_): The netcore to manage this device.  
+2. `rawDev` (_Object_): Raw device, maybe a data object that contains many information about this device.  
 
 **Returns:**  
 
-* _none_
+* (_Object_): device, instance of Device class.
 
 **Examples:**  
   
 ```js
+var myNetcore = require('./my_foo_netcore');
+var deviceRawData = {
+    ieeeAddr: '0x123456789ABCDEF',
+    nwkAddr: 0x27B3,
+    // ...
+};
 
+var myDevice = new Device(myNetcore, deviceRawData);
 ```
 
 ********************************************
 <a name="API_enable"></a>
 ### .enable()
-Enable this device. Transportation is working.  
+Enable this device. Transportation is working if device is enabled.  
   
 **Arguments:**  
 
@@ -60,12 +73,12 @@ Enable this device. Transportation is working.
 
 **Returns:**  
 
-* _none_
+* (_Object_): device itself.
 
 **Examples:**  
   
 ```js
-
+myDevice.enable();
 ```
 
 ********************************************
@@ -79,18 +92,18 @@ Disable this device. Any transportation will be ignore if device is disabled.
 
 **Returns:**  
 
-* _none_
+* (_Object_): device itself.
 
 **Examples:**  
   
 ```js
-
+myDevice.disable();
 ```
 
 ********************************************
 <a name="API_isEnabled"></a>
 ### .isEnabled()
-To see if this device is enabled.  
+Checks if this device is enabled.  
   
 **Arguments:**  
 
@@ -98,18 +111,18 @@ To see if this device is enabled.
 
 **Returns:**  
 
-* _none_
+* (_Boolean_): Returns `true` if enabled, else `false.  
 
 **Examples:**  
   
 ```js
-
+myDevice.isEnabled();   // true
 ```
 
 ********************************************
 <a name="API_isRegistered"></a>
 ### .isRegistered()
-To see if this device has been registered to freebird.  
+Checks if this device has been registered to freebird.  
   
 **Arguments:**  
 
@@ -117,18 +130,18 @@ To see if this device has been registered to freebird.
 
 **Returns:**  
 
-* _none_
+* (_Boolean_): Returns `true` if registered, else `false.  
 
 **Examples:**  
   
 ```js
-
+myDevice.isRegistered();   // false
 ```
 
 ********************************************
 <a name="API_getNetcore"></a>
 ### .getNetcore()
-Get the netcore which manages this device.  
+Get the netcore that manages this device.  
   
 **Arguments:**  
 
@@ -136,19 +149,18 @@ Get the netcore which manages this device.
 
 **Returns:**  
 
-* _none_
+* (_Object_): The netcore, which is an instance of Netcore class.  
 
 **Examples:**  
   
 ```js
-
+myDevice.getNetcore();  // netcore instance
 ```
-
 
 ********************************************
 <a name="API_getRawDev"></a>
 ### .getRawDev()
-Get device raw data that came from the low-layer network controller.  
+Get raw device data that came from the low-layer network controller. This is the data object used with the Device constructor. The raw data may be `undefined` if it was not given at instance creation.  
   
 **Arguments:**  
 
@@ -156,18 +168,18 @@ Get device raw data that came from the low-layer network controller.
 
 **Returns:**  
 
-* _none_
+* (_Object_): The device raw data. Returns `undefined` if this device doesn't have raw data in it.  
 
 **Examples:**  
   
 ```js
-
+myDevice.getRawDev();   // { ieeeAddr: '0x123456789ABCDEF', nwkAddr: 0x27B3, ... }
 ```
 
 ********************************************
 <a name="API_getId"></a>
 ### .getId()
-Get device identifier. It will be null if not registered to freebird.  
+Get device identifier assigned by freebird. It will be `null` if it is not registered to freebird.  
   
 **Arguments:**  
 
@@ -175,12 +187,12 @@ Get device identifier. It will be null if not registered to freebird.
 
 **Returns:**  
 
-* _none_
+* (_Number_): Device identifier assigned by freebird. Returns `null` if not registered to freebird.  
 
 **Examples:**  
   
 ```js
-
+myDevice.getId();   // 18
 ```
 
 ********************************************
@@ -194,12 +206,18 @@ Get device permanent and dynamic addresses.
 
 **Returns:**  
 
-* _none_
+* (_Object_): The object has `permanent` and `dynamic` properties to show the permanent (e.g., mac) and the dynamic (e.g., ip) addresses of the device.  
+
+| Property  | Type             | Description                                            |  
+|-----------|------------------|--------------------------------------------------------|  
+| permanent | String           | Permanent address, such as mac address, ieee address.  |  
+| dynamic   | String \| Number | Dynamic address, such as ip address, network address.  |  
+
 
 **Examples:**  
   
 ```js
-
+myDevice.getAddr();   // { permanent: '0x123456789ABCDEF', dynamic: 10163 };
 ```
 
 ********************************************
@@ -213,12 +231,12 @@ Get device permanent address.
 
 **Returns:**  
 
-* _none_
+* (_String_): Permanent address of the device.  
 
 **Examples:**  
   
 ```js
-
+myDevice.getPermAddr();   // '0x123456789ABCDEF'
 ```
 
 
@@ -233,12 +251,12 @@ Get device status.
 
 **Returns:**  
 
-* _none_
+* (_String_): Device status. Can be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.  
 
 **Examples:**  
   
 ```js
-
+myDevice.getStatus();   // 'online'
 ```
 
 ********************************************
@@ -252,38 +270,76 @@ Get the table of gadget records on this device.
 
 **Returns:**  
 
-* _none_
+* (_Array_): Returns an array that contains the record of gadgets on this device. The record is maintained by freebird. Each element in the array is an data object with keys given in the following table.  
+
+| Property  | Type             | Description                                                                                                         |  
+|-----------|------------------|---------------------------------------------------------------------------------------------------------------------|  
+| gadId     | Number           | Gadget identifier assgined by frrebird.                                                                             |  
+| auxId     | String \| Number | Auxiliary identifier to help allocate a gadget on the real device. The `auxId` is given by netcore driver designer. |  
+
 
 **Examples:**  
   
 ```js
-
+myDevice.getGadTable();
+// [
+//     { gadId: 28, auxId: 'temperature/0' },
+//     { gadId: 29, auxId: 'temperature/1' },
+//     { gadId: 30, auxId: 'humidity/0' }
+// ]
 ```
 
 ********************************************
 <a name="API_getTraffic"></a>
-### .getTraffic()
+### .getTraffic([dir])
 Get the current traffic record of this device.  
   
 **Arguments:**  
 
-* _none_
+1. `dir` (_String_): To tell the input or output traffic you'd like to get. Only accepts `'in'` or `'out'` if given.  
 
 **Returns:**  
 
-* _none_
+* (_Object_): The object has `in` and `out` properties to show traffic with this device.  
+
+| Property  | Type   | Description                                                                                                |  
+|-----------|--------|------------------------------------------------------------------------------------------------------------|  
+| in        | Object | An object like `{ hits: 6, bytes: 220 }` to show the times and bytes of data that this device transmitted. |  
+| out       | Object | An object like `{ hits: 8, bytes: 72 }` to show the times and bytes of data that this device received.     |  
 
 **Examples:**  
   
 ```js
+myDevice.getTraffic();
+// {
+//     in: { hits: 6, bytes: 220 },
+//     out: { hits: 8, bytes: 72 }
+// },
 
+myDevice.getTraffic('in');  // { hits: 6, bytes: 220 }
+myDevice.getTraffic('out'); // { hits: 8, bytes: 72 }
 ```
 
 ********************************************
 <a name="API_getNetInfo"></a>
 ### .getNetInfo([keys])
-Get network information of this device.  
+Get network information of this device. You can give a single key or an array of keys to choose what information you'd like to get. The complete network info object has the following properties:   
   
+| Property    | Type    | Description                                                                                                |  
+|-------------|---------|------------------------------------------------------------------------------------------------------------|  
+| enabled     | Boolean |                                                                                                            |  
+| joinTime    | Number  |                                                                                                            |  
+| timestamp   | Number  |                                                                                                            |  
+| traffic     | Object  |                                                                                                            |  
+| role        | String  |                                                                                                            |  
+| parent      | String  |                                                                                                            |  
+| maySleep    | Boolean |                                                                                                            |  
+| sleepPeriod | Number  |                                                                                                            |  
+| status      | String  |                                                                                                            |  
+| address     | Object  |                                                                                                            |  
+
+
+
 **Arguments:**  
 
 1. `keys` (_String[]_): Array of keys. Return a whole object if not given.  
@@ -295,7 +351,36 @@ Get network information of this device.
 **Examples:**  
   
 ```js
+myDevice.getNetInfo('enabled'); // true
+myDevice.getNetInfo([ 'enabled', 'status', 'address' ]);
+// {
+//     enabled: true,
+//     status: 'online',
+//     address: {
+//         permanent: '0x123456789ABCDEF',
+//         dynamic: 10163 
+//     }
+// }
 
+myDevice.getNetInfo();
+// {
+//     enabled: true,
+//     joinTime: 12222,
+//     timestamp: 111,
+//     traffic: {
+//         in: { hits: 882, bytes: 77826 }
+//         out: { hits: 67, bytes: 1368  }
+//     },
+//     role: 'end-device',
+//     parent: '0x24576052CDEF',
+//     maySleep: true,
+//     sleepPeriod: 60,
+//     status: 'online',
+//     address: {
+//         permanent: '0x123456789ABCDEF',
+//         dynamic: 10163 
+//     }
+// }
 ```
 
 ********************************************
