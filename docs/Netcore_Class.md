@@ -972,7 +972,7 @@ Get the report configuration from a gadget on the remote device.
 **Examples:**  
   
 ```js
-nc.setReportCfg('00:2c:3d:..', 'temperature/0', 'sensorValue', function (err, cfg) {
+nc.getReportCfg('00:2c:3d:..', 'temperature/0', 'sensorValue', function (err, cfg) {
     if (!err)
         console.log(cfg);
         // { pmin: 60, pmax: 180 }

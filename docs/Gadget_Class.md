@@ -3,30 +3,30 @@ The Gadget Class defines a gadget which is a single and small application, such 
 
 ## APIs
 
-* [new Gadget()](#API_Gadget)
-* [enable()](#API_enable)
-* [disable()](#API_disable)
-* [isEnabled()](#API_isEnabled)
-* [isRegistered()](#API_isRegistered)
-* [getNetcore()](#API_getNetcore)
-* [getDev()](#API_getDev)
-* [getPermAddr()](#API_getPermAddr)
-* [getLocation()](#API_getLocation)
-* [getRawGad()](#API_getRawGad)
-* [getId()](#API_getId)
-* [getAuxId()](#API_getAuxId)
-* [getPanelInfo()](#API_getPanelInfo)
-* [getProps()](#API_getProps)
-* [getAttrs()](#API_getAttrs)
-* [setPanelInfo()](#API_setPanelInfo)
-* [setProps()](#API_setProps)
-* [setAttrs()](#API_setAttrs)
-* [dump()](#API_dump)
-* [read()](#API_read)
-* [write()](#API_write)
-* [exec()](#API_exec)
-* [getReportCfg()](#API_getReportCfg)
-* [setReportCfg()](#API_setReportCfg)
+* [v new Gadget()](#API_Gadget)
+* [v enable()](#API_enable)
+* [v disable()](#API_disable)
+* [v isEnabled()](#API_isEnabled)
+* [v isRegistered()](#API_isRegistered)
+* [v getNetcore()](#API_getNetcore)
+* [v getDev()](#API_getDev)
+* [v getPermAddr()](#API_getPermAddr)
+* [v getLocation()](#API_getLocation)
+* [v getRawGad()](#API_getRawGad)
+* [v getId()](#API_getId)
+* [v getAuxId()](#API_getAuxId)
+* [v getPanelInfo()](#API_getPanelInfo)
+* [v getProps()](#API_getProps)
+* [v getAttrs()](#API_getAttrs)
+* [v setPanelInfo()](#API_setPanelInfo)
+* [v setProps()](#API_setProps)
+* [v setAttrs()](#API_setAttrs)
+* [v dump()](#API_dump)
+* [v read()](#API_read)
+* [v write()](#API_write)
+* [v exec()](#API_exec)
+* [v getReportCfg()](#API_getReportCfg)
+* [v setReportCfg()](#API_setReportCfg)
 
 ********************************************
 <a name="API_Device"></a>
@@ -193,7 +193,7 @@ Get the location of which device owns this gadget.
 
 **Returns:**  
 
-* _none_
+* (_String_): Location of this gadget.  
 
 **Examples:**  
   
@@ -250,7 +250,7 @@ Get the auxiliary id of this gadget.
 
 **Returns:**  
 
-* _none_
+* (_Number_ | _String_): The auxiliary id to identify the gadget on a device.  
 
 **Examples:**  
   
@@ -261,114 +261,121 @@ myGadget.getAuxId();    // 'temperature/3'
 ********************************************
 <a name="API_getPanelInfo"></a>
 ### .getPanelInfo([keys])
-Get panel information of this gadget. The panel information is a data object that includes the foloowing properties. 
-  
+Get panel information of this gadget. You can give a single key or an array of keys to choose what information you'd like to get. The panel information is a data object that includes the following properties.  
 
-    | Property  | Type    |  Description                                                 |
-    |-----------|---------|--------------------------------------------------------------|
-    | enabled   | Boolean | Indicate whether this gadget is enabled                      |
-    | profile   | String  | Profile of this gadget, can be any string, such as 'Home'    |
-    | classId   | String  | Gadget class to tell what kind of application is this gadget |
-
-  
 **Arguments:**  
 
-* _none_
+1. `keys` (_String[]_): Array of keys. Return a whole information data object if not given.  
 
 **Returns:**  
 
-* _none_
+* (_Object_): Panel information about this gadget.  
+
+| Property  | Type    |  Description                                                 |
+|-----------|---------|--------------------------------------------------------------|
+| enabled   | Boolean | Indicate whether this gadget is enabled                      |
+| profile   | String  | Profile of this gadget, can be any string, such as 'Home'    |
+| classId   | String  | Gadget class to tell what kind of application is this gadget |
+
 
 **Examples:**  
   
 ```js
-
+myGadget.getPanelInfo();    // { enabled: true, profile: 'Home', classId: 'temperature' }
 ```
 
 ********************************************
 <a name="API_getProps"></a>
 ### .getProps([keys])
-Enable this device. Transportation is working.  
-  
+Get user-defined properties of this device. You can give a single key or an array of keys to choose what information you'd like to get.  
+
 **Arguments:**  
 
-* _none_
+1. `keys` (_String[]_): Array of keys. Return a whole object if not given.  
 
 **Returns:**  
 
-* _none_
+* (_Object_): User-defined properties on this device.  
+
+| Property    | Type      | Description                                                                                                |  
+|-------------|-----------|------------------------------------------------------------------------------------------------------------|  
+| name        | String    | Human-redable name of this gadget, default will be `'unknown'` if not set. [TODO]                          |  
+| description | String    | Gadget description. Default will be `'unknown'` if not set. [TODO]                                         |  
+| _Others_    | _Depends_ | Other props                                                                                                |  
+
 
 **Examples:**  
   
 ```js
+myGadget.getProps();    // { name: 'sivann temperature sensor' , description: 'Do not remove this sensor' }
 
 ```
 
 ********************************************
 <a name="API_getAttrs"></a>
 ### .getAttrs([keys])
-Enable this device. Transportation is working.  
+Get attributes of this gadget.  
   
 **Arguments:**  
 
-* _none_
+1. `keys` (_String[]_): Array of keys. Return a whole object if not given.  
 
 **Returns:**  
 
-* _none_
+* (_Object_): Attributes on this gadget.  
 
 **Examples:**  
   
 ```js
-
+myGadget.getAttrs();    // { sensorValue: 26.4 , unit: 'Cels' }
 ```
 
 ********************************************
 <a name="API_setPanelInfo"></a>
 ### .setPanelInfo(info)
-Enable this device. Transportation is working.  
+[TODO MOVE TO DEV SECTION]  Locally set panel information of the gadget. This may cause 'panelChanged' event if gadget is enabled and registered to freebird. Setting of `'enabled'` will be ignored.  
   
 **Arguments:**  
 
-* _none_
+1. `info` (_Object_): Panel information to set.  
 
 **Returns:**  
 
-* _none_
+* (_Gadget_): gadget itself.  
 
 **Examples:**  
   
 ```js
-
+myGadget.setPanelInfo({ classId: 'humidity' });
 ```
 
 ********************************************
 <a name="API_setProps"></a>
 ### .setProps(props)
-Enable this device. Transportation is working.  
+Locally set properties on the gadget. This may cause 'propsChanged' event if device is enabled and registered to freebird.  
   
 **Arguments:**  
 
-* _none_
+1. `props` (_Object_): Properties to set.  
 
 **Returns:**  
 
-* _none_
+* (_Gadget_): gadget itself.  
 
 **Examples:**  
   
 ```js
-
+myGadget.setProps({ greeting: 'hello world' });
 ```
 
 ********************************************
 <a name="API_setAttrs"></a>
 ### .setAttrs(attrs)
-Enable this device. Transportation is working.  
-  
+[TODO MOVE TO DEV SECTION] Locally set attributes on the gadget. This may cause 'attrsChanged' event if gadget is enabled and registered to freebird. Only attributes listed in [TODO]() are accepted.  
+
 **Arguments:**  
 
-* _none_
+1. `attrs` (_Object_): An object contains key-value pairs of the attributes  
 
 **Returns:**  
 
@@ -377,13 +384,13 @@ Enable this device. Transportation is working.
 **Examples:**  
   
 ```js
-
+myGadget.setAttrs({ sensorValue: '86', unit: 'F' });
 ```
 
 ********************************************
 <a name="API_dump"></a>
 ### .dump()
-Enable this device. Transportation is working.  
+Dump the information about this gadget.  
   
 **Arguments:**  
 
@@ -391,22 +398,55 @@ Enable this device. Transportation is working.
 
 **Returns:**  
 
-* _none_
+* (_Object_): Information about this device.  
+
+| Property | Type             | Description                                                                     |
+|----------|------------------|---------------------------------------------------------------------------------|
+| netcore  | String           | Netcore name                                                                    |
+| id       | Number           | Device id in freebird                                                           |
+| auxId    | String \| Number | Auxiliary id to identify the gadget on a device                                 |
+| dev      | Object           | Owner device info, `{ id: 3, permAddr: '0x12345678' }`                          |
+| panel    | Object           | Panel information, `{ enabled: true, profile: 'Home', classId: 'temperature' }` |
+| props    | Object           | User-defined properties                                                         |
+| attrs    | Object           | Gadget attributes                                                               |
 
 **Examples:**  
   
 ```js
-
+myGadget.dump();
+// {
+//     netcore: 'freebird-netcore-mqtt',
+//     id: 648,
+//     auxId: 'temperature/0',
+//     dev: {
+//         id: 573,
+//         permAddr: '0x123456789abcdef'
+//     },
+//     panel: {
+//         enabled: true,
+//         profile: 'Home',
+//         classId: 'temperature'
+//     },
+//     props: {
+//         name: 'sivann temperature sensor' ,
+//         description: 'Do not remove this sensor'
+//     }.
+//     attrs: {
+//         sensorValue: 26.4 ,
+//         unit: 'Cels'
+//     }
+// }
 ```
 
 ********************************************
 <a name="API_read"></a>
 ### .read(attrName, callback)
-Enable this device. Transportation is working.  
+Read gadget attribute from the remote device.  
   
 **Arguments:**  
 
-* _none_
+1. `attrName` (_String_): Attribute name  
+2. `callback` (_Function_): `function (err, data) {}`  
 
 **Returns:**  
 
@@ -415,17 +455,22 @@ Enable this device. Transportation is working.
 **Examples:**  
   
 ```js
-
+myGadget.read('sensorValue', function (err, data) {
+    if (!err)
+        console.log(data);  // 21.2
+});
 ```
 
 ********************************************
 <a name="API_write"></a>
-### .write(attrName, args, callback)
-Enable this device. Transportation is working.  
+### .write(attrName, val, callback)
+Remotely write the value to an attribue on this gadget.  
   
 **Arguments:**  
 
-* _none_
+1. `attrName` (_String_):  Attribute name  
+2. `val` (_Depends_): Attribute value to write to the gadget  
+3. `callback` (_Function_): `function (err, data) {}`  
 
 **Returns:**  
 
@@ -434,17 +479,22 @@ Enable this device. Transportation is working.
 **Examples:**  
   
 ```js
-
+myGadget.write('sensorValue', 18, function (err, data) {
+    if (err)
+        console.log(err);  // Error: unwritable [TODO] ERROR FORMAT?
+});
 ```
 
 ********************************************
 <a name="API_exec"></a>
 ### .exec(attrName, args, callback)
-Enable this device. Transportation is working.  
+Remotely invoke the procedure on this gadget.  
   
 **Arguments:**  
 
-* _none_
+1. `attrName` (_String_):  Attribute name  
+2. `args` (_Array_): Arguments to invoke with  
+3. `callback` (_Function_): `function (err, data) {}`  
 
 **Returns:**  
 
@@ -453,17 +503,22 @@ Enable this device. Transportation is working.
 **Examples:**  
   
 ```js
-
+myGadget.exec('blink', [ 10 ], function (err, data) {
+    if (!err)
+        console.log(data);  // Depends
+});
 ```
 
 ********************************************
 <a name="API_getReportCfg"></a>
 ### .getReportCfg(attrName, cfg, callback)
-Enable this device. Transportation is working.  
+Remotely get the report settings from the gadget.  
   
 **Arguments:**  
 
-* _none_
+1. `attrName` (_Object_): Name of which attribute you'd like to get its reporting configuration  
+2. `callback` (_Function_):  `function (err, cfg) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+
 
 **Returns:**  
 
@@ -472,17 +527,33 @@ Enable this device. Transportation is working.
 **Examples:**  
   
 ```js
-
+myGadget.getReportCfg('sensorValue', function (err, cfg) {
+    if (!err)
+        console.log(cfg);
+        // { pmin: 60, pmax: 180 }
+});
 ```
 
 ********************************************
 <a name="API_setReportCfg"></a>
 ### .setReportCfg(attrName, cfg, callback)
-Enable this device. Transportation is working.  
+Set the report configuration to a gadget on the remote device.  
   
 **Arguments:**  
 
-* _none_
+1. `attrName` (_Object_): Name of which attribute you'd like to set its reporting behavior  
+2. `cfg` (_Object_): Report configuration  
+
+    | Property | Type    | Mandatory | Description |
+    |----------|---------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | pmin     | Number  | optional  | Minimum Period. Minimum time in seconds the Client Device should wait from the time when sending the last notification to the time when sending a new notification.                                     |
+    | pmax     | Number  | optional  | Maximum Period. Maximum time in seconds the Client Device should wait from the time when sending the last notification to the time sending the next notification (regardless if the value has changed). |
+    | gt       | Number  | optional  | Greater Than. The Client Device should notify its value when the value is greater than this setting. Only valid for the Resource typed as a number.                                                     |
+    | lt       | Number  | optional  | Less Than. The Client Device should notify its value when the value is smaller than this setting. Only valid for the Resource typed as a number.                                                        |
+    | stp      | Number  | optional  | Step. The Client Device should notify its value when the change of the Resource value, since the last report happened, is greater than this setting.                                                    |
+    | enable   | Boolean | optional  | Set to `true` for a Client Device to enable observation on the allocated Resource or Object Instance.                                                                                                   |
+
+33. `callback` (_Function_):  `function (err, rsp) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -491,5 +562,7 @@ Enable this device. Transportation is working.
 **Examples:**  
   
 ```js
-
+myGadget.setReportCfg('sensorValue', { pmin: 60, pmax: 180 }, function (err) {
+    
+});
 ```

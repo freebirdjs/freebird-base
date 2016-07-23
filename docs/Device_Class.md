@@ -421,7 +421,7 @@ Get attributes of this device.
 
 **Returns:**  
 
-* (_Object_): User-defined properties on this device.  
+* (_Object_): Attributes on this device.  
 
 | Property     | Type            | Description                                                                                           |
 |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
