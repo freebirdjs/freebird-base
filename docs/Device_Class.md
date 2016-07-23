@@ -16,24 +16,24 @@ The Device Class defines a device which can have many gadgets(applications) on i
     * [v getStatus()](#API_getStatus)
     * [v getGadTable()](#API_getGadTable)
     * [v getTraffic()](#API_getTraffic)
-    * [getNetInfo()](#API_getNetInfo)
-    * [getProps()](#API_getProps)
-    * [getAttrs()](#API_getAttrs)
+    * [v getNetInfo()](#API_getNetInfo)
+    * [v getProps()](#API_getProps)
+    * [v getAttrs()](#API_getAttrs)
 * Setters
-    * [setNetInfo()](#API_setNetInfo)
-    * [setProps()](#API_setProps)
-    * [setAttrs()](#API_setAttrs)
+    * [v setNetInfo()](#API_setNetInfo)
+    * [v setProps()](#API_setProps)
+    * [v setAttrs()](#API_setAttrs)
 
 * [v enable()](#API_enable)
 * [v disable()](#API_disable)
-* [resetTxTraffic()](#API_resetTxTraffic)
-* [resetRxTraffic()](#API_resetRxTraffic)
-* [read()](#API_read)
-* [write()](#API_write)
-* [identify()](#API_identify)
-* [ping()](#API_ping)
-* [refresh()](#API_refresh)
-* [dump()](#API_dump)
+* [v resetTxTraffic()](#API_resetTxTraffic)
+* [v resetRxTraffic()](#API_resetRxTraffic)
+* [v read()](#API_read)
+* [v write()](#API_write)
+* [v identify()](#API_identify)
+* [v ping()](#API_ping)
+* [v refresh()](#API_refresh)
+* [v dump()](#API_dump)
 
 ********************************************
 <a name="API_Device"></a>
@@ -323,30 +323,29 @@ myDevice.getTraffic('out'); // { hits: 8, bytes: 72 }
 ********************************************
 <a name="API_getNetInfo"></a>
 ### .getNetInfo([keys])
-Get network information of this device. You can give a single key or an array of keys to choose what information you'd like to get. The complete network info object has the following properties:   
-  
-| Property    | Type    | Description                                                                                                |  
-|-------------|---------|------------------------------------------------------------------------------------------------------------|  
-| enabled     | Boolean |                                                                                                            |  
-| joinTime    | Number  |                                                                                                            |  
-| timestamp   | Number  |                                                                                                            |  
-| traffic     | Object  |                                                                                                            |  
-| role        | String  |                                                                                                            |  
-| parent      | String  |                                                                                                            |  
-| maySleep    | Boolean |                                                                                                            |  
-| sleepPeriod | Number  |                                                                                                            |  
-| status      | String  |                                                                                                            |  
-| address     | Object  |                                                                                                            |  
-
-
+Get network information of this device. You can give a single key or an array of keys to choose what information you'd like to get.  
 
 **Arguments:**  
 
-1. `keys` (_String[]_): Array of keys. Return a whole object if not given.  
+1. `keys` (_String[]_): Array of keys. Return a whole information data object if not given.  
 
 **Returns:**  
 
-* _none_
+* (_Object_): Network information about this device.  
+
+| Property    | Type    | Description                                                                                                |  
+|-------------|---------|------------------------------------------------------------------------------------------------------------|  
+| enabled     | Boolean | Tells if this device is enabled.                                                                           |  
+| joinTime    | Number  | Device joined time, which is an UNIX(POSIX) time in ms.                                                    |  
+| timestamp   | Number  | Timestamp at the last activity.                                                                            |  
+| traffic     | Object  | The traffic record of this device.                                                                         |  
+| role        | String  | Device role, which depends on protocol. For example, it may be `'peripheral'` of a BLE device.             |  
+| parent      | String  | The parent of this device. It is `'0'` if the parent is the netcore, otherwise parent's permanent address. |  
+| maySleep    | Boolean | Tells whether this device may sleep or not.                                                                |  
+| sleepPeriod | Number  | The sleep period in seconds. This property is only valid when maySleep is `true`.                          |  
+| status      | String  | Can be `'unknown'`, `'online'`, `'offline'`, or `'sleep'`.                                                 |  
+| address     | Object  | The permanent and dynamic adrresses of this device. This object is in the format of `{ permanent: '00:01:xx', dynamic: '192.168.0.99' }`. |  
+
 
 **Examples:**  
   
@@ -386,7 +385,7 @@ myDevice.getNetInfo();
 ********************************************
 <a name="API_getProps"></a>
 ### .getProps([keys])
-Get properties of this device.  
+Get user-defined properties of this device. You can give a single key or an array of keys to choose what information you'd like to get.  
   
 **Arguments:**  
 
@@ -394,11 +393,20 @@ Get properties of this device.
 
 **Returns:**  
 
-* _none_
+* (_Object_): User-defined properties on this device.  
+
+| Property    | Type      | Description                                                                                                |  
+|-------------|-----------|------------------------------------------------------------------------------------------------------------|  
+| name        | String    | Human-redable name of this device, default will be `'unknown'` if not set. [TODO]                          |  
+| description | String    | Device description. Default will be `'unknown'` if not set. [TODO]                                         |  
+| location    | String    | Location of this device. Default will be `'unknown'` if not set. [TODO]                                    |  
+| _Others_    | _Depends_ | Other props                                                                                                |  
 
 **Examples:**  
   
 ```js
+myDevice.getProps([ 'name', 'location' ]);
+// { name: 'temp sensor', location: 'kitchen' }
 
 ```
 
@@ -413,18 +421,27 @@ Get attributes of this device.
 
 **Returns:**  
 
-* _none_
+* (_Object_): User-defined properties on this device.  
+
+| Property     | Type            | Description                                                                                           |
+|--------------|-----------------|-------------------------------------------------------------------------------------------------------|
+| manufacturer | String          | Manufacturer name                                                                                     |
+| model        | String          | Model name                                                                                            |
+| serial       | String          | Serial number of this device.                                                                         |
+| version      | Object          | Version tags. { hw: '', sw: 'v1.2.2', fw: 'v0.0.8' }                                                  |
+| power        | Object          | Power source. { type: 'battery', voltage: '5V' }. The type can be 'line', 'battery' or 'harvester'    |
 
 **Examples:**  
   
 ```js
-
+myDevice.getAttrs([ 'manufacturer', 'power' ]);
+// { manufacturer: 'sivann', power: { type: 'line', voltage: '12V' } }
 ```
 
 ********************************************
 <a name="setNetInfo"></a>
 ### .setNetInfo(info)
-Locally set network information on the device. This may cause 'netChanged' event if device is enabled and registered to freebird.  
+[TODO MOVE TO DEV SECTION] Locally set network information on the device. This may cause 'netChanged' event if device is enabled and registered to freebird. Setting of `'enabled'` will be ignored. 
   
 **Arguments:**  
 
@@ -432,12 +449,19 @@ Locally set network information on the device. This may cause 'netChanged' event
 
 **Returns:**  
 
-* _none_
+* (_Object_): device itself
 
 **Examples:**  
   
 ```js
-
+myDevice.setNetInfo({
+    enabled: true,
+    status: 'online',
+    address: {
+        permanent: '0x123456789ABCDEF',
+        dynamic: 10163 
+    }
+});
 ```
 
 ********************************************
@@ -451,18 +475,20 @@ Locally set properties on the device. This may cause 'propsChanged' event if dev
 
 **Returns:**  
 
-* _none_
+* (_Object_): device itself
 
 **Examples:**  
   
 ```js
-
+myDevice.setProps({
+    greeting: 'hello world!'
+});
 ```
 
 ********************************************
 <a name="setAttrs"></a>
 ### .setAttrs(attrs)
-Locally set attributes on the device. This may cause 'attrsChanged' event if device is enabled and registered to freebird.
+[TODO MOVE TO DEV SECTION] Locally set attributes on the device. This may cause 'attrsChanged' event if device is enabled and registered to freebird. Only attributes listed in [TODO]() are accepted.  
   
 **Arguments:**  
 
@@ -470,18 +496,20 @@ Locally set attributes on the device. This may cause 'attrsChanged' event if dev
 
 **Returns:**  
 
-* _none_
+* (_Object_): device itself
 
 **Examples:**  
   
 ```js
-
+myDevice.setAttrs({
+    manufacturer: 'foo_brand'
+});
 ```
 
 ********************************************
 <a name="API_resetTxTraffic"></a>
 ### .resetTxTraffic()
-Reset the transmitted traffic record.  
+[TODO MOVE TO DEV SECTION] Reset the transmitted traffic record.  
   
 **Arguments:**  
 
@@ -489,12 +517,12 @@ Reset the transmitted traffic record.
 
 **Returns:**  
 
-* _none_
+* (_Object_): device itself
 
 **Examples:**  
   
 ```js
-
+myDevice.resetTxTraffic();
 ```
 
 ********************************************
@@ -508,12 +536,12 @@ Reset the received traffic record.
 
 **Returns:**  
 
-* _none_
+* (_Object_): device itself
 
 **Examples:**  
   
 ```js
-
+myDevice.resetRxTraffic();
 ```
 
 ********************************************
@@ -527,12 +555,68 @@ Dump the information about this device.
 
 **Returns:**  
 
-* Object
+* (_Object_): Information about this device.  
+
+| Property | Type   | Description               |
+|----------|--------|---------------------------|
+| netcore  | String | Netcore name              |
+| id       | Number | Device id in freebird     |
+| gads     | Array  | Gadget records            |
+| net      | Object | Network information       |
+| props    | Object | User-defined properties   |
+| attrs    | Object | Device attributes         |
+
 
 **Examples:**  
   
 ```js
-
+myDevice.dump();
+// {
+//     netcore: 'freebird-netcore-mqtt',
+//     id: 268,
+//     gads: [
+//         { gadId: 721, auxId: 'temperature/0' },
+//         { gadId: 722, auxId: 'temperature/1' },
+//         { gadId: 723, auxId: 'humidity/0' }
+//     ],
+//     net: {
+//         enabled: true,
+//         joinTime: 12222,
+//         timestamp: 111,
+//         traffic: {
+//             in: { hits: 882, bytes: 77826 }
+//             out: { hits: 67, bytes: 1368  }
+//         },
+//         role: 'end-device',
+//         parent: '0x24576052CDEF',
+//         maySleep: true,
+//         sleepPeriod: 60,
+//         status: 'online',
+//         address: {
+//             permanent: '0x123456789ABCDEF',
+//             dynamic: 10163 
+//         }
+//     },
+//     props: {
+//         name: 'home sensor 1',
+//         description: 'It measures temp and humidity in kitchen.',
+//         location: 'kitchen'
+//     },
+//     attrs: {
+//         manufacturer: 'freebird',
+//         model: 'lwmqn-7688-duo',
+//         serial: 'lwmqn-2016-03-15-01',
+//         version: {
+//             hw: 'v1.2.0',
+//             sw: 'v0.8.4',
+//             fw: 'v2.0.0'
+//         },
+//         power: {
+//             type: 'line',
+//             voltage: '5V'
+//         }
+//     }
+// }
 ```
 
 ********************************************
@@ -546,18 +630,21 @@ Refresh the status and attributes from the remote device.
 
 **Returns:**  
 
-* _none_
+* (_Object_): device itself
 
 **Examples:**  
   
 ```js
-
+myDevice.refresh(function (err, attrs) {
+    if (!err)
+        console.log('device refreshed.');
+});
 ```
 
 ********************************************
 <a name="API_read"></a>
 ### .read(attrName, callback)
-xx  
+Read device attribute from the remote device.  
   
 **Arguments:**  
 
@@ -571,7 +658,10 @@ xx
 **Examples:**  
   
 ```js
-
+myDevice.read('model', function (err, data) {
+    if (!err)
+        console.log(data);  // 'lwmqn-7688-duo'
+});
 ```
 
 ********************************************
@@ -592,7 +682,13 @@ Remotely write the value to an attribue on this device.
 **Examples:**  
   
 ```js
+myDevice.write('model', 'lwmqn-7688-happy-duo', function (err, data) {
+    if (!err)
+        console.log(data);  // 'lwmqn-7688-happy-duo'
 
+    // Most devices don't accept writie operation upon the attribute!
+    // Thus you probably will get an error.
+});
 ```
 
 ********************************************
@@ -611,7 +707,12 @@ Identify this device. If remote device does not implement this freature, it woul
 **Examples:**  
   
 ```js
+myDevice.identify(function (err) {
+    if (err)
+        console.log(err);
 
+    // If no driver, an error will occur.
+});
 ```
 
 ********************************************
@@ -630,6 +731,8 @@ Ping this remote device.
 **Examples:**  
   
 ```js
-
+myDevice.ping(function (err, time) {
+    if (!err)
+        console.log(time);  // 26, this value is in milliseconds
+});
 ```
-
