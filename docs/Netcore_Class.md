@@ -1,23 +1,22 @@
 # Netcore Class
 The Netcore Class provides methods of network management.  
 
-<a name="Netcore"></a>
-## 1. List of Methods
+<a name="Basic"></a>
+## 1. Basic Methods
 
-* Basic
-    * [Netcore()](#API_Netcore)
-    * [enable()](#API_enable)
-    * [disable()](#API_disable)
-    * [isEnabled()](#API_isEnabled)
-    * [isRegistered()](#API_isRegistered)
-    * [isJoinable()](#API_isJoinable)
-    * [getName()](#API_getName)
-    * [getTraffic()](#API_getTraffic)
-    * [resetTxTraffic()](#API_resetTxTraffic)
-    * [resetRxTraffic()](#API_resetRxTraffic)
-    * [getBlacklist()](#API_getBlacklist)
-    * [clearBlacklist()](#API_clearBlacklist)
-    * [dump()](#API_dump)
+* [Netcore()](#API_Netcore)
+* [enable()](#API_enable)
+* [disable()](#API_disable)
+* [isEnabled()](#API_isEnabled)
+* [isRegistered()](#API_isRegistered)
+* [isJoinable()](#API_isJoinable)
+* [getName()](#API_getName)
+* [getTraffic()](#API_getTraffic)
+* [resetTxTraffic()](#API_resetTxTraffic)
+* [resetRxTraffic()](#API_resetRxTraffic)
+* [getBlacklist()](#API_getBlacklist)
+* [clearBlacklist()](#API_clearBlacklist)
+* [dump()](#API_dump)
 
 * Network Managing
     * [start()](#API_start)
@@ -629,7 +628,10 @@ Dangerously commit a gadget reporting message to netcore when a gadget reports i
 **Examples:**  
   
 ```js
-
+nc.dangerouslyCommitGadReporting('0x12345678abcde', 'dIn/6', {
+    xx: 1,
+    yy: 2
+});
 ```
 
 ********************************************
@@ -648,7 +650,9 @@ Start the network controller.
 **Examples:**  
   
 ```js
-
+nc.start(function (err, result) {
+    
+});
 ```
 
 ********************************************
@@ -667,7 +671,10 @@ Stop the network controller.
 **Examples:**  
   
 ```js
-
+```js
+nc.stop(function (err, result) {
+    
+});
 ```
 
 ********************************************
@@ -677,7 +684,8 @@ Reset the network controller.
   
 **Arguments:**  
 
-* _none_
+1. `mode` (_Number_): [TODO]  
+2. `callback` (_Function_):  `function (err, result) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -686,7 +694,9 @@ Reset the network controller.
 **Examples:**  
   
 ```js
-
+nc.reset(0, function (err, result) {
+    
+});
 ```
 
 ********************************************
@@ -696,7 +706,8 @@ Let the network controller allow devices to join its network.
   
 **Arguments:**  
 
-* _none_
+1. `duration` (_Number_): [TODO]  
+2. `callback` (_Function_):  `function (err, result) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -705,7 +716,9 @@ Let the network controller allow devices to join its network.
 **Examples:**  
   
 ```js
-
+nc.permitJoin(180, function (err, result) {
+    
+});
 ```
 
 ********************************************
@@ -715,7 +728,8 @@ Remove a remote device from the network.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -724,7 +738,9 @@ Remove a remote device from the network.
 **Examples:**  
   
 ```js
-
+nc.remove('00:2c:3d:..', function (err, result) {
+    
+});
 ```
 
 ********************************************
@@ -734,7 +750,8 @@ Ban a device from the network. Once a device is banned, it can never join the ne
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -743,7 +760,9 @@ Ban a device from the network. Once a device is banned, it can never join the ne
 **Examples:**  
   
 ```js
-
+nc.ban('00:2c:3d:..', function (err, result) {
+    
+});
 ```
 
 ********************************************
@@ -753,7 +772,8 @@ Unban a device.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -762,7 +782,9 @@ Unban a device.
 **Examples:**  
   
 ```js
-
+nc.unban('00:2c:3d:..', function (err, result) {
+    
+});
 ```
 
 ********************************************
@@ -772,7 +794,8 @@ Ping a remote device.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -781,7 +804,9 @@ Ping a remote device.
 **Examples:**  
   
 ```js
-
+nc.ping('00:2c:3d:..', function (err, time) {
+    
+});
 ```
 
 ********************************************
@@ -791,7 +816,9 @@ Read an attribute from the remote device.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
+3. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -800,7 +827,9 @@ Read an attribute from the remote device.
 **Examples:**  
   
 ```js
-
+nc.devRead('00:2c:3d:..', 'version', function (err, val) {
+    
+});
 ```
 
 ********************************************
@@ -810,7 +839,10 @@ Write a value to an attribute to the remote device.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
+3. `val` (_Depends_): [TODO]  
+4. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -819,7 +851,9 @@ Write a value to an attribute to the remote device.
 **Examples:**  
   
 ```js
-
+nc.devWrite('00:2c:3d:..', 'version', '0.1.2', function (err, val) {
+    
+});
 ```
 
 ********************************************
@@ -829,7 +863,8 @@ Identify a remote device. If the remote device does not support this feature, in
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -838,7 +873,9 @@ Identify a remote device. If the remote device does not support this feature, in
 **Examples:**  
   
 ```js
-
+nc.identify('00:2c:3d:..', function (err, data) {
+    
+});
 ```
 
 ********************************************
@@ -848,7 +885,10 @@ Read an attribute from a gadget on the remote device.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
+3. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
+4. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -857,7 +897,9 @@ Read an attribute from a gadget on the remote device.
 **Examples:**  
   
 ```js
-
+nc.gadRead('00:2c:3d:..', 'humidity/2, 'sensorValue', function (err, data) {
+    
+});
 ```
 
 ********************************************
@@ -867,7 +909,11 @@ Write a value to an attribute to a gadget on the remote device.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
+3. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
+4. `val` (_Depends_): [TODO]  
+5. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -876,7 +922,9 @@ Write a value to an attribute to a gadget on the remote device.
 **Examples:**  
   
 ```js
-
+nc.gadWrite('00:2c:3d:..', 'lightCtrl/0', 'onOff', 1, function (err, val) {
+    
+});
 ```
 
 ********************************************
@@ -886,7 +934,11 @@ Issue a remote process call to a gadget on the remote device.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
+3. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
+4. `args` (_Array_): [TODO]  
+5. `callback` (_Function_):  `function (err, rsp) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -895,6 +947,9 @@ Issue a remote process call to a gadget on the remote device.
 **Examples:**  
   
 ```js
+nc.gadExec('00:2c:3d:..', 'led/3', 'blink', [ 3 ], function (err, rsp) {
+    
+});
 
 ```
 
@@ -905,7 +960,10 @@ Get the report configuration from a gadget on the remote device.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
+3. `attrName` (_Object_): Name of which attribute you'd like to get its reporting configuration  
+4. `callback` (_Function_):  `function (err, cfg) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
 
 **Returns:**  
 
@@ -914,7 +972,11 @@ Get the report configuration from a gadget on the remote device.
 **Examples:**  
   
 ```js
-
+nc.setReportCfg('00:2c:3d:..', 'temperature/0', 'sensorValue', function (err, cfg) {
+    if (!err)
+        console.log(cfg);
+        // { pmin: 60, pmax: 180 }
+});
 ```
 
 ********************************************
@@ -924,7 +986,25 @@ Set the report configuration to a gadget on the remote device.
   
 **Arguments:**  
 
-* _none_
+1. `permAddr` (_String_): Device permanent address  
+2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
+3. `attrName` (_Object_): Name of which attribute you'd like to set its reporting behavior  
+4. `cfg` (_Object_): Report configuration  
+
+    | Property | Type    | Mandatory | Description |
+    |----------|---------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | pmin     | Number  | optional  | Minimum Period. Minimum time in seconds the Client Device should wait from the time when sending the last notification to the time when sending a new notification.                                     |
+    | pmax     | Number  | optional  | Maximum Period. Maximum time in seconds the Client Device should wait from the time when sending the last notification to the time sending the next notification (regardless if the value has changed). |
+    | gt       | Number  | optional  | Greater Than. The Client Device should notify its value when the value is greater than this setting. Only valid for the Resource typed as a number.                                                     |
+    | lt       | Number  | optional  | Less Than. The Client Device should notify its value when the value is smaller than this setting. Only valid for the Resource typed as a number.                                                        |
+    | stp      | Number  | optional  | Step. The Client Device should notify its value when the change of the Resource value, since the last report happened, is greater than this setting.                                                    |
+    | enable   | Boolean | optional  | Set to `true` for a Client Device to enable observation on the allocated Resource or Object Instance.                                                                                                   |
+
+4. `callback` (_Function_):  `function (err, rsp) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+
+    | Property | Type    | Description                                                             |
+    |----------|---------|-------------------------------------------------------------------------|
+    |  status  | Number  | Status code of the response. Possible status codes are 204, 400, 404, and 408. See [Status Code](#).                      |
 
 **Returns:**  
 
@@ -933,5 +1013,7 @@ Set the report configuration to a gadget on the remote device.
 **Examples:**  
   
 ```js
-
+nc.setReportCfg('00:2c:3d:..', 'temperature/0', 'sensorValue', { pmin: 60, pmax: 180 }, function (err) {
+    
+});
 ```
