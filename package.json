@@ -1,6 +1,6 @@
 {
   "name": "freebird-base",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Base classes for freebird",
   "main": "index.js",
   "scripts": {
