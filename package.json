@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/freebirdjs/freebird-base#readme",
   "dependencies": {
-    "busyman": "^0.1.2"
+    "busyman": "^0.2.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

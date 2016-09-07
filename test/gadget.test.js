@@ -410,27 +410,29 @@ describe('APIs Signature Check', function() {
     });
 
     describe('#read', function() {
+        var cb = function () {};
         it('should throw if input attrName is not a string', function () {
-            expect(function () { return mygad.read(1); }).to.throw(TypeError);
-            expect(function () { return mygad.read(null); }).to.throw(TypeError);
-            expect(function () { return mygad.read(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.read(true); }).to.throw(TypeError);
-            expect(function () { return mygad.read(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', true, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.read(); }).to.throw(TypeError);
-            expect(function () { return mygad.read([]); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+            expect(function () { return mygad.read(1, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read(null, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read(NaN, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read(true, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read(function () {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read([ 'a', 1, 'c' ], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read([ 'a', null, 'c' ], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read([ 'a', NaN, 'c' ], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read([ 'a', true, 'c' ], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read(cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read([], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read([ 'a', 'b', 'c' ], cb); }).to.throw(TypeError);
         });
 
         it('should not throw if input attrName is a string', function () {
-            expect(function () { return mygad.read('xxx'); }).not.to.throw(Error);
+            expect(function () { return mygad.read('xxx', cb); }).not.to.throw(Error);
         });
     });
 
     describe('#write', function() {
+        var cb = function () {};
         it('should throw if input attrName is not a string', function () {
             expect(function () { return mygad.write(1); }).to.throw(TypeError);
             expect(function () { return mygad.write(null); }).to.throw(TypeError);
@@ -452,16 +454,17 @@ describe('APIs Signature Check', function() {
         });
 
         it('should not throw if input attrName is a string and val is given', function () {
-            expect(function () { return mygad.write('xxx', 1); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', 'x'); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', true); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', NaN); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', []); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', {}); }).not.to.throw(Error);
+            expect(function () { return mygad.write('xxx', 1, cb); }).not.to.throw(Error);
+            expect(function () { return mygad.write('xxx', 'x', cb); }).not.to.throw(Error);
+            expect(function () { return mygad.write('xxx', true, cb); }).not.to.throw(Error);
+            expect(function () { return mygad.write('xxx', NaN, cb); }).not.to.throw(Error);
+            expect(function () { return mygad.write('xxx', [], cb); }).not.to.throw(Error);
+            expect(function () { return mygad.write('xxx', {}, cb); }).not.to.throw(Error);
         });
     });
 
     describe('#exec', function() {
+        var cb = function () {};
         it('should throw if input attrName is not a string', function () {
             expect(function () { return mygad.exec(1); }).to.throw(TypeError);
             expect(function () { return mygad.exec(null); }).to.throw(TypeError);
@@ -477,13 +480,16 @@ describe('APIs Signature Check', function() {
             expect(function () { return mygad.exec([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
         });
 
-        it('should not throw if input attrName is a string', function () {
-            expect(function () { return mygad.exec('xxx', [1]); }).not.to.throw(Error);
-            expect(function () { return mygad.exec('xxx', 'x'); }).not.to.throw(Error);
-            expect(function () { return mygad.exec('xxx', true); }).not.to.throw(Error);
-            expect(function () { return mygad.exec('xxx', NaN); }).not.to.throw(Error);
-            expect(function () { return mygad.exec('xxx', []); }).not.to.throw(Error);
-            expect(function () { return mygad.exec('xxx', {}); }).not.to.throw(Error);
+        it('should throw if input arg is not an array', function () {
+            expect(function () { return mygad.exec('xxx', 'x', cb); }).to.throw(Error);
+            expect(function () { return mygad.exec('xxx', true, cb); }).to.throw(Error);
+            expect(function () { return mygad.exec('xxx', NaN, cb); }).to.throw(Error);
+            expect(function () { return mygad.exec('xxx', {}, cb); }).to.throw(Error);
+        });
+
+        it('should not throw if input arg is an array', function () {
+            expect(function () { return mygad.exec('xxx', [1], cb); }).not.to.throw(Error);
+            expect(function () { return mygad.exec('xxx', [ {}, 'x', 3], cb); }).not.to.throw(Error);
         });
     });
 
