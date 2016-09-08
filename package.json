@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "chance": "^1.0.2",
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "sinon": "^1.17.5"
   }
 }

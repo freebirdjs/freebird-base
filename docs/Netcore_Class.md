@@ -701,7 +701,7 @@ nc.reset(0, function (err, result) {
 
 ********************************************
 <a name="API_permitJoin"></a>
-### .permitJoin(duration, callback)
+### .permitJoin(duration[, callback])
 Let the network controller allow devices to join its network.  
   
 **Arguments:**  
@@ -1017,3 +1017,82 @@ nc.setReportCfg('00:2c:3d:..', 'temperature/0', 'sensorValue', { pmin: 60, pmax:
     
 });
 ```
+
+## Signatures for drivers
+
+* net
+    - start: `function(callback) {}`
+        * `callback(err)` should be called after done
+    - stop: `function(callback) {}`
+        * `callback(err)` should be called after done
+    - reset: `function(mode, callback) {}`
+        * `callback(err)` should be called after done
+    - permitJoin: `function(duration, callback) {}`
+        * `callback(err, timeLeft)` should be called after done
+        * timeLeft (_Number_): Time left for joining in seconds, e.g., 180.
+    - remove: `function(permAddr, callback) {}`
+        * `callback(err, permAddr)` should be called after done
+        * permAddr (_String_): permAddr, e.g., '0x12345678'.
+    - ban: `function(permAddr, callback) {}`
+        * `callback(err, permAddr)` should be called after done
+        * permAddr (_String_): permAddr, e.g., '0x12345678'.
+    - unban: `function(permAddr, callback) {}` should be called after done
+        * `callback(err, permAddr)` should be called after done
+        * permAddr (_String_): permAddr, e.g., '0x12345678'.
+    - ping: `function(permAddr, callback) {}, callback(err, time), `
+        * `callback(err, time)` should be called after done
+        * time (_Number_): round-trip time in milliseconds, e.g., 16.
+* dev
+    - read: `function(permAddr, attr, callback) {}`
+        * `callback(err, val)` should be called after done
+        * val (_Depends_): value read. Type denpends, e.g., `'hello'`, `12`, `false`.
+    - write: `function(permAddr, attr, val, callback) {}, ),`
+        * `callback(err, val)`
+        * val: value written (optional, Type denpends, ex: 'hello', 12, false)
+    - identify: `function(permAddr, callback) {}`
+        * `callback(err)`
+* gad
+    - read: `function(permAddr, auxId, attr, callback) {}`
+        * `callback(err, val)`
+        * val (_Depends_): value read (Type denpends, ex: 'hello', 12, false)
+    - write: `function(permAddr, auxId, attr, val, callback) {}`
+        * `callback(err, val)`
+        * val (_Depends_): value written (optional, Type denpends, ex: 'hello', 12, false)
+    - exec: `function(permAddr, auxId, attr, args, callback) {}`
+        * `callback(err, result)`
+        * result (_Depends_): can be anything, depends on firmware
+    - setReportCfg: `function(permAddr, auxId, attrName, cfg, callback) {}`
+        * `callback(err, result)`
+        * result (_Depends_): set succeeds? (Boolean, true or false)
+    - getReportCfg: `function(permAddr, auxId, attrName, callback) {}`
+        * `callback(err, cfg)`
+        * cfg (_Object_): config object (Object, ex: { pmin: 10, pmax: 60, gt: 200 })
+
+
+// For standalone usage
+// function attachOnEventHandlers(nc) {
+//     nc.onError = null;
+//     nc.onReady = null;
+//     nc.onEnabled = null;
+//     nc.onPermitJoin = null;
+//     nc.onDevIncoming = null;
+//     nc.onDevLeaving = null;
+//     nc.onDevReporting = null;
+//     nc.onDevNetChanging = null;
+//     nc.onGadIncoming = null;
+//     nc.onGadReporting = null;
+//     nc.onBannedDevIncoming = null;
+//     nc.onBannedDevReporting = null;
+//     nc.onBannedGadIncoming = null;
+//     nc.onBannedGadReporting = null;
+
+//     nc.onDevError = null;
+//     nc.onDevNetChanged = null;
+//     nc.onDevPropsChanged = null;
+//     nc.onDevAttrsChanged = null;
+
+//     nc.onGadError = null;
+//     nc.onGadPanelChanged = null;
+//     nc.onGadPropsChanged = null;
+//     nc.onGadAttrsChanged = null;
+// }
