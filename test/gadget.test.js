@@ -51,7 +51,7 @@ ncMock = {
     _drivers: {},
     _findDriver: function () { return function () {}; },
     getName: function () { return ncMock._net.name; },
-    _fbEmit: function (evt, data) {
+    _fire: function (evt, data) {
         var emitData,
             emitted = false,
             isErrEvt = (evt === '_nc:error') || (evt === '_dev:error') || (evt === '_gad:error');
@@ -103,7 +103,7 @@ ncMock = {
 dev = new Device(ncMock, rawDev);
 dev.extra = ext;
 
-dev = dev.setNetInfo({
+dev = dev.set('net', {
     role: 'fake',
     parent: '0',
     maySleep: false,
@@ -111,8 +111,8 @@ dev = dev.setNetInfo({
     address: { permanent: rawDev.permAddr, dynamic: rawDev.dynAddr }
 });
 
-dev = dev.setAttrs(rawDev.attrs);
-dev = dev.setProps({ location: 'home' });
+dev = dev.set('attrs', rawDev.attrs);
+dev = dev.set('props', { location: 'home' });
 dev._id = 3;
 dev.enable();
 
@@ -124,24 +124,12 @@ gad = new Gadget(dev, auxId, rawDev.gads[0]);
 gad.extra = gadext;
 gad._id = 100;
 
-// Things to be tested
-// 1. Gadget Constructor
-//    - dev
-//    - auxId
-//    - other defaults
-// 2. Methods Signature check - throw error
-// 3. Methods Functionality and Output Check
-//    - enable(), disable(), isEnabled(), isRegistered()
-//    - getNetcore(), getRawGad(), getId(), getDev(), getPermAddr(), getAuxId(), getLocation(), getPanelInfo(), getProps(), getAttrs(),
-//    - setPanelInfo(), setProps(), setAttrs(), dump()
-//    - read(), write(), exec(), setReportCfg(), getReportCfg(), _callDriver(), _fbEmit(), _get()
-
 describe('Device Constructor', function() {
     var mygad = gad;
 
     describe('#No Arg', function() {
         it('should throw if no argument input', function () {
-            expect(function () { return new Gadget(); }).to.throw(Error);
+            expect(function () { return new Gadget(); }).to.throw(TypeError);
         });
     });
 
@@ -169,21 +157,23 @@ describe('Device Constructor', function() {
         });
     });
 
-    describe('#getNetcore', function() {
+    describe('#get netcore', function() {
         it('should equal to ncMock', function () {
-            expect(mygad.getNetcore()).to.be.equal(ncMock);
+            expect(mygad.get('netcore')).to.be.equal(ncMock);
+            expect(mygad.get('nc')).to.be.equal(ncMock);
         });
     });
 
-    describe('#getRawGad', function() {
+    describe('#get raw gad', function() {
         it('should equal to rawDev.gads[0]', function () {
-            expect(mygad.getRawGad()).to.be.equal(rawDev.gads[0]);
+            expect(mygad.get('raw')).to.be.equal(rawDev.gads[0]);
+            expect(mygad.get('rawGad')).to.be.equal(rawDev.gads[0]);
         });
     });
 
-    describe('#getId', function() {
+    describe('#get gad id', function() {
         it('should be 100', function () {
-            expect(mygad.getId()).to.be.equal(100);
+            expect(mygad.get('id')).to.be.equal(100);
         });
     });
 
@@ -193,47 +183,55 @@ describe('Device Constructor', function() {
         });
     });
 
-    describe('#getDev', function() {
+    describe('#get dev', function() {
         it('should equal to dev', function () {
-            expect(mygad.getDev()).to.be.equal(dev);
+            expect(mygad.get('dev')).to.be.equal(dev);
+            expect(mygad.get('device')).to.be.equal(dev);
         });
     });
 
-    describe('#getPermAddr', function() {
+    describe('#get perm addr', function() {
         it('should equal to rawDev.permAddr', function () {
-            expect(mygad.getPermAddr()).to.be.a('string');
-            expect(mygad.getPermAddr()).to.be.equal(rawDev.permAddr);
+            expect(mygad.get('permAddr')).to.be.a('string');
+            expect(mygad.get('permAddr')).to.be.equal(rawDev.permAddr);
         });
     });
 
-    describe('#getAuxId', function() {
+    describe('#get dynamic addr', function() {
+        it('should equal to rawDev.dynAddr', function () {
+            expect(mygad.get('dynAddr')).to.be.a('string');
+            expect(mygad.get('dynAddr')).to.be.equal(rawDev.dynAddr);
+        });
+    });
+
+    describe('#get auxId', function() {
         it('should equal to auxId', function () {
-            expect(mygad.getAuxId()).to.be.equal(auxId);
+            expect(mygad.get('auxId')).to.be.equal(auxId);
         });
     });
 
-    describe('#getLocation', function() {
+    describe('#get location', function() {
         it('should equal to home', function () {
-            expect(mygad.getLocation()).to.be.equal('home');
+            expect(mygad.get('location')).to.be.equal('home');
         });
     });
 
-    describe('#getPanelInfo', function() {
+    describe('#get panel info', function() {
         it('should equal to { enabled: false, profile: "", classId: "" }', function () {
             mygad.disable();
-            expect(mygad.getPanelInfo()).to.be.eql({ enabled: false, profile: '', classId: '' });
+            expect(mygad.get('panel')).to.be.eql({ enabled: false, profile: '', classId: '' });
         });
     });
 
-    describe('#getProps', function() {
+    describe('#get props', function() {
         it('should equal to mygad._props', function () {
-            expect(mygad.getProps()).to.be.eql(mygad._props);
+            expect(mygad.get('props')).to.be.eql(mygad._props);
         });
     });
 
-    describe('#getAttrs', function() {
+    describe('#get attrs', function() {
         it('should equal to mygad._attrs', function () {
-            expect(mygad.getAttrs()).to.be.eql(mygad._attrs);
+            expect(mygad.get('attrs')).to.be.eql(mygad._attrs);
         });
     });
 
@@ -250,7 +248,7 @@ describe('Device Constructor', function() {
         });
     });
 
-    describe('#isEnabled', function() {
+    describe('#isEnabled - disable', function() {
         it('should be false', function () {
             mygad.disable();
             expect(mygad.isEnabled()).to.be.false;
@@ -273,275 +271,442 @@ describe('APIs Signature Check', function() {
     mydev.enable();
     mygad.enable();
 
-    describe('#getPanelInfo', function() {
-        it('should throw if input keys is not an array of string or not a single string', function () {
-            expect(function () { return mygad.getPanelInfo(1); }).to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo(null); }).to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo(true); }).to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo({}); }).to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo([ 'a', true, 'c' ]); }).to.throw(TypeError);
-        });
-
-        it('should not throw if input is undefined, a string, or an array of string', function () {
-            expect(function () { return mygad.getPanelInfo(); }).not.to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo('xxx'); }).not.to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo([]); }).not.to.throw(TypeError);
-            expect(function () { return mygad.getPanelInfo([ 'a', 'b', 'c' ]); }).not.to.throw(TypeError);
+    describe('#isRegistered()', function() {
+        it('should always pass - no signature', function (done) {
+            done();
         });
     });
 
-    describe('#getProps', function() {
-        it('should throw if input keys is not an array of string or not a single string', function () {
-            expect(function () { return mygad.getProps(1); }).to.throw(TypeError);
-            expect(function () { return mygad.getProps(null); }).to.throw(TypeError);
-            expect(function () { return mygad.getProps(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.getProps(true); }).to.throw(TypeError);
-            expect(function () { return mygad.getProps(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.getProps({}); }).to.throw(TypeError);
-            expect(function () { return mygad.getProps([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getProps([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getProps([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getProps([ 'a', true, 'c' ]); }).to.throw(TypeError);
-        });
-
-        it('should not throw if input is undefined, a string, or an array of string', function () {
-            expect(function () { return mygad.getProps(); }).not.to.throw(TypeError);
-            expect(function () { return mygad.getProps('xxx'); }).not.to.throw(TypeError);
-            expect(function () { return mygad.getProps([]); }).not.to.throw(TypeError);
-            expect(function () { return mygad.getProps([ 'a', 'b', 'c' ]); }).not.to.throw(TypeError);
+    describe('#isEnabled()', function() {
+        it('should always pass - no signature', function (done) {
+            done();
         });
     });
 
-    describe('#getAttrs', function() {
-        it('should throw if input keys is not an array of string or not a single string', function () {
-            expect(function () { return mygad.getAttrs(1); }).to.throw(TypeError);
-            expect(function () { return mygad.getAttrs(null); }).to.throw(TypeError);
-            expect(function () { return mygad.getAttrs(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.getAttrs(true); }).to.throw(TypeError);
-            expect(function () { return mygad.getAttrs(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.getAttrs({}); }).to.throw(TypeError);
-            expect(function () { return mygad.getAttrs([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getAttrs([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getAttrs([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getAttrs([ 'a', true, 'c' ]); }).to.throw(TypeError);
-        });
-
-        it('should not throw if input is undefined, a string, or an array of string', function () {
-            expect(function () { return mygad.getAttrs(); }).not.to.throw(TypeError);
-            expect(function () { return mygad.getAttrs('xxx'); }).not.to.throw(TypeError);
-            expect(function () { return mygad.getAttrs([]); }).not.to.throw(TypeError);
-            expect(function () { return mygad.getAttrs([ 'a', 'b', 'c' ]); }).not.to.throw(TypeError);
+    describe('#enable()', function() {
+        it('should always pass - no signature', function (done) {
+            done();
         });
     });
 
-    describe('#setPanelInfo', function() {
-        it('should throw if input info is not an object', function () {
-            expect(function () { return mygad.setPanelInfo(1); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo(null); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo(true); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo([ 'a', true, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo(); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo('xxx'); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo([]); }).to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
-        });
-
-        it('should not throw if input info is an object', function () {
-            expect(function () { return mygad.setPanelInfo({}); }).not.to.throw(TypeError);
-            expect(function () { return mygad.setPanelInfo({ a: 1 }); }).not.to.throw(TypeError);
+    describe('#disable()', function() {
+        it('should always pass - no signature', function (done) {
+            done();
         });
     });
 
-    describe('#setProps', function() {
-        it('should throw if input props is not an object', function () {
-            expect(function () { return mygad.setProps(1); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps(null); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps(true); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps([ 'a', true, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps(); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps('xxx'); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps([]); }).to.throw(TypeError);
-            expect(function () { return mygad.setProps([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+    describe('#get(propName, arg) - propName test', function() {
+        it('should throw if propName is not a string', function () {
+            expect(function () { return mygad.get(); }).to.throw(TypeError);
+            expect(function () { return mygad.get(1); }).to.throw(TypeError);
+            expect(function () { return mygad.get([]); }).to.throw(TypeError);
+            expect(function () { return mygad.get(null); }).to.throw(TypeError);
+            expect(function () { return mygad.get(NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.get(true); }).to.throw(TypeError);
+            expect(function () { return mygad.get(function () {}); }).to.throw(TypeError);
         });
 
-        it('should not throw if input props is an object', function () {
-            expect(function () { return mygad.setProps({}); }).not.to.throw(TypeError);
-            expect(function () { return mygad.setProps({ a: 1 }); }).not.to.throw(TypeError);
-
+        it('should not throw if propName is a string', function () {
+            expect(function () { return mygad.get('xxx'); }).not.to.throw(TypeError);
         });
     });
 
-    describe('#setAttrs', function() {
-        it('should throw if input attrs is not an object', function () {
-            expect(function () { return mygad.setAttrs(1); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs(null); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs(true); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs([ 'a', true, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs(); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs('xxx'); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs([]); }).to.throw(TypeError);
-            expect(function () { return mygad.setAttrs([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+    describe('#get(propName, arg) - panel arg test', function() {
+        it('should throw if arg is not a string or an array', function () {
+            expect(function () { return mygad.get('panel', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.get('panel', {}); }).to.throw(TypeError);
+            expect(function () { return mygad.get('panel', null); }).to.throw(TypeError);
+            expect(function () { return mygad.get('panel', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.get('panel', true); }).to.throw(TypeError);
+            expect(function () { return mygad.get('panel', function () {}); }).to.throw(TypeError);
         });
 
-        it('should not throw if input attrs is an object', function () {
-            expect(function () { return mygad.setAttrs({}); }).not.to.throw(TypeError);
-            expect(function () { return mygad.setAttrs({ a: 1 }); }).not.to.throw(TypeError);
+        it('should not throw if arg is a string or an array', function () {
+            expect(function () { return mygad.get('panel'); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('panel', 'sleepPeriod'); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('panel', 'xxxx'); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('panel', []); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('panel', [ 'a', 'b', 'c' ]); }).not.to.throw(TypeError);
         });
     });
 
-    describe('#read', function() {
+    describe('#get(propName, arg) - props arg test', function() {
+        it('should throw if arg is not a string or an array', function () {
+            expect(function () { return mygad.get('props', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.get('props', {}); }).to.throw(TypeError);
+            expect(function () { return mygad.get('props', null); }).to.throw(TypeError);
+            expect(function () { return mygad.get('props', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.get('props', true); }).to.throw(TypeError);
+            expect(function () { return mygad.get('props', function () {}); }).to.throw(TypeError);
+        });
+
+        it('should not throw if arg is a string or an array', function () {
+            expect(function () { return mygad.get('props'); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('props', 'name'); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('props', 'xxxx'); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('props', []); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('props', [ 'a', 'b', 'c' ]); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#get(propName, arg) - attrs arg test', function() {
+        it('should throw if arg is not a string or an array', function () {
+            expect(function () { return mygad.get('attrs', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.get('attrs', {}); }).to.throw(TypeError);
+            expect(function () { return mygad.get('attrs', null); }).to.throw(TypeError);
+            expect(function () { return mygad.get('attrs', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.get('attrs', true); }).to.throw(TypeError);
+            expect(function () { return mygad.get('attrs', function () {}); }).to.throw(TypeError);
+        });
+
+        it('should not throw if arg is a string or an array', function () {
+            expect(function () { return mygad.get('attrs'); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('attrs', 'name'); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('attrs', 'xxxx'); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('attrs', []); }).not.to.throw(TypeError);
+            expect(function () { return mygad.get('attrs', [ 'a', 'b', 'c' ]); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#set(propName, arg) - propName test', function() {
+        it('should throw if propName is not a string', function () {
+            expect(function () { return mygad.set(); }).to.throw(TypeError);
+            expect(function () { return mygad.set(1); }).to.throw(TypeError);
+            expect(function () { return mygad.set([]); }).to.throw(TypeError);
+            expect(function () { return mygad.set(null); }).to.throw(TypeError);
+            expect(function () { return mygad.set(NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.set(true); }).to.throw(TypeError);
+            expect(function () { return mygad.set(function () {}); }).to.throw(TypeError);
+        });
+
+        it('should not throw if propName is a string', function () {
+            expect(function () { return mygad.set('xxx'); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#set(propName, arg) - _id arg test', function() {
+        it('should throw if arg is not a string or a number', function () {
+            expect(function () { return mygad.set('_id'); }).to.throw(TypeError);
+            expect(function () { return mygad.set('_id', []); }).to.throw(TypeError);
+            expect(function () { return mygad.set('_id', {}); }).to.throw(TypeError);
+            expect(function () { return mygad.set('_id', null); }).to.throw(TypeError);
+            expect(function () { return mygad.set('_id', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.set('_id', true); }).to.throw(TypeError);
+            expect(function () { return mygad.set('_id', function () {}); }).to.throw(TypeError);
+        });
+
+        it('should not throw if propName is a string', function () {
+            expect(function () { return mygad.set('_id', 1); }).not.to.throw(TypeError);
+            expect(function () { return mygad.set('_id', 'xxx'); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#set(propName, arg) - _raw arg test', function() {
+        it('should always pass - no restriction', function () {
+            expect(function () { return mygad.set('_raw', 1); }).not.to.throw(Error);
+            expect(function () { return mygad.set('_raw', 'xxx'); }).not.to.throw(Error);
+        });
+    });
+
+    describe('#set(propName, arg) - panel arg test', function() {
+        it('should throw if arg is not an object', function () {
+            expect(function () { return mygad.set('panel'); }).to.throw(TypeError);
+            expect(function () { return mygad.set('panel', []); }).to.throw(TypeError);
+            expect(function () { return mygad.set('panel', null); }).to.throw(TypeError);
+            expect(function () { return mygad.set('panel', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.set('panel', true); }).to.throw(TypeError);
+            expect(function () { return mygad.set('panel', function () {}); }).to.throw(TypeError);
+            expect(function () { return mygad.set('panel', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.set('panel', 'xxx'); }).to.throw(TypeError);
+        });
+
+        it('should not throw if propName is a string', function () {
+            expect(function () { return mygad.set('panel', {}); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#set(propName, arg) - props arg test', function() {
+        it('should throw if arg is not an object', function () {
+            expect(function () { return mygad.set('props'); }).to.throw(TypeError);
+            expect(function () { return mygad.set('props', []); }).to.throw(TypeError);
+            expect(function () { return mygad.set('props', null); }).to.throw(TypeError);
+            expect(function () { return mygad.set('props', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.set('props', true); }).to.throw(TypeError);
+            expect(function () { return mygad.set('props', function () {}); }).to.throw(TypeError);
+            expect(function () { return mygad.set('props', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.set('props', 'xxx'); }).to.throw(TypeError);
+        });
+
+        it('should not throw if propName is a string', function () {
+            expect(function () { return mygad.set('props', {}); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#set(propName, arg) - attrs arg test', function() {
+        it('should throw if arg is not an object', function () {
+            expect(function () { return mygad.set('attrs'); }).to.throw(TypeError);
+            expect(function () { return mygad.set('attrs', []); }).to.throw(TypeError);
+            expect(function () { return mygad.set('attrs', null); }).to.throw(TypeError);
+            expect(function () { return mygad.set('attrs', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.set('attrs', true); }).to.throw(TypeError);
+            expect(function () { return mygad.set('attrs', function () {}); }).to.throw(TypeError);
+            expect(function () { return mygad.set('attrs', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.set('attrs', 'xxx'); }).to.throw(TypeError);
+        });
+
+        it('should not throw if propName is an object', function () {
+            expect(function () { return mygad.set('attrs', {}); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#dump()', function() {
+        it('should always pass - no restriction', function () {
+            expect(function () { return mygad.dump(); }).not.to.throw(Error);
+            expect(function () { return mygad.dump(true); }).not.to.throw(Error);
+            expect(function () { return mygad.dump(false); }).not.to.throw(Error);
+            expect(function () { return mygad.dump({}); }).not.to.throw(Error);
+        });
+    });
+
+    describe('#recoverFromRecord(rec)', function() {
+        it('should throw if rec is not an object', function () {
+            expect(function () { return mygad.recoverFromRecord(); }).to.throw(TypeError);
+            expect(function () { return mygad.recoverFromRecord([]); }).to.throw(TypeError);
+            expect(function () { return mygad.recoverFromRecord(null); }).to.throw(TypeError);
+            expect(function () { return mygad.recoverFromRecord(NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.recoverFromRecord(true); }).to.throw(TypeError);
+            expect(function () { return mygad.recoverFromRecord(function () {}); }).to.throw(TypeError);
+            expect(function () { return mygad.recoverFromRecord(1); }).to.throw(TypeError);
+            expect(function () { return mygad.recoverFromRecord('xxx'); }).to.throw(TypeError);
+        });
+
+        it('should not throw if propName is a string', function () {
+            expect(function () { return mygad.recoverFromRecord({
+                id: 100,
+                panel: {
+                    enabled: false,
+                    profile: 'xxxx',
+                    classId: 'temperature'
+                },
+                attrs: {},
+                props: {}
+            }); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#read(attrName, callback)', function() {
         var cb = function () {};
-        it('should throw if input attrName is not a string', function () {
+        it('should throw if attrName is not a string', function () {
+            expect(function () { return mygad.read(cb); }).to.throw(TypeError);
             expect(function () { return mygad.read(1, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.read([], cb); }).to.throw(TypeError);
             expect(function () { return mygad.read(null, cb); }).to.throw(TypeError);
             expect(function () { return mygad.read(NaN, cb); }).to.throw(TypeError);
             expect(function () { return mygad.read(true, cb); }).to.throw(TypeError);
             expect(function () { return mygad.read(function () {}, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', 1, 'c' ], cb); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', null, 'c' ], cb); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', NaN, 'c' ], cb); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', true, 'c' ], cb); }).to.throw(TypeError);
-            expect(function () { return mygad.read(cb); }).to.throw(TypeError);
-            expect(function () { return mygad.read([], cb); }).to.throw(TypeError);
-            expect(function () { return mygad.read([ 'a', 'b', 'c' ], cb); }).to.throw(TypeError);
         });
 
-        it('should not throw if input attrName is a string', function () {
-            expect(function () { return mygad.read('xxx', cb); }).not.to.throw(Error);
+        it('should not throw if attrName is a string', function () {
+            expect(function () { return mygad.read('xxx', cb); }).not.to.throw(TypeError);
+        });
+
+        it('should throw if cb is not a function', function () {
+            expect(function () { return mygad.read('x'); }).to.throw(TypeError);
+            expect(function () { return mygad.read('x', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.read('x', []); }).to.throw(TypeError);
+            expect(function () { return mygad.read('x', null); }).to.throw(TypeError);
+            expect(function () { return mygad.read('x', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.read('x', true); }).to.throw(TypeError);
+        });
+
+        it('should not throw if cb is a function', function () {
+            expect(function () { return mygad.read('xxx', cb); }).not.to.throw(TypeError);
         });
     });
 
-    describe('#write', function() {
+    describe('#write(attrName, val, callback)', function() {
         var cb = function () {};
-        it('should throw if input attrName is not a string', function () {
-            expect(function () { return mygad.write(1); }).to.throw(TypeError);
-            expect(function () { return mygad.write(null); }).to.throw(TypeError);
-            expect(function () { return mygad.write(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.write(true); }).to.throw(TypeError);
-            expect(function () { return mygad.write(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.write([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.write([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.write([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.write([ 'a', true, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.write(); }).to.throw(TypeError);
-            expect(function () { return mygad.write([]); }).to.throw(TypeError);
-            expect(function () { return mygad.write([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+        it('should throw if attrName is not a string', function () {
+            expect(function () { return mygad.write(cb); }).to.throw(TypeError);
+            expect(function () { return mygad.write(1, 'x', cb); }).to.throw(TypeError);
+            expect(function () { return mygad.write([], 'x', cb); }).to.throw(TypeError);
+            expect(function () { return mygad.write(null, 'x', cb); }).to.throw(TypeError);
+            expect(function () { return mygad.write(NaN, 'x', cb); }).to.throw(TypeError);
+            expect(function () { return mygad.write(true, 'x', cb); }).to.throw(TypeError);
+            expect(function () { return mygad.write(function () {}, 'x', cb); }).to.throw(TypeError);
         });
 
-        it('should throw if input val is not given', function () {
-            expect(function () { return mygad.write('xxx'); }).to.throw(Error);
-            expect(function () { return mygad.write('xxx', function () {}); }).to.throw(Error);
+        it('should not throw if attrName is a string', function () {
+            expect(function () { return mygad.write('xxx', 'x', cb); }).not.to.throw(TypeError);
         });
 
-        it('should not throw if input attrName is a string and val is given', function () {
-            expect(function () { return mygad.write('xxx', 1, cb); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', 'x', cb); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', true, cb); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', NaN, cb); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', [], cb); }).not.to.throw(Error);
-            expect(function () { return mygad.write('xxx', {}, cb); }).not.to.throw(Error);
+        it('should throw if cb is not a function', function () {
+            expect(function () { return mygad.write('x', 'x'); }).to.throw(TypeError);
+            expect(function () { return mygad.write('x', 'x', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.write('x', 'x', []); }).to.throw(TypeError);
+            expect(function () { return mygad.write('x', 'x', null); }).to.throw(TypeError);
+            expect(function () { return mygad.write('x', 'x', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.write('x', 'x', true); }).to.throw(TypeError);
+        });
+
+        it('should not throw if cb is a function', function () {
+            expect(function () { return mygad.write('xxx', 'x', cb); }).not.to.throw(TypeError);
+        });
+
+        it('should throw if val is undefined', function () {
+            expect(function () { return mygad.write('xxx', undefined, cb); }).to.throw(TypeError);
         });
     });
 
-    describe('#exec', function() {
+    describe('#exec(attrName, args, callback)', function() {
         var cb = function () {};
-        it('should throw if input attrName is not a string', function () {
-            expect(function () { return mygad.exec(1); }).to.throw(TypeError);
-            expect(function () { return mygad.exec(null); }).to.throw(TypeError);
-            expect(function () { return mygad.exec(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.exec(true); }).to.throw(TypeError);
-            expect(function () { return mygad.exec(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.exec([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.exec([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.exec([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.exec([ 'a', true, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.exec(); }).to.throw(TypeError);
-            expect(function () { return mygad.exec([]); }).to.throw(TypeError);
-            expect(function () { return mygad.exec([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+        it('should throw if attrName is not a string', function () {
+            expect(function () { return mygad.exec(cb); }).to.throw(TypeError);
+            expect(function () { return mygad.exec(1, ['x'], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.exec([], ['x'], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.exec(null, ['x'], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.exec(NaN, ['x'], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.exec(true, ['x'], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.exec(function () {}, ['x'], cb); }).to.throw(TypeError);
         });
 
-        it('should throw if input arg is not an array', function () {
-            expect(function () { return mygad.exec('xxx', 'x', cb); }).to.throw(Error);
-            expect(function () { return mygad.exec('xxx', true, cb); }).to.throw(Error);
-            expect(function () { return mygad.exec('xxx', NaN, cb); }).to.throw(Error);
-            expect(function () { return mygad.exec('xxx', {}, cb); }).to.throw(Error);
+        it('should not throw if attrName is a string', function () {
+            expect(function () { return mygad.exec('xxx', ['x'], cb); }).not.to.throw(TypeError);
         });
 
-        it('should not throw if input arg is an array', function () {
-            expect(function () { return mygad.exec('xxx', [1], cb); }).not.to.throw(Error);
-            expect(function () { return mygad.exec('xxx', [ {}, 'x', 3], cb); }).not.to.throw(Error);
-        });
-    });
-
-    describe('#getReportCfg', function() {
-        it('should throw if input attrName is not a string', function () {
-            expect(function () { return mygad.getReportCfg(1); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(null); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(true); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg([ 'a', true, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg([]); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+        it('should throw if cb is not a function', function () {
+            expect(function () { return mygad.exec('x', ['x']); }).to.throw(TypeError);
+            expect(function () { return mygad.exec('x', ['x'], 1); }).to.throw(TypeError);
+            expect(function () { return mygad.exec('x', ['x'], []); }).to.throw(TypeError);
+            expect(function () { return mygad.exec('x', ['x'], null); }).to.throw(TypeError);
+            expect(function () { return mygad.exec('x', ['x'], NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.exec('x', ['x'], true); }).to.throw(TypeError);
         });
 
-        it('should not throw if input attrName is a string', function () {
-            expect(function () { return mygad.getReportCfg('xxx'); }).not.to.throw(Error);
+        it('should not throw if cb is a function', function () {
+            expect(function () { return mygad.exec('xxx', ['x'], cb); }).not.to.throw(TypeError);
+        });
+
+        it('should throw if val is not an array', function () {
+            expect(function () { return mygad.exec('xxx', undefined, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.exec('xxx', 'x', cb); }).to.throw(TypeError);
+            expect(function () { return mygad.exec('xxx', null, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.exec('xxx', {}, cb); }).to.throw(TypeError);
         });
     });
 
-    describe('#setReportCfg', function() {
-        it('should throw if input attrName is not a string', function () {
-            expect(function () { return mygad.setReportCfg(1); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(null); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(true); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg([ 'a', true, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg([]); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
+    describe('#getReportCfg(attrName, callback)', function() {
+        var cb = function () {};
+        it('should throw if attrName is not a string', function () {
+            expect(function () { return mygad.getReportCfg(cb); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(1, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg([], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(null, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(NaN, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(true, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg(function () {}, cb); }).to.throw(TypeError);
         });
 
-        it('should throw if input cfg is not given or cfg is not an object', function () {
-            expect(function () { return mygad.setReportCfg('xxx'); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('xxx', 1); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('xxx', 'x'); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('xxx', true); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('xxx', NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('xxx', []); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('xxx', function () {}); }).to.throw(TypeError);
+        it('should not throw if attrName is a string', function () {
+            expect(function () { return mygad.getReportCfg('xxx', cb); }).not.to.throw(TypeError);
         });
 
-        it('should not throw if input attrName is a string and cfg is given', function () {
-            expect(function () { return mygad.setReportCfg('xxx', {}); }).not.to.throw(Error);
+        it('should throw if cb is not a function', function () {
+            expect(function () { return mygad.getReportCfg('x'); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg('x', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg('x', []); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg('x', null); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg('x', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.getReportCfg('x', true); }).to.throw(TypeError);
+        });
+
+        it('should not throw if cb is a function', function () {
+            expect(function () { return mygad.getReportCfg('xxx', cb); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#setReportCfg(attrName, cfg, callback)', function() {
+        var cb = function () {};
+        it('should throw if attrName is not a string', function () {
+            expect(function () { return mygad.setReportCfg(cb); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(1, {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg([], {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(null, {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(NaN, {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(true, {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg(function () {}, {}, cb); }).to.throw(TypeError);
+        });
+
+        it('should not throw if attrName is a string', function () {
+            expect(function () { return mygad.setReportCfg('xxx', {}, cb); }).not.to.throw(TypeError);
+        });
+
+        it('should throw if cb is not a function', function () {
+            expect(function () { return mygad.setReportCfg('x', {}); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('x', {}, 1); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('x', {}, []); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('x', {}, null); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('x', {}, NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('x', {}, true); }).to.throw(TypeError);
+        });
+
+        it('should not throw if cb is a function', function () {
+            expect(function () { return mygad.setReportCfg('xxx', {}, cb); }).not.to.throw(TypeError);
+        });
+
+        it('should throw if val is not an object', function () {
+            expect(function () { return mygad.setReportCfg('xxx', undefined, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('xxx', 'x', cb); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('xxx', null, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.setReportCfg('xxx', [], cb); }).to.throw(TypeError);
+        });
+    });
+
+    describe('#_callDriver(drvName, args)', function() {
+        it('should throw if drvName is not a string', function () {
+            expect(function () { return mygad._callDriver([], 1); }).to.throw(TypeError);
+            expect(function () { return mygad._callDriver({}, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._callDriver(null, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._callDriver(NaN, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._callDriver(true, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._callDriver(function () {}, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._callDriver(1); }).to.throw(TypeError);
+        });
+
+        it('should not throw if drvName is a string', function () {
+            expect(function () { return mygad._callDriver('_id', 1); }).not.to.throw(TypeError);
+            expect(function () { return mygad._callDriver('in', 2); }).not.to.throw(TypeError);
+            expect(function () { return mygad._callDriver('out', 10); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#_fire(evt, data)', function() {
+        it('should throw if evt is not a string', function () {
+            expect(function () { return mygad._fire([], 1); }).to.throw(TypeError);
+            expect(function () { return mygad._fire({}, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._fire(null, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._fire(NaN, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._fire(true, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._fire(function () {}, 1); }).to.throw(TypeError);
+            expect(function () { return mygad._fire(1); }).to.throw(TypeError);
+        });
+
+        it('should not throw if evt is a string', function () {
+            expect(function () { return mygad._fire('_id', 1); }).not.to.throw(TypeError);
+            expect(function () { return mygad._fire('in', 2); }).not.to.throw(TypeError);
+            expect(function () { return mygad._fire('out', 10); }).not.to.throw(TypeError);
+        });
+    });
+
+    describe('#_clear()', function() {
+        it('should always pass - no signature', function (done) {
+            done();
+        });
+    });
+
+    describe('#_dumpGadInfo()', function() {
+        it('should always pass - no signature', function (done) {
+            done();
         });
     });
 
@@ -567,31 +732,4 @@ describe('APIs Signature Check', function() {
             expect(function () { return mygad._dangerouslyAppendAttrs({ a: 1 }); }).not.to.throw(TypeError);
         });
     });
-
-    // This recovery test should left to the last one
-    describe('#recoverFromRecord', function() {
-        it('should throw if input rec is not an object', function () {
-            expect(function () { return mygad.recoverFromRecord(1); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(null); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(true); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord([ 'a', 1, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord([ 'a', null, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord([ 'a', NaN, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord([ 'a', true, 'c' ]); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord('xxx'); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord([]); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord([ 'a', 'b', 'c' ]); }).to.throw(TypeError);
-        });
-
-        it('should not throw if input rec is an object', function () {
-            expect(function () { return mygad.recoverFromRecord({ panel: { enabled: true }, attrs: {}, props: {} } ); }).not.to.throw(TypeError);
-        });
-    });
-});
-
-describe.skip('APIs functional check', function() {
-    // Test in integration part
 });
