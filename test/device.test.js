@@ -196,9 +196,9 @@ describe('Device Constructor', function() {
     describe('#get props', function() {
         it('has an empty props', function () {
             expect(mydev.get('props')).to.be.eql({
-                name: undefined,
-                description: undefined,
-                location: undefined
+                name: '',
+                description: '',
+                location: ''
             });
         });
     });
@@ -597,33 +597,33 @@ describe('APIs Signature Check', function() {
         });
     });
 
-    describe('#_setGadIdToAuxId(gadId, auxId)', function() {
+    describe('#_connectGadIdToAuxId(gadId, auxId)', function() {
         it('should throw if gadId is not a number or a string', function () {
-            expect(function () { return mydev._setGadIdToAuxId([]); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId({}); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(null); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(NaN); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(true); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(function () {}); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId([]); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId({}); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(null); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(NaN); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(true); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(function () {}); }).to.throw(TypeError);
         });
 
         it('should not throw if gadId is a number', function () {
-            expect(function () { return mydev._setGadIdToAuxId('x', 1); }).not.to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(1, 'xxx'); }).not.to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId('x', 1); }).not.to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(1, 'xxx'); }).not.to.throw(TypeError);
         });
 
         it('should throw if auxId is not a number or a string', function () {
-            expect(function () { return mydev._setGadIdToAuxId(1, []); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(1, {}); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(1, null); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(1, NaN); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(1, true); }).to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(1, function () {}); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(1, []); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(1, {}); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(1, null); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(1, NaN); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(1, true); }).to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(1, function () {}); }).to.throw(TypeError);
         });
 
         it('should not throw if auxId is a number or a string', function () {
-            expect(function () { return mydev._setGadIdToAuxId(1, 'xxx'); }).not.to.throw(TypeError);
-            expect(function () { return mydev._setGadIdToAuxId(1, 1); }).not.to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(1, 'xxx'); }).not.to.throw(TypeError);
+            expect(function () { return mydev._connectGadIdToAuxId(1, 1); }).not.to.throw(TypeError);
         });
     });
 

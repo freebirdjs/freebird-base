@@ -1,6 +1,6 @@
 {
   "name": "freebird-base",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Base classes for freebird",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "chance": "^1.0.4",
     "mocha": "^2.5.3",
     "sinon": "^1.17.5"
   }
