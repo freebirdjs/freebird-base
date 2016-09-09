@@ -1055,7 +1055,7 @@ nc.setReportCfg('00:2c:3d:..', 'temperature/0', 'sensorValue', { pmin: 60, pmax:
     - read: `function(permAddr, auxId, attr, callback) {}`
         * `callback(err, val)`
         * val (_Depends_): value read (Type denpends, ex: 'hello', 12, false)
-    - write: `function(permAddr, auxId, attr, val, callback) {}`
+    - write: `function(permAddr, auxId, attr, callback) {}`
         * `callback(err, val)`
         * val (_Depends_): value written (optional, Type denpends, ex: 'hello', 12, false)
     - exec: `function(permAddr, auxId, attr, args, callback) {}`
