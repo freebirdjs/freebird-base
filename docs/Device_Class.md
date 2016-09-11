@@ -421,7 +421,7 @@ Remotely write a value to an attribue on this device.
   
 **Arguments:**  
 
-1. `attrName` (_String_):  Attribute name  
+1. `attrName` (_String_): Attribute name  
 2. `val` (_Depends_): Attribute value to write to the device  
 3. `callback` (_Function_): `function (err, data) {}`  
 

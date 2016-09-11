@@ -178,7 +178,7 @@ myGadget.dump();
 
 <a name="API_read"></a>
 ### .read(attrName, callback)
-Read gadget attribute from the remote device.  
+Read an attribute from a gadget on the remote device.  
   
 **Arguments:**  
 
@@ -219,6 +219,11 @@ Remotely write the value to an attribue on this gadget.
 myGadget.write('sensorValue', 18, function (err, data) {
     if (err)
         console.log(err);  // Error: unwritable [TODO] ERROR FORMAT?
+});
+
+myGadget.write('onOff', 1, function (err, data) {
+    if (!err)
+        console.log(data); // 1
 });
 ```
 

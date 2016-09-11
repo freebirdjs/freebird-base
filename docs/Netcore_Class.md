@@ -5,20 +5,15 @@ The Netcore Class provides methods of network management.
 ## 1. Basic Methods
 
 * [Netcore()](#API_Netcore)
-* [enable()](#API_enable)
-* [disable()](#API_disable)
+* [getName()](#API_getName)
 * [isEnabled()](#API_isEnabled)
 * [isRegistered()](#API_isRegistered)
 * [isJoinable()](#API_isJoinable)
-* [getName()](#API_getName)
-* [getTraffic()](#API_getTraffic)
-* [resetTxTraffic()](#API_resetTxTraffic)
-* [resetRxTraffic()](#API_resetRxTraffic)
-* [getBlacklist()](#API_getBlacklist)
-* [clearBlacklist()](#API_clearBlacklist)
+* [enable()](#API_enable)
+* [disable()](#API_disable)
 * [dump()](#API_dump)
 
-* Network Managing
+* Network Management
     * [start()](#API_start)
     * [stop()](#API_stop)
     * [reset()](#API_reset)
@@ -27,46 +22,34 @@ The Netcore Class provides methods of network management.
     * [ban()](#API_ban)
     * [unban()](#API_unban)
     * [ping()](#API_ping)
+    * [getTraffic()](#API_getTraffic)
+    * [resetTraffic()](#API_resetTraffic)
+    * [getBlacklist()](#API_getBlacklist)
+    * [clearBlacklist()](#API_clearBlacklist)
     * [isBlacklisted()](#API_isBlacklisted)
 
-* Remote Device Operation
+* Remote Device Operations
     * [devRead()](#API_devRead)
     * [devWrite()](#API_devWrite)
     * [identify()](#API_identify)
 
-* Remote Gadget Operation
+* Remote Gadget Operations
     * [gadRead()](#API_gadRead)
     * [gadWrite()](#API_gadWrite)
     * [gadExec()](#API_gadExec)
     * [getReportCfg()](#API_getReportCfg)
     * [setReportCfg()](#API_setReportCfg)
 
-* Driver Registration (For developers who like to create their own netcore)
-    * [registerNetDrivers()](#API_registerNetDrivers)
-    * [registerDevDrivers()](#API_registerDevDrivers)
-    * [registerGadDrivers()](#API_registerGadDrivers)
-
-* Commit Message From Low-layer Controller (For developers who like to create their own netcore)
-    * [commitReady()](#API_commitReady)
-    * [commitDevNetChanging()](#API_commitDevNetChanging)
-    * [commitDevIncoming()](#API_commitDevIncoming)
-    * [commitDevLeaving()](#API_commitDevLeaving)
-    * [commitGadIncoming()](#API_commitGadIncoming)
-    * [commitDevReporting()](#API_commitDevReporting)
-    * [commitGadReporting()](#API_commitGadReporting)
-    * [dangerouslyCommitGadReporting()](#API_dangerouslyCommitGadReporting)
-
 ********************************************
-<a name="API_Device"></a>
+<a name="API_Netcore"></a>
 ### Netcore(name, controller, protocol[, opt])
 Netcore constructor. It is suggested to use freebird-base `.createNetcore()` method to create a new instance of Netcore.  
   
 **Arguments:**  
 
-1. `name` (_String_): Netocre name  
-2. `controller` (_Object_): Low-level controller, for example, `ble-shepherd`  
-3. `protocol` (_Object_): Information of the used protocol  
-4. `opt` (_Object_): Optional settings  
+1. `name` (_String_): Netocre name
+2. `controller` (_Object_): Low-level controller, for example, `ble-shepherd`
+3. `protocol` (_Object_): Information of the used protocol
 
     | Property | Type    | Mandatory | Description          |
     |----------|---------|-----------|----------------------|
@@ -77,6 +60,8 @@ Netcore constructor. It is suggested to use freebird-base `.createNetcore()` met
     | sl       | String  | optional  | Session layer        |
     | pl       | String  | optional  | Presentation layer   |
     | apl      | String  | optional  | Application layer    |
+
+4. `opt` (_Object_): Optional settings
 
 **Returns:**  
 
@@ -89,19 +74,22 @@ var FreebirdBase = require('freebird-base'),
     Netcore = FreebirdBase.Netcore,
     bShep = require('ble-shepherd');
 
-// [TODO]
 var nc = new Netcore('my_netcore', bShep, {
     phy: 'ieee802.15.1',
-    tl: '',
-    nwk: '',
-    apl: ''
+    nwk: 'ble',
+});
+
+// Use shorthand
+var nc = FreebirdBase.createNetcore('my_netcore', bShep, {
+    phy: 'ieee802.15.1',
+    nwk: 'ble',
 });
 ```
 
 ********************************************
-<a name="API_enable"></a>
-### .enable()
-Enable netcore. Once the netcore is enabled, the traffic is alive.  
+<a name="API_getName"></a>
+### .getName()
+Get netcore name.  
   
 **Arguments:**  
 
@@ -109,31 +97,12 @@ Enable netcore. Once the netcore is enabled, the traffic is alive.
 
 **Returns:**  
 
-* (_Object_): netcore itself
+* (_String_): Name of the netcore.  
 
 **Examples:**  
   
 ```js
-nc.enable();
-```
-
-********************************************
-<a name="API_disable"></a>
-### .disable()
-Disable network. The traffic is dead an all APIs with remote operations are disabled.  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* (_Object_): netcore itself
-
-**Examples:**  
-  
-```js
-nc.disable();
+nc.getName();  // 'my_netcore'
 ```
 
 ********************************************
@@ -177,7 +146,7 @@ nc.isRegistered();  // false
 ********************************************
 <a name="API_isJoinable"></a>
 ### .isJoinable()
-To see if the netcore is currently allowed for devices to join the network.  
+To see if the netcore is currently allowing for devices to join the network.  
 
 **Arguments:**  
 
@@ -194,9 +163,9 @@ nc.isJoinable();  // true
 ```
 
 ********************************************
-<a name="API_getName"></a>
-### .getName()
-Get name of this netcore.  
+<a name="API_enable"></a>
+### .enable()
+Enable netcore. Transportation is working when netcore is enabled.   
   
 **Arguments:**  
 
@@ -204,18 +173,256 @@ Get name of this netcore.
 
 **Returns:**  
 
-* (_String_): Name of the netcore.  
+* (_Object_): netcore
 
 **Examples:**  
   
 ```js
-nc.getName();  // 'my_netcore'
+nc.enable();
+```
+
+********************************************
+<a name="API_disable"></a>
+### .disable()
+Disable network. Any transportation will be ignore if netcore is disabled, and all remote operations become no use as well.  
+  
+**Arguments:**  
+
+* _none_
+
+**Returns:**  
+
+* (_Object_): netcore
+
+**Examples:**  
+  
+```js
+nc.disable();
+```
+
+********************************************
+<a name="API_dump"></a>
+### .dump()
+Dump information about this netcore.  
+  
+**Arguments:**  
+
+* _none_
+
+**Returns:**  
+
+* (_Object_): A data object to describe information about this netcore.  
+
+**Examples:**  
+  
+```js
+nc.dump();
+
+/*
+{
+    name: 'my_netcore',
+    enabled: true,
+    protocol: {
+        phy: 'ieee802.15.1',
+        nwk: 'ble'
+    },
+    startTime: 12345678,
+    defaultJoinTime: 180
+}
+*/
+```
+
+********************************************
+<a name="API_start"></a>
+### .start(callback)
+Start the network controller.  
+
+**Arguments:**  
+
+1. `callback` (_Function_): `function (err) {}`. Get called after started.  
+
+**Returns:**  
+
+* _none_
+
+**Examples:**  
+  
+```js
+nc.start(function (err) {
+    if (!err)
+        console.log('netcore is up.');
+});
+```
+
+********************************************
+<a name="API_stop"></a>
+### .stop(callback)
+Stop the network controller.  
+  
+**Arguments:**  
+
+1. `callback` (_Function_): `function (err) {}`. Get called after stopped.  
+
+**Returns:**  
+
+* _none_
+
+**Examples:**  
+  
+```js
+```js
+nc.stop(function (err) {
+    if (!err)
+        console.log('netcore is down.');
+});
+```
+
+********************************************
+<a name="API_reset"></a>
+### .reset([mode,] callback)   [TBD]
+Reset the network controller.  
+  
+**Arguments:**  
+
+1. `mode` (_Number_): [TODO]  
+2. `callback` (_Function_):  `function (err, result) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+
+**Returns:**  
+
+* _none_
+
+**Examples:**  
+  
+```js
+nc.reset(0, function (err, result) {
+    
+});
+```
+
+********************************************
+<a name="API_permitJoin"></a>
+### .permitJoin(duration[, callback])
+Let the network controller allow devices to join its network.  
+  
+**Arguments:**  
+
+1. `duration` (_Number_): Duration in seconds for netcore allowing devices to join the network. Set it to `0` can immediately close the admission.  
+2. `callback` (_Function_):  `function (err, timeLeft) { }`. Get called when netcore starts/stops to permit joining, where `timeLeft` is a number that indicates time left for device joining in seconds, e.g., 180.
+
+**Returns:**  
+
+* _none_
+
+**Examples:**  
+  
+```js
+nc.permitJoin(180, function (err, timeLeft) {
+    if (!err)
+        console.log(timeLeft);  // 160
+});
+
+nc.permitJoin(0, function (err, timeLeft) {
+    if (!err)
+        console.log(timeLeft);  // 0
+});
+```
+
+********************************************
+<a name="API_remove"></a>
+### .remove(permAddr, callback)
+Remove a remote device from the network.  
+  
+**Arguments:**  
+
+1. `permAddr` (_String_): Device permanent address  
+2. `callback` (_Function_):  `function (err, permAddr) { }`. Get called after removal, where `permAddr` is permananet address of that device.
+
+**Returns:**  
+
+* _none_
+
+**Examples:**  
+  
+```js
+nc.remove('00:0c:29:ff:ed:7c', function (err, permAddr) {
+    if (!err)
+        console.log(permAddr);  // 00:0c:29:ff:ed:7c
+});
+```
+
+********************************************
+<a name="API_ban"></a>
+### .ban(permAddr, callback)
+Ban a device from the network. Once a device is banned, it can never join the network till you unban it.  
+  
+**Arguments:**  
+
+1. `permAddr` (_String_): Device permanent address  
+2. `callback` (_Function_):  `function (err, permAddr) { }`. Get called after device banned, where `permAddr` is permananet address of that device.  
+
+**Returns:**  
+
+* _none_
+
+**Examples:**  
+  
+```js
+nc.ban('00:0c:29:ff:ed:7c', function (err, permAddr) {
+    if (!err)
+        console.log(permAddr);  // 00:0c:29:ff:ed:7c
+});
+```
+
+********************************************
+<a name="API_unban"></a>
+### .unban(permAddr, callback)
+Unban a device.  
+  
+**Arguments:**  
+
+1. `permAddr` (_String_): Device permanent address  
+2. `callback` (_Function_):  `function (err, val) { }`. Get called after device unbanned, where `permAddr` is permananet address of that device.  
+
+**Returns:**  
+
+* _none_
+
+**Examples:**  
+  
+```js
+nc.unban('00:0c:29:ff:ed:7c', function (err, permAddr) {
+    if (!err)
+        console.log(permAddr);  // 00:0c:29:ff:ed:7c
+});
+```
+
+********************************************
+<a name="API_ping"></a>
+### .ping(permAddr, callback)
+Ping a remote device.  
+  
+**Arguments:**  
+
+1. `permAddr` (_String_): Device permanent address  
+2. `callback` (_Function_):  `function (err, time) { }`. Get called after ping response comes back, where `time` is the round-trip time in milliseconds, e.g., 16.
+
+**Returns:**  
+
+* _none_
+
+**Examples:**  
+  
+```js
+nc.ping('00:0c:29:ff:ed:7c', function (err, time) {
+    if (!err)
+        console.log(time);  // 42
+});
 ```
 
 ********************************************
 <a name="API_getTraffic"></a>
 ### .getTraffic()
-Get traffic record on the netcore.  
+Get traffic record of the netcore.  
   
 **Arguments:**  
 
@@ -229,54 +436,40 @@ Get traffic record on the netcore.
   
 ```js
 nc.getTraffic();
-// {
-//     in: {
-//         hits: 0,
-//         bytes: 0
-//     },
-//     out: {
-//         hits: 0,
-//         bytes: 0
-//     }
-// }
+/*
+{
+    in: {
+        hits: 1422,
+        bytes: 896632
+    },
+    out: {
+        hits: 884,
+        bytes: 36650
+    }
+}
+*/
 ```
 
 ********************************************
-<a name="API_resetTxTraffic"></a>
-### .resetTxTraffic()
-Reset the traffic record of transmitting out.  
+<a name="API_resetTraffic"></a>
+### .resetTraffic([dir])
+Reset the traffic record.  
   
 **Arguments:**  
 
-* _none_
+1. `dir` (_String_): If given with `'in'`, the incoming traffic will be reset, else if given with `'out'`, the outgoing traffic will be reset. Both incoming and outgoing traffic records will be reset if `dir` is not specified.  
 
 **Returns:**  
 
-* (_Object_): netcore itself
+* (_Object_): netcore
 
 **Examples:**  
   
 ```js
-nc.resetTxTraffic();
-```
-
-********************************************
-<a name="API_resetRxTraffic"></a>
-### .resetRxTraffic()
-Reset the traffic record of receiving in.  
-  
-**Arguments:**  
-
-* (_Object_): netcore itself
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-nc.resetRxTraffic();
+nc.resetTraffic();
+nc.resetTraffic('in');
+nc.resetTraffic('out');
+nc.resetTraffic();
 ```
 
 ********************************************
@@ -310,7 +503,7 @@ Clear the blacklist.
 
 **Returns:**  
 
-* (_Object_): netcore itself
+* (_Object_): netcore
 
 **Examples:**  
   
@@ -339,486 +532,17 @@ nc.isBlacklisted('0x2e3c5a11'); // false
 ```
 
 ********************************************
-<a name="API_dump"></a>
-### .dump()
-Dump information about this netcore.  
-  
-**Arguments:**  
+## Remote Device Operations
 
-* _none_
-
-**Returns:**  
-
-* (_Object_): A data object to describe information about this netcore.  
-
-**Examples:**  
-  
-```js
-nc.dump();
-
-// {
-//     name: 'my_netcore',
-//     enabled: true,
-//     protocol: {
-//         // [TODO]
-//     },
-//     startTime: 12345678,
-//     defaultJoinTime: 180,
-//     traffic: {
-//         in: { hits: 21, bytes: 168 },
-//         out: { hits: 6, bytes: 72 }
-//     }
-// }
-```
-
-********************************************
-<a name="API_registerNetDrivers"></a>
-### .registerNetDrivers(drvs)
-Register network drivers to the netcore.  
-  
-**Arguments:**  
-
-1. `drvs` (_Object_): An object contains all network management drivers required by the netcore.  
-
-    | Property   | Type     | Mandatory | Description                                 |
-    |------------|----------|-----------|---------------------------------------------|
-    | start      | Function | required  | Driver to start the network controller      |
-    | stop       | Function | required  | Driver to stop the network controller       |
-    | reset      | Function | required  | Driver to reset the network controller      |
-    | permitJoin | Function | required  | Driver to allow devices to join the network |
-    | remove     | Function | required  | Driver to remove a device from the network  |
-    | ping       | Function | required  | Driver to ping a device in the network      |
-    | ban        | Function | optional  | Driver to ban a device from the network     |
-    | unban      | Function | optional  | Driver to unban a device from the network   |
-
-**Returns:**  
-
-* (_Object_): netcore itself
-
-**Examples:**  
-  
-```js
-var bleNetDrivers = {
-    // [TODO] arguments
-    start: function () {},
-    stop: function () {},
-    reset: function () {},
-    permitJoin: function () {},
-    remove: function () {},
-    ping: function () {}
-};
-
-nc.registerNetDrivers(bleNetDrivers);
-```
-
-********************************************
-<a name="API_registerDevDrivers"></a>
-### .registerDevDrivers(drvs)
-Register device drivers to the netcore.  
-  
-**Arguments:**  
-
-1. `drvs` (_Object_): An object contains all device operation drivers required by the netcore.  
-
-    | Property   | Type     | Mandatory | Description                                                  |
-    |------------|----------|-----------|--------------------------------------------------------------|
-    | read       | Function | required  | Driver to read an attribute from a remote device             |
-    | write      | Function | required  | Driver to write an attribute value to a remote device        |
-    | identify   | Function | optional  | Driver to identify a remote device. This method is optional. If a device supoorts the identifying mode, it may, for example, start to blink a led to get users attention. |
-
-**Returns:**  
-
-* (_Object_): netcore itself
-
-**Examples:**  
-  
-```js
-var bleDevDrivers = {
-    // [TODO] arguments
-    read: function () {},
-    write: function () {},
-    identify: function () {}
-};
-
-nc.registerDevDrivers(bleDevDrivers);
-```
-
-********************************************
-<a name="API_registerGadDrivers"></a>
-### .registerGadDrivers(drvs)
-Register gadget drivers to the netcore.  
-  
-**Arguments:**  
-
-1. `drvs` (_Object_): An object contains all device operation drivers required by the netcore.  
-
-    | Property     | Type     | Mandatory | Description                                                  |
-    |--------------|----------|-----------|--------------------------------------------------------------|
-    | read         | Function | required  | Driver to read an attribute from a remote gadget             |
-    | write        | Function | required  | Driver to write an attribute value to a remote gadget        |
-    | exec         | Function | optional  | [TODO]                                                       |
-    | getReportCfg | Function | optional  | [TODO]                                                       |
-    | setReportCfg | Function | optional  | [TODO]                                                       |
-
-**Returns:**  
-
-* (_Object_): netcore itself
-
-**Examples:**  
-  
-```js
-var bleGadDrivers = {
-    // [TODO] arguments
-    read: function () {},
-    write: function () {},
-    exec: function () {},
-    getReportCfg: function () {},
-    setReportCfg: function () {}
-};
-
-nc.registerDevDrivers(bleDevDrivers);
-```
-
-********************************************
-<a name="API_commitReady"></a>
-### .commitReady()
-Commit ready to tell the netcore that the network controller is ready. Everytime the netcore starts, reboots, or resset, it must call `nc.commitReady()` to let the netcore know.  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-
-```
-
-********************************************
-<a name="API_commitDevNetChanging"></a>
-### .commitDevNetChanging(permAddr, changes)
-Commit the network status when a device changes its status.  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-
-```
-
-********************************************
-<a name="API_commitDevIncoming"></a>
-### .commitDevIncoming(permAddr, rawDev)
-Commit a device incoming message to netcore when a device comes in.  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-
-```
-
-********************************************
-<a name="API_commitDevLeaving"></a>
-### .commitDevLeaving(permAddr)
-Commit a device leaving message to netcore when a device leave from the network.  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-
-```
-
-********************************************
-<a name="API_commitGadIncoming"></a>
-### .commitGadIncoming(permAddr, auxId, rawGad)
-Commit a gadget incoming message to netcore when a gadget comes in.  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-
-```
-
-********************************************
-<a name="API_commitDevReporting"></a>
-### .commitDevReporting(permAddr, devAttrs)
-Commit a device reporting message to netcore when a device reports its attribtue(s).  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-
-```
-
-********************************************
-<a name="API_commitGadReporting"></a>
-### .commitGadReporting(permAddr, auxId, gadAttrs)
-Commit a gadget reporting message to netcore when a gadget reports its attribtue(s).  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-
-```
-
-********************************************
-<a name="API_dangerouslyCommitGadReporting"></a>
-### .dangerouslyCommitGadReporting(permAddr, auxId, gadAttrs)
-Dangerously commit a gadget reporting message to netcore when a gadget reports its attribtue(s). This will restructure the attrs data in the gadget instance. Use this API when you do know what you are doing.  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-nc.dangerouslyCommitGadReporting('0x12345678abcde', 'dIn/6', {
-    xx: 1,
-    yy: 2
-});
-```
-
-********************************************
-<a name="API_start"></a>
-### .start(callback)
-Start the network controller.  
-
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-nc.start(function (err, result) {
-    
-});
-```
-
-********************************************
-<a name="API_stop"></a>
-### .stop(callback)
-Stop the network controller.  
-  
-**Arguments:**  
-
-* _none_
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-```js
-nc.stop(function (err, result) {
-    
-});
-```
-
-********************************************
-<a name="API_reset"></a>
-### .reset(mode, callback)
-Reset the network controller.  
-  
-**Arguments:**  
-
-1. `mode` (_Number_): [TODO]  
-2. `callback` (_Function_):  `function (err, result) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-nc.reset(0, function (err, result) {
-    
-});
-```
-
-********************************************
-<a name="API_permitJoin"></a>
-### .permitJoin(duration[, callback])
-Let the network controller allow devices to join its network.  
-  
-**Arguments:**  
-
-1. `duration` (_Number_): [TODO]  
-2. `callback` (_Function_):  `function (err, result) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-nc.permitJoin(180, function (err, result) {
-    
-});
-```
-
-********************************************
-<a name="API_remove"></a>
-### .remove(permAddr, callback)
-Remove a remote device from the network.  
-  
-**Arguments:**  
-
-1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-nc.remove('00:2c:3d:..', function (err, result) {
-    
-});
-```
-
-********************************************
-<a name="API_ban"></a>
-### .ban(permAddr, callback)
-Ban a device from the network. Once a device is banned, it can never join the network till you unban it.  
-  
-**Arguments:**  
-
-1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-nc.ban('00:2c:3d:..', function (err, result) {
-    
-});
-```
-
-********************************************
-<a name="API_unban"></a>
-### .unban(permAddr, callback)
-Unban a device.  
-  
-**Arguments:**  
-
-1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-nc.unban('00:2c:3d:..', function (err, result) {
-    
-});
-```
-
-********************************************
-<a name="API_ping"></a>
-### .ping(permAddr, callback)
-Ping a remote device.  
-  
-**Arguments:**  
-
-1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-nc.ping('00:2c:3d:..', function (err, time) {
-    
-});
-```
-
-********************************************
 <a name="API_devRead"></a>
 ### .devRead(permAddr, attrName, callback)
-Read an attribute from the remote device.  
+Read device attribute from the remote device.  
   
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
-3. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+2. `attrName` (_Object_): Attribute name  
+3. `callback` (_Function_):  `function (err, data) { }`  
 
 **Returns:**  
 
@@ -827,22 +551,23 @@ Read an attribute from the remote device.
 **Examples:**  
   
 ```js
-nc.devRead('00:2c:3d:..', 'version', function (err, val) {
-    
+nc.devRead('00:0c:29:ff:ed:7c', 'model', function (err, val) {
+    if (!err)
+        console.log(data);  // 'lwmqn-7688-duo'
 });
 ```
 
 ********************************************
 <a name="API_devWrite"></a>
 ### .devWrite(permAddr, attrName, val, callback)
-Write a value to an attribute to the remote device.  
+Remotely write a value to an attribue on this device.  
   
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
-3. `val` (_Depends_): [TODO]  
-4. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+2. `attrName` (_Object_): Attribute name  
+3. `val` (_Depends_): Attribute value to write to the device  
+4. `callback` (_Function_):  `function (err, data) { }`  
 
 **Returns:**  
 
@@ -851,20 +576,24 @@ Write a value to an attribute to the remote device.
 **Examples:**  
   
 ```js
-nc.devWrite('00:2c:3d:..', 'version', '0.1.2', function (err, val) {
-    
+nc.devWrite('00:0c:29:ff:ed:7c', 'model', 'lwmqn-7688-happy-duo', function (err, data) {
+    if (!err)
+        console.log(data);  // 'lwmqn-7688-happy-duo'
+
+    // Most devices don't accept writie operation upon the attribute!
+    // Thus you probably will get an error.
 });
 ```
 
 ********************************************
 <a name="API_identify"></a>
 ### .identify(permAddr, callback)
-Identify a remote device. If the remote device does not support this feature, invoking this API will be ineffective.  
+Identify a remote device. If remote device does not implement this freature, it would be no effect.  
   
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+2. `callback` (_Function_):  `function (err) { }`  
 
 **Returns:**  
 
@@ -873,12 +602,15 @@ Identify a remote device. If the remote device does not support this feature, in
 **Examples:**  
   
 ```js
-nc.identify('00:2c:3d:..', function (err, data) {
-    
+nc.identify('00:0c:29:ff:ed:7c', function (err) {
+    if (!err)
+        console.log('The device is enter identifying mode.');
 });
 ```
 
 ********************************************
+## Remote Gadget Operations
+
 <a name="API_gadRead"></a>
 ### .gadRead(permAddr, auxId, attrName, callback)
 Read an attribute from a gadget on the remote device.  
@@ -886,9 +618,9 @@ Read an attribute from a gadget on the remote device.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
-3. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
-4. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+2. `auxId` (_String_ | _Number_): Auxiliary id of the gadget on a device  
+3. `attrName` (_Object_): Attribute name  
+4. `callback` (_Function_):  `function (err, data) { }`  
 
 **Returns:**  
 
@@ -897,8 +629,9 @@ Read an attribute from a gadget on the remote device.
 **Examples:**  
   
 ```js
-nc.gadRead('00:2c:3d:..', 'humidity/2, 'sensorValue', function (err, data) {
-    
+nc.gadRead('00:0c:29:ff:ed:7c', 'humidity/2', 'sensorValue', function (err, data) {
+    if (!err)
+        console.log(data);  // 52.6
 });
 ```
 
@@ -910,10 +643,10 @@ Write a value to an attribute to a gadget on the remote device.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
-3. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
-4. `val` (_Depends_): [TODO]  
-5. `callback` (_Function_):  `function (err, val) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+2. `auxId` (_String_ | _Number_): Auxiliary id of the gadget on a device  
+3. `attrName` (_Object_): Attribute name  
+4. `val` (_Depends_): Attribute value to write to the gadget   
+5. `callback` (_Function_):  `function (err, data) { }`.  
 
 **Returns:**  
 
@@ -922,23 +655,24 @@ Write a value to an attribute to a gadget on the remote device.
 **Examples:**  
   
 ```js
-nc.gadWrite('00:2c:3d:..', 'lightCtrl/0', 'onOff', 1, function (err, val) {
-    
+nc.gadWrite('00:0c:29:ff:ed:7c', 'lightCtrl/0', 'onOff', 1, function (err, data) {
+    if (!err)
+        console.log(data); // 1
 });
 ```
 
 ********************************************
 <a name="API_gadExec"></a>
 ### .gadExec(permAddr, auxId, attrName, args, callback)
-Issue a remote process call to a gadget on the remote device.  
+Remotely invoke the procedure on this gadget.  
   
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
-3. `attrName` (_Object_): Name of which attribute you'd like to [TODO]  
-4. `args` (_Array_): [TODO]  
-5. `callback` (_Function_):  `function (err, rsp) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+2. `auxId` (_String_ | _Number_): Auxiliary id of the gadget on a device  
+3. `attrName` (_Object_): Attribute name  
+4. `args` (_Array_): Arguments to invoke with  
+5. `callback` (_Function_):  `function (err, data) { }`  
 
 **Returns:**  
 
@@ -947,8 +681,9 @@ Issue a remote process call to a gadget on the remote device.
 **Examples:**  
   
 ```js
-nc.gadExec('00:2c:3d:..', 'led/3', 'blink', [ 3 ], function (err, rsp) {
-    
+nc.gadExec('00:0c:29:ff:ed:7c', 'led/3', 'blink', [ 3 ], function (err, data) {
+    if (!err)
+        console.log(data);  // Depends
 });
 
 ```
@@ -961,9 +696,9 @@ Get the report configuration from a gadget on the remote device.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
-3. `attrName` (_Object_): Name of which attribute you'd like to get its reporting configuration  
-4. `callback` (_Function_):  `function (err, cfg) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+2. `auxId` (_String_ | _Number_): Auxiliary id of the gadget on a device  
+3. `attrName` (_Object_): Attribute name  
+4. `callback` (_Function_):  `function (err, cfg) { }`  
 
 **Returns:**  
 
@@ -972,7 +707,7 @@ Get the report configuration from a gadget on the remote device.
 **Examples:**  
   
 ```js
-nc.getReportCfg('00:2c:3d:..', 'temperature/0', 'sensorValue', function (err, cfg) {
+nc.getReportCfg('00:0c:29:ff:ed:7c', 'temperature/0', 'sensorValue', function (err, cfg) {
     if (!err)
         console.log(cfg);
         // { pmin: 60, pmax: 180 }
@@ -987,8 +722,8 @@ Set the report configuration to a gadget on the remote device.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `auxId` (_String_ | _Number_): Auxiliary id to indentify the gadget on a device  
-3. `attrName` (_Object_): Name of which attribute you'd like to set its reporting behavior  
+2. `auxId` (_String_ | _Number_): Auxiliary id of the gadget on a device  
+3. `attrName` (_Object_): Attribute name  
 4. `cfg` (_Object_): Report configuration  
 
     | Property | Type    | Mandatory | Description |
@@ -1013,63 +748,15 @@ Set the report configuration to a gadget on the remote device.
 **Examples:**  
   
 ```js
-nc.setReportCfg('00:2c:3d:..', 'temperature/0', 'sensorValue', { pmin: 60, pmax: 180 }, function (err) {
-    
+nc.setReportCfg('00:0c:29:ff:ed:7c', 'temperature/0', 'sensorValue', { pmin: 60, pmax: 180 }, function (err) {
+    if (!err)
+        console.log('success!');
 });
 ```
 
-## Signatures for drivers
+********************************************
+## Standalone Usage
 
-* net
-    - start: `function(callback) {}`
-        * `callback(err)` should be called after done
-    - stop: `function(callback) {}`
-        * `callback(err)` should be called after done
-    - reset: `function(mode, callback) {}`
-        * `callback(err)` should be called after done
-    - permitJoin: `function(duration, callback) {}`
-        * `callback(err, timeLeft)` should be called after done
-        * timeLeft (_Number_): Time left for joining in seconds, e.g., 180.
-    - remove: `function(permAddr, callback) {}`
-        * `callback(err, permAddr)` should be called after done
-        * permAddr (_String_): permAddr, e.g., '0x12345678'.
-    - ban: `function(permAddr, callback) {}`
-        * `callback(err, permAddr)` should be called after done
-        * permAddr (_String_): permAddr, e.g., '0x12345678'.
-    - unban: `function(permAddr, callback) {}` should be called after done
-        * `callback(err, permAddr)` should be called after done
-        * permAddr (_String_): permAddr, e.g., '0x12345678'.
-    - ping: `function(permAddr, callback) {}, callback(err, time), `
-        * `callback(err, time)` should be called after done
-        * time (_Number_): round-trip time in milliseconds, e.g., 16.
-* dev
-    - read: `function(permAddr, attr, callback) {}`
-        * `callback(err, val)` should be called after done
-        * val (_Depends_): value read. Type denpends, e.g., `'hello'`, `12`, `false`.
-    - write: `function(permAddr, attr, val, callback) {}, ),`
-        * `callback(err, val)`
-        * val: value written (optional, Type denpends, ex: 'hello', 12, false)
-    - identify: `function(permAddr, callback) {}`
-        * `callback(err)`
-* gad
-    - read: `function(permAddr, auxId, attr, callback) {}`
-        * `callback(err, val)`
-        * val (_Depends_): value read (Type denpends, ex: 'hello', 12, false)
-    - write: `function(permAddr, auxId, attr, callback) {}`
-        * `callback(err, val)`
-        * val (_Depends_): value written (optional, Type denpends, ex: 'hello', 12, false)
-    - exec: `function(permAddr, auxId, attr, args, callback) {}`
-        * `callback(err, result)`
-        * result (_Depends_): can be anything, depends on firmware
-    - setReportCfg: `function(permAddr, auxId, attrName, cfg, callback) {}`
-        * `callback(err, result)`
-        * result (_Depends_): set succeeds? (Boolean, true or false)
-    - getReportCfg: `function(permAddr, auxId, attrName, callback) {}`
-        * `callback(err, cfg)`
-        * cfg (_Object_): config object (Object, ex: { pmin: 10, pmax: 60, gt: 200 })
-
-
-// For standalone usage
 // function attachOnEventHandlers(nc) {
 //     nc.onError = null;
 //     nc.onReady = null;
