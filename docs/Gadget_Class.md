@@ -18,6 +18,10 @@ The Gadget Class defines a gadget which is a single and small application, such 
     * [exec()](#API_exec)
     * [getReportCfg()](#API_getReportCfg)
     * [setReportCfg()](#API_setReportCfg)
+* Data Formats
+    - [panel](#Data_panel)
+    - [props](#Data_props)
+    - [attrs](#Data_attrs)
 
 ********************************************
 <a name="API_Device"></a>
@@ -304,49 +308,49 @@ myGadget.setReportCfg('sensorValue', { pmin: 60, pmax: 180 }, function (err) {
 ## Getter and Setter
 
 <a name="API_get"></a>
-### .get(propName[, arg])
+### .get(name)
 Getter to get the required information.  
   
 **Arguments:**  
 
-1. `propName` (_String_): 
-2. `arg`
+1. `name` (_String_): 
 
-| `propName`           | `arg`      | Description                                                                                                                             | Example                    |  
-|----------------------|------------|-----------------------------------------------------------------------------------------------------------------------------------------|----------------------------|  
-| v 'id'                 | _none_     | Get gadget id assigned by freebird. It will be `null` if it is not registered to freebird.                                              | `myGadget.get('id')`       |  
-| v 'auxId'              | _none_     | Get gadget auxiliary id.                                                                                                                | `myGadget.get('auxId')`    |  
-| v 'raw' or 'rawGad'  | _none_     | Get raw data which may be `undefined` if it was not given at instance creation.                                                         | `myGadget.get('raw')` or `myGadget.get('rawGad')` |  
-| v 'dev' or 'device'  | _none_     | Get the device that owns this gadget.                                                                                                   | `myGadget.get('dev')` or `myGadget.get('device')` |  
-| v 'nc' or 'nectcore' | _none_     | Get the netcore that manages this gadget.                                                                                               | `myGadget.get('nc')` or `myGadget.get('netcore')` |  
-| v 'permAddr'         | _none_     | Get the permanent address from which device owns this gadget.                                                                           | `myGadget.get('permAddr')` |  
-| v 'dynAddr'          | _none_     | Get the dynamic address from which device owns this gadget.                                                                             | `myGadget.get('dynAddr')`  |  
-| v 'location'         | _none_     | Get the location of which device owns this gadget.                                                                                      | `myGadget.get('location')` |  
-| 'panel'              | _optioanl_ | Get panel information of this gadget. You can give a single key or an array of keys to choose what information you'd like to get.       | `myGadget.get('panel')`, `myGadget.get('panel', 'enabled')`, `myGadget.get('panel', [ 'enabled', 'classId'] )`   |  
-| 'props'              | _optioanl_ | Get user-defined properties of this gadget. You can give a single key or an array of keys to choose what information you'd like to get. | `myGadget.get('props')`, `myGadget.get('props', 'name')`, `myGadget.get('props', [ 'name', 'description' ])` |  
-| 'attrs'              | _optioanl_ | Get attributes of this device.                                                                                                          | `myGadget.get('attrs')`, `myGadget.get('attrs', 'sensorValue')`, `myGadget.get('attrs', [ 'sensorValue', 'unit' ])`    |  
-      
+| Name                 | Description                                                                                  | Example                    | Returned Data Type            |  
+|----------------------|----------------------------------------------------------------------------------------------|----------------------------|-------------------------------|  
+| 'id'                 | Get gadget id assigned by freebird. It will be `null` if it is not registered to freebird.   | `myGadget.get('id')`       | Number \| String              |  
+| 'auxId'              | Get gadget auxiliary id.                                                                     | `myGadget.get('auxId')`    | Number \| String              |  
+| 'rawGad'             | Get raw data which may be `undefined` if it was not given at instance creation.              | `myGadget.get('rawGad')`   | Object                        |  
+| 'raw'                | Alias of 'rawGad'.                                                                           | `myGadget.get('raw')`      | -                             |  
+| 'device'             | Get the device that owns this gadget.                                                        | `myGadget.get('device')`   | Object ([Device])             |  
+| 'dev'                | Alias of 'device'.                                                                           | `myGadget.get('dev')`      | -                             |  
+| 'nectcore'           | Get the netcore that manages this gadget.                                                    | `myGadget.get('netcore')`  | Object ([Netcore])            |  
+| 'nc'                 | Alias of 'netcore'.                                                                          | `myGadget.get('nc')`       | -                             |  
+| 'permAddr'           | Get the permanent address from which device owns this gadget.                                | `myGadget.get('permAddr')` | String                        |  
+| 'dynAddr'            | Get the dynamic address from which device owns this gadget.                                  | `myGadget.get('dynAddr')`  | Number \| String              |  
+| 'location'           | Get the location of which device owns this gadget.                                           | `myGadget.get('location')` | String                        |  
+| 'panel'              | Get panel information of this gadget.                                                        | `myGadget.get('panel')`    | Object ([panel](#Data_panel)) |  
+| 'attrs'              | Get attributes of this device.                                                               | `myGadget.get('attrs')`    | Object ([attrs](#Data_attrs)) |  
+| 'props'              | Get user-defined properties of this gadget.                                                  | `myGadget.get('props')`    | Object ([props](#Data_props)) |  
 
 **Examples:**  
   
 ```js
-myGadget.get('netcore');  // netcore instance
-myGadget.get('device');   // device instance
-myDevice.get('raw');      // { ... } or null
-myGadget.get('id');       // 122
-myGadget.get('auxId');    // 'temperature/3'
+myGadget.get('id');         // 122
+myGadget.get('auxId');      // 'temperature/3'
 
-myGadget.get('permAddr'); // '0x123456789ABCDEF'
-myGadget.get('dynAddr');  // 10163
-myGadget.get('location'); // 'kitchen'
+myDevice.get('raw');
+myDevice.get('rawGad');     // { ... } or null
 
+myGadget.get('dev');
+myGadget.get('device');     // device instance
 
+myGadget.get('nc');
+myGadget.get('netcore');    // netcore instance
 
-myGadget.get('addr');     // { permanent: '0x123456789ABCDEF', dynamic: 10163 };
-myGadget.get('dynAddr');  // 10163
-myGadget.get('status');   // 'online'. Can be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.  
+myGadget.get('permAddr');   // '0x123456789abcdef'
+myGadget.get('dynAddr');    // 10163
 
-
+myGadget.get('location');   // 'kitchen'
 
 myGadget.get('panel');
 /*
@@ -357,25 +361,75 @@ myGadget.get('panel');
 }
 */
 
-myGadget.get('props');
-/*
-{
-    name: 'sivann temperature sensor',
-    description: 'Do not remove this sensor'
-}
-*/
-
 myGadget.get('attrs');
 /*
 {
     sensorValue: 26.4,
-    unit: 'Cels'
+    unit: 'Cels',
+    // There may be other properties
 }
 */
 
-myGadget.get('props', [ 'name', 'location' ]);              // { name: 'temp sensor', location: 'kitchen' }
-myGadget.getAttrs('attrs', [ 'manufacturer', 'power' ]);    // { manufacturer: 'sivann', power: { type: 'line', voltage: '12V' } }
+myGadget.get('props');
+/*
+{
+    name: 'sivann temperature sensor',
+    description: 'Do not remove this sensor',
+    // There may be other properties
+}
+*/
+
 ```
+
+********************************************
+<a name="API_get"></a>
+### .set(name, value)
+Setter to set the value to gadget.  
+  
+**Arguments:**  
+
+1. `name` (_String_): Possible names are `'panel'`, `'attrs'`, and `'props'`.
+2. `value` (_Depends_)
+
+* `set('panel', value)`
+    - Locally set panel information on the gadget. Setting of `'enabled'` property will be ignored, should use `enable()` and `disable()` instead.
+    - `value` (_Object_): An object contains key-value pairs of the panel information.
+* `set('attrs', value)`
+    - Locally set attributes on the gadget. If you like to have some additional attributes, please use `set('props', value)`.
+    - `value` (_Object_): An object contains key-value pairs of the attributes.
+* `set('props', value)`
+    - Locally set properties on the gadget. This is for customization, you are free to add any property you like.
+    - `value` (_Object_): An object contains key-value pairs of the properties.
+
+**Returns:**  
+
+* (_Object_): gadget
+
+**Examples:**  
+
+```js
+myGadget.set('panel', {
+    enabled: true,      // this will be ignore, use enable() or disable() instead
+    profile: 'Smart Energy'
+});
+
+myGadget.set('attrs', {
+    sensorValue: 24
+});
+
+myGadget.set('props', {
+    name: 'temp sensor',
+    greeting: 'hello world!'
+});
+````
+
+********************************************
+## Data Formats
+
+[TBD]
+
+<a name="Data_panel"></a>
+### panel information
 * (_Object_): Panel information about this gadget.  
 
 | Property  | Type    |  Description                                                 |
@@ -384,6 +438,8 @@ myGadget.getAttrs('attrs', [ 'manufacturer', 'power' ]);    // { manufacturer: '
 | profile   | String  | Profile of this gadget, can be any string, such as 'Home'    |
 | classId   | String  | Gadget class to tell what kind of application is this gadget |
 
+<a name="Data_attrs"></a>
+### attrs information
 * (_Object_): User-defined properties on this device.  
 
 | Property    | Type      | Description                                                                                                |  
@@ -392,65 +448,12 @@ myGadget.getAttrs('attrs', [ 'manufacturer', 'power' ]);    // { manufacturer: '
 | description | String    | Gadget description. Default will be `'unknown'` if not set. [TODO]                                         |  
 | _Others_    | _Depends_ | Other props                                                                                                |  
 
+<a name="Data_props"></a>
+### props information
+* (_Object_): User-defined properties on this device.  
 
-
-
-********************************************
-<a name="API_setPanelInfo"></a>
-### .setPanelInfo(info)
-[TODO MOVE TO DEV SECTION]  Locally set panel information of the gadget. This may cause 'panelChanged' event if gadget is enabled and registered to freebird. Setting of `'enabled'` will be ignored.  
-  
-**Arguments:**  
-
-1. `info` (_Object_): Panel information to set.  
-
-**Returns:**  
-
-* (_Gadget_): gadget itself.  
-
-**Examples:**  
-  
-```js
-myGadget.setPanelInfo({ classId: 'humidity' });
-```
-
-********************************************
-<a name="API_setProps"></a>
-### .setProps(props)
-Locally set properties on the gadget. This may cause 'propsChanged' event if device is enabled and registered to freebird.  
-  
-**Arguments:**  
-
-1. `props` (_Object_): Properties to set.  
-
-**Returns:**  
-
-* (_Gadget_): gadget itself.  
-
-**Examples:**  
-  
-```js
-myGadget.setProps({ greeting: 'hello world' });
-```
-
-********************************************
-<a name="API_setAttrs"></a>
-### .setAttrs(attrs)
-[TODO MOVE TO DEV SECTION] Locally set attributes on the gadget. This may cause 'attrsChanged' event if gadget is enabled and registered to freebird. Only attributes listed in [TODO]() are accepted.  
-
-**Arguments:**  
-
-1. `attrs` (_Object_): An object contains key-value pairs of the attributes  
-
-**Returns:**  
-
-* _none_
-
-**Examples:**  
-  
-```js
-myGadget.setAttrs({ sensorValue: '86', unit: 'F' });
-```
-
-********************************************
-
+| Property    | Type      | Description                                                                                                |  
+|-------------|-----------|------------------------------------------------------------------------------------------------------------|  
+| name        | String    | Human-redable name of this gadget, default will be `'unknown'` if not set. [TODO]                          |  
+| description | String    | Gadget description. Default will be `'unknown'` if not set. [TODO]                                         |  
+| _Others_    | _Depends_ | Other props                                                                                                |  

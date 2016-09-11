@@ -229,18 +229,18 @@ myDevice.dump();
 ## Getter and Setter
 
 <a name="API_get"></a>
-### .get(propName)
+### .get(name)
 Getter to get the required information.  
   
 **Arguments:**  
 
-1. `propName` (_String_): Possible `propName` are listed in the follwoing table.  
+1. `name` (_String_): Possible names are listed in the follwoing table.  
 
-| `propName`          | Description                                                                                                                             | Example                      | Returned Data Type             |  
+| Name                | Description                                                                                                                             | Example                      | Returned Data Type             |  
 |---------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------------------|--------------------------------|  
 | 'id'                | Get device id assigned by freebird. It will be `null` if it is not registered to freebird.                                              | `myDevice.get('id')`         |  Number \| String              |  
-| 'rawGad'            | Get raw device data which may be `undefined` if it was not given at instance creation.                                                  | `myDevice.get('rawGad')`     |  Object                        |  
-| 'raw'               | Alias of `'rawGad'`.                                                                                                                    | `myDevice.get('raw')`        |  -                             |  
+| 'rawDev'            | Get raw device data which may be `undefined` if it was not given at instance creation.                                                  | `myDevice.get('rawDev')`     |  Object                        |  
+| 'raw'               | Alias of `'rawDev'`.                                                                                                                    | `myDevice.get('raw')`        |  -                             |  
 | 'nectcore'          | Get the netcore that manages this device.                                                                                               | `myDevice.get('netcore')`    |  Object ([Netcore])            |
 | 'nc'                | Alias of `'netcore'`.                                                                                                                   | `myDevice.get('nc')`         |  -                             |  
 | 'address'           | Get device permanent and dynamic addresses. Returned object has a shape of `{ permanent, dynamic }`.                                    | `myDevice.get('address')`    |  Object                        |  
@@ -257,7 +257,7 @@ Getter to get the required information.
 
 **Returns:**  
 
-* (_Depends_): If `propName` is none of the listed property, always returns `undefined`.  
+* (_Depends_): If `name` is none of the listed property, always returns `undefined`.  
 
 **Examples:**  
   
@@ -319,7 +319,7 @@ myDevice.get('net');  // true
 }
 */
 
-myDevice.getAttrs('attrs');
+myDevice.get('attrs');
 /*
 {
     manufacturer: 'sivann',
@@ -340,21 +340,22 @@ myDevice.getAttrs('attrs');
 myDevice.get('props');
 /*
 {
-    name: 'temp_sensor_01',                  // client user set at will
-    description: 'detect heat around stove', // client user set at will
-    location: 'kitchen'                      // client user set at will
+    name: 'home sensor 1',          // client user set at will
+    description: 'detect heat',     // client user set at will
+    location: 'kitchen'             // client user set at will
+    // There may be other properties
 }
 */
 ```
 
 ********************************************
 <a name="API_set"></a>
-### .set(propName, value)
-Setter to set tha value to device.  
+### .set(name, value)
+Setter to set the value to device.  
   
 **Arguments:**  
 
-1. `propName` (_String_): Possible `propName` are `'net'`, `'attrs'`, and `props`.
+1. `name` (_String_): Possible names are `'net'`, `'attrs'`, and `'props'`.
 2. `value` (_Depends_)
 
 * `set('net', value)`
@@ -529,7 +530,7 @@ myDevice.refresh(function (err, attrs) {
 | status      | String  | Can be `'unknown'`, `'online'`, `'offline'`, or `'sleep'`.                                                 |  
 | address     | Object  | The permanent and dynamic adrresses of this device. This object is in the format of `{ permanent: '00:01:xx', dynamic: '192.168.0.99' }`. |  
 
-<a name="Data_props"></a>
+<a name="Data_attrs"></a>
 ### User-defined properties on this device.
 
 | Property    | Type      | Description                                                                                                |  
