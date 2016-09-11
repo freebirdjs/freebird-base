@@ -3,24 +3,27 @@ The Device Class defines a device which can have many gadgets(applications) on i
 
 ## APIs
 
-* [v new Device()](#API_Device)
-* [v isEnabled()](#API_isEnabled)
-* [v isRegistered()](#API_isRegistered)
-* [v enable()](#API_enable)
-* [v disable()](#API_disable)
-* [v resetTraffic()](#API_resetTraffic)
-* [v dump()](#API_dump)
+* [new Device()](#API_Device)
+* [isEnabled()](#API_isEnabled)
+* [isRegistered()](#API_isRegistered)
+* [enable()](#API_enable)
+* [disable()](#API_disable)
+* [resetTraffic()](#API_resetTraffic)
+* [dump()](#API_dump)
 * Getter and Setter
     - [get()](#API_get)
     - [set()](#API_set)
 * Remote Operations
-    - [v read()](#API_read)
-    - [v write()](#API_write)
-    - [v identify()](#API_identify)
-    - [v ping()](#API_ping)
-    - [v refresh()](#API_refresh)
-    
-  
+    - [read()](#API_read)
+    - [write()](#API_write)
+    - [identify()](#API_identify)
+    - [ping()](#API_ping)
+    - [refresh()](#API_refresh)
+* Data Formats
+    - [net](#Data_net)
+    - [props](#Data_props)
+    - [attrs](#Data_attrs)
+
 ********************************************
 <a name="API_Device"></a>
 ### new Device(netcore[, rawDev])
@@ -28,8 +31,8 @@ New a device instance.
   
 **Arguments:**  
 
-1. `netcore` (_Object_): The netcore that manages this device.  
-2. `rawDev` (_Object_): Raw device, maybe a data object that contains many information about this device.  
+1. `netcore` (_Object_): The netcore that manages this device. Should be an instance of the _Netcore_ class.  
+2. `rawDev` (_Object_): Optional. The `rawDev` maybe a data object that contains many raw information about this device.  
 
 **Returns:**  
 
@@ -40,7 +43,7 @@ New a device instance.
 ```js
 var myNetcore = require('./my_foo_netcore');
 var deviceRawData = {
-    ieeeAddr: '0x123456789ABCDEF',
+    ieeeAddr: '0x123456789abcdef',
     nwkAddr: 0x27B3,
     // ...
 };
@@ -59,7 +62,7 @@ Checks if this device is enabled.
 
 **Returns:**  
 
-* (_Boolean_): Returns `true` if enabled, else `false.  
+* (_Boolean_): Returns `true` if enabled, else `false`.  
 
 **Examples:**  
   
@@ -78,7 +81,7 @@ Checks if this device has been registered to freebird.
 
 **Returns:**  
 
-* (_Boolean_): Returns `true` if registered, else `false.  
+* (_Boolean_): Returns `true` if registered, else `false`.  
 
 **Examples:**  
   
@@ -131,7 +134,7 @@ Reset the traffic record.
   
 **Arguments:**  
 
-1. `dir` (_String_): If given with `'in'`, the incoming traffic will be reset, else if given with `'out'`, the outgoing traffic will be reset. Both incoming and outgoing traffic records will be reset.  
+1. `dir` (_String_): If given with `'in'`, the incoming traffic will be reset, else if given with `'out'`, the outgoing traffic will be reset. Both incoming and outgoing traffic records will be reset if `dir` is not specified.  
 
 **Returns:**  
 
@@ -140,9 +143,9 @@ Reset the traffic record.
 **Examples:**  
   
 ```js
-myDevice.resetTraffic();
 myDevice.resetTraffic('in');
 myDevice.resetTraffic('out');
+myDevice.resetTraffic();
 ```
 
 ********************************************
@@ -158,14 +161,14 @@ Dump the information about this device.
 
 * (_Object_): Information about this device.  
 
-| Property | Type   | Description               |
-|----------|--------|---------------------------|
-| netcore  | String | Netcore name              |
-| id       | Number | Device id in freebird     |
-| gads     | Array  | Gadget records            |
-| net      | Object | Network information       |
-| props    | Object | User-defined properties   |
-| attrs    | Object | Device attributes         |
+| Property | Type   | Description                                                      |
+|----------|--------|------------------------------------------------------------------|
+| netcore  | String | Netcore name                                                     |
+| id       | Number | Device id assigned by freebird                                   |
+| gads     | Array  | Gadget records, each record has a shape of `{ gadId, auxId }`    |
+| net      | Object | Network information obecjt ([net](#Data_net))                    |
+| attrs    | Object | Device attributes ([attrs](#Data_attrs))                         |
+| props    | Object | User-defined properties ([props](#Data_props))                   |
 
 
 **Examples:**  
@@ -195,14 +198,9 @@ myDevice.dump();
         sleepPeriod: 60,
         status: 'online',
         address: {
-            permanent: '0x123456789ABCDEF',
+            permanent: '0x123456789abcdef',
             dynamic: 10163 
         }
-    },
-    props: {
-        name: 'home sensor 1',
-        description: 'It measures temp and humidity in kitchen.',
-        location: 'kitchen'
     },
     attrs: {
         manufacturer: 'freebird',
@@ -217,10 +215,178 @@ myDevice.dump();
             type: 'line',
             voltage: '5V'
         }
+    },
+    props: {
+        name: 'home sensor 1',
+        description: 'It measures temp and humidity in kitchen.',
+        location: 'kitchen'
     }
 }
 */
 ```
+
+********************************************
+## Getter and Setter
+
+<a name="API_get"></a>
+### .get(propName)
+Getter to get the required information.  
+  
+**Arguments:**  
+
+1. `propName` (_String_): Possible `propName` are listed in the follwoing table.  
+
+| `propName`          | Description                                                                                                                             | Example                      | Returned Data Type             |  
+|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------------------|--------------------------------|  
+| 'id'                | Get device id assigned by freebird. It will be `null` if it is not registered to freebird.                                              | `myDevice.get('id')`         |  Number \| String              |  
+| 'rawGad'            | Get raw device data which may be `undefined` if it was not given at instance creation.                                                  | `myDevice.get('rawGad')`     |  Object                        |  
+| 'raw'               | Alias of `'rawGad'`.                                                                                                                    | `myDevice.get('raw')`        |  -                             |  
+| 'nectcore'          | Get the netcore that manages this device.                                                                                               | `myDevice.get('netcore')`    |  Object ([Netcore])            |
+| 'nc'                | Alias of `'netcore'`.                                                                                                                   | `myDevice.get('nc')`         |  -                             |  
+| 'address'           | Get device permanent and dynamic addresses. Returned object has a shape of `{ permanent, dynamic }`.                                    | `myDevice.get('address')`    |  Object                        |  
+| 'addr'              | Alias of `'address'`.                                                                                                                   | `myDevice.get('addr')`       |  -                             |  
+| 'permAddr'          | Get device permanent address. For exameple, `'00:0c:29:ff:ed:7c'`.                                                                      | `myDevice.get('permAddr')`   |  String                        |  
+| 'dynAddr'           | Get device dynamic address. For exameple, `'192.168.1.96'`.                                                                             | `myDevice.get('dynAddr')`    |  String \| Number              |  
+| 'status'            | Get device status. Could be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.                                                        | `myDevice.get('status')`     |  String                        |  
+| 'gadTable'          | Get the table of gadget records on this device. Returned array has a shape of `[ { gadId, auxId }, ... ]`.                              | `myDevice.get('gadTable')`   |  Array                         |  
+| 'traffic'           | Get the current traffic record of this device. Returned object has a shape of `{ in: { hits, bytes }, out: { hits, bytes } }`.          | `myDevice.get('traffic')`    |  Object                        |  
+| 'net'               | Get network information of this device. You can give a single key or an array of keys to choose what information you'd like to get.     | `myDevice.get('net')`        |  Object ([net](#Data_net))     |  
+| 'attrs'             | Get attributes of this device.                                                                                                          | `myDevice.get('attrs')`      |  Object ([attrs](#Data_attrs)) |  
+| 'props'             | Get user-defined properties of this device. You can give a single key or an array of keys to choose what information you'd like to get. | `myDevice.get('props')`      |  Object ([props](#Data_props)) |  
+
+
+**Returns:**  
+
+* (_Depends_): If `propName` is none of the listed property, always returns `undefined`.  
+
+**Examples:**  
+  
+```js
+myDevice.get('foo_name');   // undefined
+
+myDevice.get('id');         // 18
+
+myDevice.get('raw');
+myDevice.get('rawGad');     // { ieeeAddr: '0x123456789abcdef', nwkAddr: 0x27B3, ... }
+
+myDevice.get('nc');
+myDevice.get('netcore');    // netcore instance
+
+myDevice.get('addr');
+myDevice.get('address');    // { permanent: '0x123456789abcdef', dynamic: 10163 };
+
+myDevice.get('permAddr');   // '0x123456789abcdef'
+myDevice.get('dynAddr');    // 10163
+
+myDevice.get('status');   // 'online'. Can be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.  
+
+myDevice.get('gadTable');
+/*
+[
+    { gadId: 28, auxId: 'temperature/0' },
+    { gadId: 29, auxId: 'temperature/1' },
+    { gadId: 30, auxId: 'humidity/0' }
+]
+*/
+
+myDevice.get('traffic');
+/*
+{
+    in: { hits: 6, bytes: 220 },
+    out: { hits: 8, bytes: 72 }
+}
+*/
+
+myDevice.get('net');  // true
+/*
+{
+    enabled: true,
+    joinTime: 1458008311,
+    timestamp: 1458008617,
+    traffic: {
+        in: { hits: 882, bytes: 77826 }
+        out: { hits: 67, bytes: 1368  }
+    },
+    role: 'end-device',
+    parent: '0x24576052CDEF',
+    maySleep: true,
+    sleepPeriod: 60,
+    status: 'online',
+    address: {
+        permanent: '0x123456789abcdef',
+        dynamic: 10163 
+    }
+}
+*/
+
+myDevice.getAttrs('attrs');
+/*
+{
+    manufacturer: 'sivann',
+    model: 'zb-temperature-sensor',
+    serial: 'zb-2016-03-28-002',
+    version: {
+        hw: '0.8.0',
+        sw: '0.4.2',
+        fw: '0.4.2'
+    },
+    power: {
+        type: 'battery',
+        voltage: '3.3V'
+    }
+}
+*/
+
+myDevice.get('props');
+/*
+{
+    name: 'temp_sensor_01',                  // client user set at will
+    description: 'detect heat around stove', // client user set at will
+    location: 'kitchen'                      // client user set at will
+}
+*/
+```
+
+********************************************
+<a name="API_set"></a>
+### .set(propName, value)
+Setter to set tha value to device.  
+  
+**Arguments:**  
+
+1. `propName` (_String_): Possible `propName` are `'net'`, `'attrs'`, and `props`.
+2. `value` (_Depends_)
+
+* `set('net', value)`
+    - Locally set network information on the device. Setting of `'enabled'` property will be ignored, should use `enable()` and `disable()` instead.
+    - `value` (_Object_): An object contains key-value pairs of the network information.
+* `set('attrs', value)`
+    - Locally set attributes on the device. Only attributes listed in [attrs](#Data_attrs) are accepted. If you like to have some additional attributes, please use `set('props', value)`.
+    - `value` (_Object_): An object contains key-value pairs of the attributes.
+* `set('props', value)`
+    - Locally set properties on the device. This is for customization, you are free to add any property you like.
+    - `value` (_Object_): An object contains key-value pairs of the properties.
+
+**Returns:**  
+
+* (_Object_): device
+
+**Examples:**  
+
+```js
+myDevice.set('net', {
+    enabled: true,      // this will be ignore, use enable() or disable() instead
+    status: 'online'
+});
+
+myDevice.set('attrs', {
+    manufacturer: 'foo_brand'
+});
+
+myDevice.set('props', {
+    greeting: 'hello world!'
+});
+````
 
 ********************************************
 ## Remote Operations
@@ -343,126 +509,12 @@ myDevice.refresh(function (err, attrs) {
 ```
 
 ********************************************
-## Getter and Setter
+## Data Formats
 
-<a name="API_get"></a>
-### .get(propName[, arg])
-Getter to get the required information.  
-  
-**Arguments:**  
+[TBD]
 
-1. `propName` (_String_): 
-2. `arg`
-
-| `propName`          | `arg`      | Description                                                                                                                             | Example                    |  
-|---------------------|------------|-----------------------------------------------------------------------------------------------------------------------------------------|----------------------------|  
-| 'id'                | _none_     | Get device id assigned by freebird. It will be `null` if it is not registered to freebird.                                              | `myDevice.get('id')`       |  
-| 'raw' or 'rawGad'   | _none_     | Get raw device data which may be `undefined` if it was not given at instance creation.                                                  | `myDevice.get('raw')` or `myDevice.get('rawGad')` |  
-| 'nc' or 'nectcore'  | _none_     | Get the netcore that manages this device.                                                                                               | `myDevice.get('nc')` or `myDevice.get('netcore')` |  
-| 'gadTable'          | _none_     | Get the table of gadget records on this device.                                                                                         | `myDevice.get('gadTable')` |  
-| 'addr' or 'address' | _none_     | Get device permanent and dynamic addresses.                                                                                             | `myDevice.get('addr')` or `myDevice.get('address')`  |  
-| 'permAddr'          | _none_     | Get device permanent address.                                                                                                           | `myDevice.get('permAddr')` |  
-| 'dynAddr'           | _none_     | Get device dynamic address.                                                                                                             | `myDevice.get('dynAddr')`  |  
-| 'status'            | _none_     | Get device status. Could be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.                                                        | `myDevice.get('status')`   |  
-| 'traffic'           | _optioanl_ | Get the current traffic record of this device.                                                                                          | `myDevice.get('traffic')`  |  
-| 'net'               | _optioanl_ | Get network information of this device. You can give a single key or an array of keys to choose what information you'd like to get.     | `myDevice.get('net')`, `myDevice.get('net', 'parent')`, `myDevice.get('net', [ 'parent', 'joinTime'] )`   |  
-| 'props'             | _optioanl_ | Get user-defined properties of this device. You can give a single key or an array of keys to choose what information you'd like to get. | `myDevice.get('props')`, `myDevice.get('props', 'name')`, `myDevice.get('props', [ 'name', 'location' ])` |  
-| 'attrs'             | _optioanl_ | Get attributes of this device.                                                                                                          | `myDevice.get('attrs')`, `myDevice.get('attrs', 'version')`, `myDevice.get('attrs', [ 'model', 'version' ])`    |  
-      
-
-* (_Object_): The object has `in` and `out` properties to show traffic with this device.  
-
-| Property  | Type   | Description                                                                                                |  
-|-----------|--------|------------------------------------------------------------------------------------------------------------|  
-| in        | Object | An object like `{ hits: 6, bytes: 220 }` to show the times and bytes of data that this device transmitted. |  
-| out       | Object | An object like `{ hits: 8, bytes: 72 }` to show the times and bytes of data that this device received.     |  
-
-
-**Examples:**  
-  
-```js
-myDevice.get('netcore');  // netcore instance
-myDevice.get('raw');      // { ieeeAddr: '0x123456789ABCDEF', nwkAddr: 0x27B3, ... }
-myDevice.get('id');       // 18
-myDevice.get('addr');     // { permanent: '0x123456789ABCDEF', dynamic: 10163 };
-myDevice.get('permAddr'); // '0x123456789ABCDEF'
-myDevice.get('dynAddr');  // 10163
-myDevice.get('status');   // 'online'. Can be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.  
-myDevice.get('gadTab;e');
-/*
-[
-    { gadId: 28, auxId: 'temperature/0' },
-    { gadId: 29, auxId: 'temperature/1' },
-    { gadId: 30, auxId: 'humidity/0' }
-]
-*/
-myDevice.get('traffic');
-/*
-{
-    in: { hits: 6, bytes: 220 },
-    out: { hits: 8, bytes: 72 }
-}
-*/
-
-myDevice.get('traffic', 'in');  // { hits: 6, bytes: 220 }
-myDevice.get('traffic', 'out'); // { hits: 6, bytes: 220 }
-myDevice.get('traffic', 'foo'); // undefined
-
-myDevice.get('net', 'enabled'); // true
-myDevice.get('net', [ 'enabled', 'status', 'address' ]);
-/*
-{
-    enabled: true,
-    status: 'online',
-    address: {
-        permanent: '0x123456789ABCDEF',
-        dynamic: 10163 
-    }
-}
-*/
-
-myDevice.get('net');  // true
-/*
-{
-    enabled: true,
-    joinTime: 1458008311,
-    timestamp: 1458008617,
-    traffic: {
-        in: { hits: 882, bytes: 77826 }
-        out: { hits: 67, bytes: 1368  }
-    },
-    role: 'end-device',
-    parent: '0x24576052CDEF',
-    maySleep: true,
-    sleepPeriod: 60,
-    status: 'online',
-    address: {
-        permanent: '0x123456789ABCDEF',
-        dynamic: 10163 
-    }
-}
-*/
-
-myDevice.get('props', [ 'name', 'location' ]);              // { name: 'temp sensor', location: 'kitchen' }
-myDevice.getAttrs('attrs', [ 'manufacturer', 'power' ]);    // { manufacturer: 'sivann', power: { type: 'line', voltage: '12V' } }
-```
-
-
-* (_Object_): The object has `permanent` and `dynamic` properties to show the permanent (e.g., mac) and the dynamic (e.g., ip) addresses of the device.  
-
-| Property  | Type             | Description                                            |  
-|-----------|------------------|--------------------------------------------------------|  
-| permanent | String           | Permanent address, such as mac address, ieee address.  |  
-| dynamic   | String \| Number | Dynamic address, such as ip address, network address.  |  
-
-* (_Array_): Returns an array that contains the record of gadgets on this device. The record is maintained by freebird. Each element in the array is an data object with keys given in the following table.  
-
-| Property  | Type             | Description                                                                                                         |  
-|-----------|------------------|---------------------------------------------------------------------------------------------------------------------|  
-| gadId     | Number           | Gadget identifier assgined by frrebird.                                                                             |  
-| auxId     | String \| Number | Auxiliary identifier to help allocate a gadget on the real device. The `auxId` is given by netcore driver designer. |  
-
-* (_Object_): Network information about this device.  
+<a name="Data_net"></a>
+### network information
 
 | Property    | Type    | Description                                                                                                |  
 |-------------|---------|------------------------------------------------------------------------------------------------------------|  
@@ -477,9 +529,8 @@ myDevice.getAttrs('attrs', [ 'manufacturer', 'power' ]);    // { manufacturer: '
 | status      | String  | Can be `'unknown'`, `'online'`, `'offline'`, or `'sleep'`.                                                 |  
 | address     | Object  | The permanent and dynamic adrresses of this device. This object is in the format of `{ permanent: '00:01:xx', dynamic: '192.168.0.99' }`. |  
 
-
-
-* (_Object_): User-defined properties on this device.  
+<a name="Data_props"></a>
+### User-defined properties on this device.
 
 | Property    | Type      | Description                                                                                                |  
 |-------------|-----------|------------------------------------------------------------------------------------------------------------|  
@@ -488,7 +539,9 @@ myDevice.getAttrs('attrs', [ 'manufacturer', 'power' ]);    // { manufacturer: '
 | location    | String    | Location of this device. Default will be `'unknown'` if not set. [TODO]                                    |  
 | _Others_    | _Depends_ | Other props                                                                                                |  
 
-* (_Object_): Attributes on this device.  
+
+<a name="Data_props"></a>
+### Attributes on this device. The arrtibutes are coming from the remote machine.  
 
 | Property     | Type            | Description                                                                                           |
 |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
@@ -497,87 +550,4 @@ myDevice.getAttrs('attrs', [ 'manufacturer', 'power' ]);    // { manufacturer: '
 | serial       | String          | Serial number of this device.                                                                         |
 | version      | Object          | Version tags. { hw: '', sw: 'v1.2.2', fw: 'v0.0.8' }                                                  |
 | power        | Object          | Power source. { type: 'battery', voltage: '5V' }. The type can be 'line', 'battery' or 'harvester'    |
-
-
-********************************************
-<a name="API_set"></a>
-### .set(propName, data)
-Setter to set the information.  
-  
-**Arguments:**  
-
-1. `propName` (_String_): 
-2. `data` (_Depends_):
-
-
-********************************************
-<a name="setNetInfo"></a>
-### .setNetInfo(info)
-[TODO MOVE TO DEV SECTION] Locally set network information on the device. This may cause 'netChanged' event if device is enabled and registered to freebird. Setting of `'enabled'` will be ignored. 
-  
-**Arguments:**  
-
-1. `info` (_Object_): An object contains key-value pairs of the network information  
-
-**Returns:**  
-
-* (_Object_): device itself
-
-**Examples:**  
-  
-```js
-myDevice.setNetInfo({
-    enabled: true,
-    status: 'online',
-    address: {
-        permanent: '0x123456789ABCDEF',
-        dynamic: 10163 
-    }
-});
-```
-
-********************************************
-<a name="setProps"></a>
-### .setProps(props)
-Locally set properties on the device. This may cause 'propsChanged' event if device is enabled and registered to freebird.  
-  
-**Arguments:**  
-
-1. `props` (_Object_): An object contains key-value pairs of the properties  
-
-**Returns:**  
-
-* (_Object_): device itself
-
-**Examples:**  
-  
-```js
-myDevice.setProps({
-    greeting: 'hello world!'
-});
-```
-
-********************************************
-<a name="setAttrs"></a>
-### .setAttrs(attrs)
-[TODO MOVE TO DEV SECTION] Locally set attributes on the device. This may cause 'attrsChanged' event if device is enabled and registered to freebird. Only attributes listed in [TODO]() are accepted.  
-  
-**Arguments:**  
-
-1. `attrs` (_Object_): An object contains key-value pairs of the attributes  
-
-**Returns:**  
-
-* (_Object_): device itself
-
-**Examples:**  
-  
-```js
-myDevice.setAttrs({
-    manufacturer: 'foo_brand'
-});
-```
-
-
-
 

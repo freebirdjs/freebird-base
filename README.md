@@ -3,23 +3,22 @@ Base classes used in freebird framework.
 
 ## Table of Contents
 
-1. [Overiew](#Overiew)  
-2. [Installation](#Installation)  
-3. [Abstractions](#Abstractions)  
-
-3. [Basic Usage](#Basic)  
-4. [Netcore Class](#Netcore)  
-5. [Device Class](#Device)  
-6. [Gadget Class](#Gadget)  
+1. [Overiew](#Overiew)
+2. [Installation](#Installation)
+3. [Abstractions](#Abstractions)
+3. [Basic Usage](#Basic)
+4. [Netcore Class](#Netcore)
+5. [Device Class](#Device)
+6. [Gadget Class](#Gadget)
 
 <a name="Overiew"></a>
 ## 1. Overview
 
-**freebird-base** is base classes used in [freebird](https://github.com/freebirdjs/freebird) framework of IoT networking and applications. These classes are Netcore, Device, and Gadget, which are abstractions of the network controller, network device, and real appliance, respectively.  
+**freebird-base** includes base classes of Netcore, Device, and Gadget that are used in the [freebird](https://github.com/freebirdjs/freebird) IoT network and application framework. These classes are abstractions of the network controller, network device, and real appliance, respectively.  
 
-* **Netcore** is a network controller responsible for message transportation and network management. For example, a zigbee coordinator.  
-* **Device** is a wired/wireless machine in the network. For example, a zigbee end-device, a BLE peripheral, a MQTT client, or a CoAP server(LWM2M client).  
-* **Gadget** represents something specific and functional in our life. For example, a temperature sensor, a light switch, or a barometer.  
+* **Netcore** is a network controller responsible for message transportation and network management. For example, a zigbee coordinator.
+* **Device** is a wired/wireless machine in the network. For example, a zigbee end-device, a BLE peripheral, a MQTT client, or a CoAP server(LWM2M client).
+* **Gadget** represents something specific and functional in our life. For example, a temperature sensor, a light switch, or a barometer.
 
 <a name="Installation"></a>
 ## 2. Installation
