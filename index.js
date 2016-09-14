@@ -6,6 +6,7 @@ module.exports = {
     Netcore: Netcore,
     Device: Device,
     Gadget: Gadget,
+    EVENTS: require('./lib/constants.js').EVENTS,
     createNetcore: function (name, controller, protocol, opt) {
         return new Netcore(name, controller, protocol, opt);
     }
