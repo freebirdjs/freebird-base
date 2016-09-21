@@ -14,7 +14,7 @@ var fb = Object.create(new EventEmitter());
 fb.getAllDevs = function () { return []; };
 
 fb.on('_nc:error', function (err) {
-    console.log(err);
+    // console.log(err);
 });
 
 var ncname = 'mync';

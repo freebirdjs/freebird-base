@@ -41,7 +41,7 @@ nc.registerGadDrivers({
 });
 
 fb.on('_nc:error', function (err) {
-    console.log(err);
+    // console.log(err);
 });
 
 describe('Drivers test - with optional', function () {
