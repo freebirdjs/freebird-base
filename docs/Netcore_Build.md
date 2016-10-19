@@ -1,51 +1,51 @@
 ## Signatures for drivers
 
 * net
-    - start: `function(callback) {}`
-        * `callback(err)` should be called after done
-    - stop: `function(callback) {}`
-        * `callback(err)` should be called after done
-    - reset: `function(mode, callback) {}`
-        * `callback(err)` should be called after done
-    - permitJoin: `function(duration, callback) {}`
-        * `callback(err, timeLeft)` should be called after done
+    - start: `function(done) {}`
+        * `done(err)` should be called after done
+    - stop: `function(done) {}`
+        * `done(err)` should be called after done
+    - reset: `function(mode, done) {}`
+        * `done(err)` should be called after done
+    - permitJoin: `function(duration, done) {}`
+        * `done(err, timeLeft)` should be called after done
         * timeLeft (_Number_): Time left for joining in seconds, e.g., 180.
-    - remove: `function(permAddr, callback) {}`
-        * `callback(err, permAddr)` should be called after done
+    - remove: `function(permAddr, done) {}`
+        * `done(err, permAddr)` should be called after done
         * permAddr (_String_): permAddr, e.g., '0x12345678'.
-    - ban: `function(permAddr, callback) {}`
-        * `callback(err, permAddr)` should be called after done
+    - ban: `function(permAddr, done) {}`
+        * `done(err, permAddr)` should be called after done
         * permAddr (_String_): permAddr, e.g., '0x12345678'.
-    - unban: `function(permAddr, callback) {}` should be called after done
-        * `callback(err, permAddr)` should be called after done
+    - unban: `function(permAddr, done) {}` should be called after done
+        * `done(err, permAddr)` should be called after done
         * permAddr (_String_): permAddr, e.g., '0x12345678'.
-    - ping: `function(permAddr, callback) {}, callback(err, time), `
-        * `callback(err, time)` should be called after done
+    - ping: `function(permAddr, done) {}, done(err, time), `
+        * `done(err, time)` should be called after done
         * time (_Number_): round-trip time in milliseconds, e.g., 16.
 * dev
-    - read: `function(permAddr, attr, callback) {}`
-        * `callback(err, val)` should be called after done
+    - read: `function(permAddr, attrName, done) {}`
+        * `done(err, val)` should be called after done
         * val (_Depends_): value read. Type denpends, e.g., `'hello'`, `12`, `false`.
-    - write: `function(permAddr, attr, val, callback) {}, ),`
-        * `callback(err, val)`
+    - write: `function(permAddr, attrName, val, done) {}, ),`
+        * `done(err, val)`
         * val: value written (optional, Type denpends, ex: 'hello', 12, false)
-    - identify: `function(permAddr, callback) {}`
-        * `callback(err)`
+    - identify: `function(permAddr, done) {}`
+        * `done(err)`
 * gad
-    - read: `function(permAddr, auxId, attr, callback) {}`
-        * `callback(err, val)`
+    - read: `function(permAddr, auxId, attrName, done) {}`
+        * `done(err, val)`
         * val (_Depends_): value read (Type denpends, ex: 'hello', 12, false)
-    - write: `function(permAddr, auxId, attr, callback) {}`
-        * `callback(err, val)`
+    - write: `function(permAddr, auxId, attrName, val, done) {}`
+        * `done(err, val)`
         * val (_Depends_): value written (optional, Type denpends, ex: 'hello', 12, false)
-    - exec: `function(permAddr, auxId, attr, args, callback) {}`
-        * `callback(err, result)`
+    - exec: `function(permAddr, auxId, attrName, args, done) {}`
+        * `done(err, result)`
         * result (_Depends_): can be anything, depends on firmware
-    - setReportCfg: `function(permAddr, auxId, attrName, cfg, callback) {}`
-        * `callback(err, result)`
+    - setReportCfg: `function(permAddr, auxId, attrName, cfg, done) {}`
+        * `done(err, result)`
         * result (_Depends_): set succeeds? (Boolean, true or false)
-    - getReportCfg: `function(permAddr, auxId, attrName, callback) {}`
-        * `callback(err, cfg)`
+    - getReportCfg: `function(permAddr, auxId, attrName, done) {}`
+        * `done(err, cfg)`
         * cfg (_Object_): config object (Object, ex: { pmin: 10, pmax: 60, gt: 200 })
 
 
