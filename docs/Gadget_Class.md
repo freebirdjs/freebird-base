@@ -1,14 +1,13 @@
 # Gadget Class
 The Gadget Class defines a gadget which is a single and small application, such as a temperature sensor, a light switch, and a barometer. This document will show you what methods does a gadget have.  
 
-## APIs
-
-* [new Gadget()](#API_Gadget)
-* [isEnabled()](#API_isEnabled)
-* [isRegistered()](#API_isRegistered)
-* [enable()](#API_enable)
-* [disable()](#API_disable)
-* [dump()](#API_dump)
+* Gadget Constructor and Basic Methods
+    - [new Gadget()](#API_Gadget)
+    - [isEnabled()](#API_isEnabled)
+    - [isRegistered()](#API_isRegistered)
+    - [enable()](#API_enable)
+    - [disable()](#API_disable)
+    - [dump()](#API_dump)
 * Getter and Setter
     - [get()](#API_get)
     - [set()](#API_set)
@@ -19,12 +18,14 @@ The Gadget Class defines a gadget which is a single and small application, such 
     * [getReportCfg()](#API_getReportCfg)
     * [setReportCfg()](#API_setReportCfg)
 * Data Formats
-    - [panel](#Data_panel)
-    - [props](#Data_props)
-    - [attrs](#Data_attrs)
+    - [panelInfoObj](#Gad_panel)
+    - [gadPropsObj](#Gad_props)
+    - [gadAttrsObj](#Gad_attrs)
 
 ********************************************
-<a name="API_Device"></a>
+## Gadget Constructor and Basic Methods
+
+<a name="API_Gadget"></a>
 ### new Gadget(dev, auxId[, rawGad])
 New a gadget instance. If your are managing your machine network with freebird, the freebird will always create a gadget for you when there is a new gadget incoming to the network.  
   
@@ -133,15 +134,15 @@ Dump the information about this gadget.
 
 * (_Object_): Information about this device.  
 
-| Property | Type             | Description                                                                     |
-|----------|------------------|---------------------------------------------------------------------------------|
-| netcore  | String           | Netcore name                                                                    |
-| id       | Number           | Device id in freebird                                                           |
-| auxId    | String \| Number | Auxiliary id to identify the gadget on a device                                 |
-| dev      | Object           | Owner device info, `{ id: 3, permAddr: '0x12345678' }`                          |
-| panel    | Object           | Panel information, `{ enabled: true, profile: 'Home', classId: 'temperature' }` |
-| props    | Object           | User-defined properties                                                         |
-| attrs    | Object           | Gadget attributes                                                               |
+| Property | Type                       | Description                                                                     |
+|----------|----------------------------|---------------------------------------------------------------------------------|
+| netcore  | String                     | Netcore name                                                                    |
+| id       | Number                     | Gadget id in freebird                                                           |
+| auxId    | String \| Number           | Auxiliary id to identify the gadget on a device                                 |
+| dev      | Object                     | Owner device info, `{ id: 3, permAddr: '0x12345678' }`                          |
+| panel    | [panelInfoObj](#Gad_panel) | Panel information, `{ enabled: true, profile: 'Home', classId: 'temperature' }` |
+| props    | [gadPropsObj](#Gad_props)  | User-defined properties                                                         |
+| attrs    | [gadAttrsObj](#Gad_attrs)  | Gadget attributes                                                               |
 
 **Examples:**  
   
@@ -218,7 +219,7 @@ Remotely write the value to an attribue on this gadget.
 ```js
 myGadget.write('sensorValue', 18, function (err, data) {
     if (err)
-        console.log(err);  // Error: unwritable [TODO] ERROR FORMAT?
+        console.log(err);
 });
 
 myGadget.write('onOff', 1, function (err, data) {
@@ -259,7 +260,7 @@ Remotely get the report settings from the gadget.
 **Arguments:**  
 
 1. `attrName` (_Object_): Name of which attribute you'd like to get its reporting configuration  
-2. `callback` (_Function_):  `function (err, cfg) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+2. `callback` (_Function_):  `function (err, cfg) {}`. The `rsp` object has a status code to indicate whether the operation is successful  
 
 
 **Returns:**  
@@ -286,8 +287,8 @@ Set the report configuration to a gadget on the remote device.
 1. `attrName` (_Object_): Name of which attribute you'd like to set its reporting behavior  
 2. `cfg` (_Object_): Report configuration  
 
-    | Property | Type    | Mandatory | Description |
-    |----------|---------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | Property | Type    | Mandatory | Description                                                                                                                                                                                             |
+    |----------|---------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
     | pmin     | Number  | optional  | Minimum Period. Minimum time in seconds the Client Device should wait from the time when sending the last notification to the time when sending a new notification.                                     |
     | pmax     | Number  | optional  | Maximum Period. Maximum time in seconds the Client Device should wait from the time when sending the last notification to the time sending the next notification (regardless if the value has changed). |
     | gt       | Number  | optional  | Greater Than. The Client Device should notify its value when the value is greater than this setting. Only valid for the Resource typed as a number.                                                     |
@@ -295,7 +296,7 @@ Set the report configuration to a gadget on the remote device.
     | stp      | Number  | optional  | Step. The Client Device should notify its value when the change of the Resource value, since the last report happened, is greater than this setting.                                                    |
     | enable   | Boolean | optional  | Set to `true` for a Client Device to enable observation on the allocated Resource or Object Instance.                                                                                                   |
 
-33. `callback` (_Function_):  `function (err, rsp) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+3. `callback` (_Function_):  `function (err) {}`  
 
 **Returns:**  
 
@@ -320,22 +321,22 @@ Getter to get the required information.
 
 1. `name` (_String_): 
 
-| Name                 | Description                                                                                  | Example                    | Returned Data Type            |  
-|----------------------|----------------------------------------------------------------------------------------------|----------------------------|-------------------------------|  
-| 'id'                 | Get gadget id assigned by freebird. It will be `null` if it is not registered to freebird.   | `myGadget.get('id')`       | Number \| String              |  
-| 'auxId'              | Get gadget auxiliary id.                                                                     | `myGadget.get('auxId')`    | Number \| String              |  
-| 'rawGad'             | Get raw data which may be `undefined` if it was not given at instance creation.              | `myGadget.get('rawGad')`   | Object                        |  
-| 'raw'                | Alias of 'rawGad'.                                                                           | `myGadget.get('raw')`      | -                             |  
-| 'device'             | Get the device that owns this gadget.                                                        | `myGadget.get('device')`   | Object ([Device])             |  
-| 'dev'                | Alias of 'device'.                                                                           | `myGadget.get('dev')`      | -                             |  
-| 'nectcore'           | Get the netcore that manages this gadget.                                                    | `myGadget.get('netcore')`  | Object ([Netcore])            |  
-| 'nc'                 | Alias of 'netcore'.                                                                          | `myGadget.get('nc')`       | -                             |  
-| 'permAddr'           | Get the permanent address from which device owns this gadget.                                | `myGadget.get('permAddr')` | String                        |  
-| 'dynAddr'            | Get the dynamic address from which device owns this gadget.                                  | `myGadget.get('dynAddr')`  | Number \| String              |  
-| 'location'           | Get the location of which device owns this gadget.                                           | `myGadget.get('location')` | String                        |  
-| 'panel'              | Get panel information of this gadget.                                                        | `myGadget.get('panel')`    | Object ([panel](#Data_panel)) |  
-| 'attrs'              | Get attributes of this device.                                                               | `myGadget.get('attrs')`    | Object ([attrs](#Data_attrs)) |  
-| 'props'              | Get user-defined properties of this gadget.                                                  | `myGadget.get('props')`    | Object ([props](#Data_props)) |  
+| Name                 | Description                                                                                  | Example                    | Returned Data Type                  |  
+|----------------------|----------------------------------------------------------------------------------------------|----------------------------|-------------------------------------|  
+| 'id'                 | Get gadget id assigned by freebird. It will be `null` if it is not registered to freebird.   | `myGadget.get('id')`       | Number \| String                    |  
+| 'auxId'              | Get gadget auxiliary id.                                                                     | `myGadget.get('auxId')`    | Number \| String                    |  
+| 'rawGad'             | Get raw data which may be `undefined` if it was not given at instance creation.              | `myGadget.get('rawGad')`   | Object                              |  
+| 'raw'                | Alias of 'rawGad'.                                                                           | `myGadget.get('raw')`      | Object                              |  
+| 'device'             | Get the device that owns this gadget.                                                        | `myGadget.get('device')`   | Object ([Device])                   |  
+| 'dev'                | Alias of 'device'.                                                                           | `myGadget.get('dev')`      | Object ([Device])                   |  
+| 'nectcore'           | Get the netcore that manages this gadget.                                                    | `myGadget.get('netcore')`  | Object ([Netcore])                  |  
+| 'nc'                 | Alias of 'netcore'.                                                                          | `myGadget.get('nc')`       | Object ([Netcore])                  |  
+| 'permAddr'           | Get the permanent address from which device owns this gadget.                                | `myGadget.get('permAddr')` | String                              |  
+| 'dynAddr'            | Get the dynamic address from which device owns this gadget.                                  | `myGadget.get('dynAddr')`  | Number \| String                    |  
+| 'location'           | Get the location of which device owns this gadget.                                           | `myGadget.get('location')` | String                              |  
+| 'panel'              | Get panel information of this gadget.                                                        | `myGadget.get('panel')`    | Object ([panelInfoObj](#Gad_panel)) |  
+| 'attrs'              | Get attributes of this device.                                                               | `myGadget.get('attrs')`    | Object ([gadAttrsObj](#Gad_attrs))  |  
+| 'props'              | Get user-defined properties of this gadget.                                                  | `myGadget.get('props')`    | Object ([gadPropsObj](#Gad_props))  |  
 
 **Examples:**  
   
@@ -387,24 +388,24 @@ myGadget.get('props');
 ```
 
 ********************************************
-<a name="API_get"></a>
-### .set(name, value)
-Setter to set the value to gadget.  
+<a name="API_set"></a>
+### .set(name, data)
+Setter to set the data to gadget.  
   
 **Arguments:**  
 
 1. `name` (_String_): Possible names are `'panel'`, `'attrs'`, and `'props'`.
-2. `value` (_Depends_)
+2. `data` (_Depends_): See descriptions below  
 
-* `set('panel', value)`
+* `set('panel', data)`
     - Locally set panel information on the gadget. Setting of `'enabled'` property will be ignored, should use `enable()` and `disable()` instead.
-    - `value` (_Object_): An object contains key-value pairs of the panel information.
-* `set('attrs', value)`
-    - Locally set attributes on the gadget. If you like to have some additional attributes, please use `set('props', value)`.
-    - `value` (_Object_): An object contains key-value pairs of the attributes.
-* `set('props', value)`
+    - `data` ([_panelInfoObj_](#Gad_panel)): An object contains key-value pairs of the panel information.
+* `set('attrs', data)`
+    - Locally set attributes on the gadget. If you like to have some additional attributes, please use `set('props', data)`.
+    - `data` ([_gadAttrsObj_](#Gad_attrs)): An object contains key-value pairs of the attributes.
+* `set('props', data)`
     - Locally set properties on the gadget. This is for customization, you are free to add any property you like.
-    - `value` (_Object_): An object contains key-value pairs of the properties.
+    - `data` ([_gadPropsObj_](#Gad_props)): An object contains key-value pairs of the properties.
 
 **Returns:**  
 
@@ -431,10 +432,9 @@ myGadget.set('props', {
 ********************************************
 ## Data Formats
 
-[TBD]
 
-<a name="Data_panel"></a>
-### panel information
+<a name="Gad_panel"></a>
+### Panel information: `panelInfoObj`
 * (_Object_): Panel information about this gadget.  
 
 | Property  | Type    |  Description                                                 |
@@ -443,22 +443,18 @@ myGadget.set('props', {
 | profile   | String  | Profile of this gadget, can be any string, such as 'Home'    |
 | classId   | String  | Gadget class to tell what kind of application is this gadget |
 
-<a name="Data_attrs"></a>
-### attrs information
-* (_Object_): User-defined properties on this device.  
+<a name="Gad_attrs"></a>
+### Attributes on the **remote** gadget: `gadAttrsObj`
+
+| Property    | Type      | Description                                                                                                                                                                       |  
+|-------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|  
+| _Others_    | _Depends_ | Remote attributes depend on classId of gadget. For a temperature sensor, it will have an attribute `sensorValue`, and may have attributes like `units` and `resetMinMaxMeaValues` |  
+
+<a name="Gad_props"></a>
+### User-defined properties on this gadget: `gadPropsObj`
 
 | Property    | Type      | Description                                                                                                |  
 |-------------|-----------|------------------------------------------------------------------------------------------------------------|  
-| name        | String    | Human-redable name of this gadget, default will be `'unknown'` if not set. [TODO]                          |  
-| description | String    | Gadget description. Default will be `'unknown'` if not set. [TODO]                                         |  
-| _Others_    | _Depends_ | Other props                                                                                                |  
-
-<a name="Data_props"></a>
-### props information
-* (_Object_): User-defined properties on this device.  
-
-| Property    | Type      | Description                                                                                                |  
-|-------------|-----------|------------------------------------------------------------------------------------------------------------|  
-| name        | String    | Human-redable name of this gadget, default will be `'unknown'` if not set. [TODO]                          |  
-| description | String    | Gadget description. Default will be `'unknown'` if not set. [TODO]                                         |  
+| name        | String    | Human-redable name of this gadget, default will be an empty string `''` if not set                         |  
+| description | String    | Gadget description. Default will be an empty string `''` if not set                                        |  
 | _Others_    | _Depends_ | Other props                                                                                                |  

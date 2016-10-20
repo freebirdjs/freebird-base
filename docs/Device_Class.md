@@ -1,15 +1,14 @@
 # Device Class
 The Device Class defines a device which can have many gadgets(applications) on it. A device is a real machine-node in the network, such as a CC2530 ZigBee SoC, a CC2540 BLE SoC, a ESP8266 WiFi SoC, and a MT7688 WiFi module. This document will show you what methods does a device have.  
 
-## APIs
-
-* [new Device()](#API_Device)
-* [isEnabled()](#API_isEnabled)
-* [isRegistered()](#API_isRegistered)
-* [enable()](#API_enable)
-* [disable()](#API_disable)
-* [resetTraffic()](#API_resetTraffic)
-* [dump()](#API_dump)
+* Device Constructor and Basic Methods
+    - [new Device()](#API_Device)
+    - [isEnabled()](#API_isEnabled)
+    - [isRegistered()](#API_isRegistered)
+    - [enable()](#API_enable)
+    - [disable()](#API_disable)
+    - [resetTraffic()](#API_resetTraffic)
+    - [dump()](#API_dump)
 * Getter and Setter
     - [get()](#API_get)
     - [set()](#API_set)
@@ -20,11 +19,13 @@ The Device Class defines a device which can have many gadgets(applications) on i
     - [ping()](#API_ping)
     - [refresh()](#API_refresh)
 * Data Formats
-    - [net](#Data_net)
-    - [props](#Data_props)
-    - [attrs](#Data_attrs)
+    - [netInfoObj](#Dev_net)
+    - [devPropsObj](#Dev_props)
+    - [devAttrsObj](#Dev_attrs)
 
 ********************************************
+## Device Constructor and Basic Methods
+
 <a name="API_Device"></a>
 ### new Device(netcore[, rawDev])
 New a device instance.  
@@ -166,9 +167,9 @@ Dump the information about this device.
 | netcore  | String | Netcore name                                                     |
 | id       | Number | Device id assigned by freebird                                   |
 | gads     | Array  | Gadget records, each record has a shape of `{ gadId, auxId }`    |
-| net      | Object | Network information obecjt ([net](#Data_net))                    |
-| attrs    | Object | Device attributes ([attrs](#Data_attrs))                         |
-| props    | Object | User-defined properties ([props](#Data_props))                   |
+| net      | Object | Network information object ([netInfoObj](#Dev_net))              |
+| attrs    | Object | Device attributes ([devAttrsObj](#Dev_attrs))                    |
+| props    | Object | User-defined properties ([devPropsObj](#Dev_props))              |
 
 
 **Examples:**  
@@ -236,23 +237,23 @@ Getter to get the required information.
 
 1. `name` (_String_): Possible names are listed in the follwoing table.  
 
-| Name                | Description                                                                                                                             | Example                      | Returned Data Type             |  
-|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------------------|--------------------------------|  
-| 'id'                | Get device id assigned by freebird. It will be `null` if it is not registered to freebird.                                              | `myDevice.get('id')`         |  Number \| String              |  
-| 'rawDev'            | Get raw device data which may be `undefined` if it was not given at instance creation.                                                  | `myDevice.get('rawDev')`     |  Object                        |  
-| 'raw'               | Alias of `'rawDev'`.                                                                                                                    | `myDevice.get('raw')`        |  -                             |  
-| 'nectcore'          | Get the netcore that manages this device.                                                                                               | `myDevice.get('netcore')`    |  Object ([Netcore])            |
-| 'nc'                | Alias of `'netcore'`.                                                                                                                   | `myDevice.get('nc')`         |  -                             |  
-| 'address'           | Get device permanent and dynamic addresses. Returned object has a shape of `{ permanent, dynamic }`.                                    | `myDevice.get('address')`    |  Object                        |  
-| 'addr'              | Alias of `'address'`.                                                                                                                   | `myDevice.get('addr')`       |  -                             |  
-| 'permAddr'          | Get device permanent address. For exameple, `'00:0c:29:ff:ed:7c'`.                                                                      | `myDevice.get('permAddr')`   |  String                        |  
-| 'dynAddr'           | Get device dynamic address. For exameple, `'192.168.1.96'`.                                                                             | `myDevice.get('dynAddr')`    |  String \| Number              |  
-| 'status'            | Get device status. Could be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.                                                        | `myDevice.get('status')`     |  String                        |  
-| 'gadTable'          | Get the table of gadget records on this device. Returned array has a shape of `[ { gadId, auxId }, ... ]`.                              | `myDevice.get('gadTable')`   |  Array                         |  
-| 'traffic'           | Get the current traffic record of this device. Returned object has a shape of `{ in: { hits, bytes }, out: { hits, bytes } }`.          | `myDevice.get('traffic')`    |  Object                        |  
-| 'net'               | Get network information of this device. You can give a single key or an array of keys to choose what information you'd like to get.     | `myDevice.get('net')`        |  Object ([net](#Data_net))     |  
-| 'attrs'             | Get attributes of this device.                                                                                                          | `myDevice.get('attrs')`      |  Object ([attrs](#Data_attrs)) |  
-| 'props'             | Get user-defined properties of this device. You can give a single key or an array of keys to choose what information you'd like to get. | `myDevice.get('props')`      |  Object ([props](#Data_props)) |  
+| Name                | Description                                                                                                                             | Example                 | Returned Data Type             |  
+|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------|--------------------------------|  
+| 'id'                | Get device id assigned by freebird. It will be `null` if it is not registered to freebird.                                              | `dev.get('id')`         |  Number \| String              |  
+| 'rawDev'            | Get raw device data which may be `undefined` if it was not given at instance creation.                                                  | `dev.get('rawDev')`     |  Object                        |  
+| 'raw'               | Alias of `'rawDev'`.                                                                                                                    | `dev.get('raw')`        |  Object                        |  
+| 'nectcore'          | Get the netcore that manages this device.                                                                                               | `dev.get('netcore')`    |  Object ([Netcore])            |
+| 'nc'                | Alias of `'netcore'`.                                                                                                                   | `dev.get('nc')`         |  Object ([Netcore])            |  
+| 'address'           | Get device permanent and dynamic addresses. Returned object has a shape of `{ permanent, dynamic }`.                                    | `dev.get('address')`    |  Object                        |  
+| 'addr'              | Alias of `'address'`.                                                                                                                   | `dev.get('addr')`       |  Object                        |  
+| 'permAddr'          | Get device permanent address. For exameple, `'00:0c:29:ff:ed:7c'`.                                                                      | `dev.get('permAddr')`   |  String                        |  
+| 'dynAddr'           | Get device dynamic address. For exameple, `'192.168.1.96'`.                                                                             | `dev.get('dynAddr')`    |  String \| Number              |  
+| 'status'            | Get device status. Could be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.                                                        | `dev.get('status')`     |  String                        |  
+| 'gadTable'          | Get the table of gadget records on this device. Returned array has a shape of `[ { gadId, auxId }, ... ]`.                              | `dev.get('gadTable')`   |  Array                         |  
+| 'traffic'           | Get the current traffic record of this device. Returned object has a shape of `{ in: { hits, bytes }, out: { hits, bytes } }`.          | `dev.get('traffic')`    |  Object                        |  
+| 'net'               | Get network information of this device. You can give a single key or an array of keys to choose what information you'd like to get.     | `dev.get('net')`        |  Object ([netInfoObj](#Dev_net))    |  
+| 'attrs'             | Get attributes of this device.                                                                                                          | `dev.get('attrs')`      |  Object ([devAttrsObj](#Dev_attrs)) |  
+| 'props'             | Get user-defined properties of this device. You can give a single key or an array of keys to choose what information you'd like to get. | `dev.get('props')`      |  Object ([devPropsObj](#Dev_props)) |  
 
 
 **Returns:**  
@@ -350,23 +351,23 @@ myDevice.get('props');
 
 ********************************************
 <a name="API_set"></a>
-### .set(name, value)
-Setter to set the value to device.  
+### .set(name, data)
+Setter to set the value to device. This method is mostly called by netcore **implementors**. The possilbe usage for netcore **users** is calling `.set('props', devPropsObj)`.
   
 **Arguments:**  
 
-1. `name` (_String_): Possible names are `'net'`, `'attrs'`, and `'props'`.
-2. `value` (_Depends_)
-
-* `set('net', value)`
+1. `name` (_String_): Possible names are `'net'`, `'attrs'`, and `'props'`
+2. `data` (_Depends_): See descriptions below
+  
+* `set('net', data)`
     - Locally set network information on the device. Setting of `'enabled'` property will be ignored, should use `enable()` and `disable()` instead.
-    - `value` (_Object_): An object contains key-value pairs of the network information.
-* `set('attrs', value)`
-    - Locally set attributes on the device. Only attributes listed in [attrs](#Data_attrs) are accepted. If you like to have some additional attributes, please use `set('props', value)`.
-    - `value` (_Object_): An object contains key-value pairs of the attributes.
-* `set('props', value)`
+    - `data` ([_netInfoObj_](#Dev_net)): An object contains key-value pairs of the network information.  
+* `set('attrs', data)`
+    - Locally set attributes on the device. Only attributes listed in [devAttrsObj](#Dev_attrs) are accepted. If you like to have some additional attributes, please use `set('props', data)`.
+    - `data` ([_devAttrsObj_](#Dev_attrs)): An object contains key-value pairs of the attributes.
+* `set('props', data)`
     - Locally set properties on the device. This is for customization, you are free to add any property you like.
-    - `value` (_Object_): An object contains key-value pairs of the properties.
+    - `data` ([_devPropsObj_](#Dev_props)): An object contains key-value pairs of the properties.
 
 **Returns:**  
 
@@ -444,7 +445,7 @@ myDevice.write('model', 'lwmqn-7688-happy-duo', function (err, data) {
 ********************************************
 <a name="API_identify"></a>
 ### .identify(callback)
-Identify this device. If remote device does not implement this freature, it would be no effect.  
+Identify this device. If remote device does not implement this freature, it would be inapplicable.  
   
 **Arguments:**  
 
@@ -512,10 +513,8 @@ myDevice.refresh(function (err, attrs) {
 ********************************************
 ## Data Formats
 
-[TBD]
-
-<a name="Data_net"></a>
-### network information
+<a name="Dev_net"></a>
+### Network information: `netInfoObj`
 
 | Property    | Type    | Description                                                                                                |  
 |-------------|---------|------------------------------------------------------------------------------------------------------------|  
@@ -530,19 +529,8 @@ myDevice.refresh(function (err, attrs) {
 | status      | String  | Can be `'unknown'`, `'online'`, `'offline'`, or `'sleep'`.                                                 |  
 | address     | Object  | The permanent and dynamic adrresses of this device. This object is in the format of `{ permanent: '00:01:xx', dynamic: '192.168.0.99' }`. |  
 
-<a name="Data_attrs"></a>
-### User-defined properties on this device.
-
-| Property    | Type      | Description                                                                                                |  
-|-------------|-----------|------------------------------------------------------------------------------------------------------------|  
-| name        | String    | Human-redable name of this device, default will be `'unknown'` if not set. [TODO]                          |  
-| description | String    | Device description. Default will be `'unknown'` if not set. [TODO]                                         |  
-| location    | String    | Location of this device. Default will be `'unknown'` if not set. [TODO]                                    |  
-| _Others_    | _Depends_ | Other props                                                                                                |  
-
-
-<a name="Data_props"></a>
-### Attributes on this device. The arrtibutes are coming from the remote machine.  
+<a name="Dev_attrs"></a>
+### Attributes on the **remote** device: `devAttrsObj`
 
 | Property     | Type            | Description                                                                                           |
 |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
@@ -550,5 +538,15 @@ myDevice.refresh(function (err, attrs) {
 | model        | String          | Model name                                                                                            |
 | serial       | String          | Serial number of this device.                                                                         |
 | version      | Object          | Version tags. { hw: '', sw: 'v1.2.2', fw: 'v0.0.8' }                                                  |
-| power        | Object          | Power source. { type: 'battery', voltage: '5V' }. The type can be 'line', 'battery' or 'harvester'    |
+| power        | Object          | Power source. { type: 'battery', voltage: '5 V' }. The type can be 'line', 'battery' or 'harvester'   |
+
+<a name="Dev_props"></a>
+### User-defined properties on this device: `devPropsObj`
+
+| Property    | Type      | Description                                                                                                |  
+|-------------|-----------|------------------------------------------------------------------------------------------------------------|  
+| name        | String    | Human-redable name of this device, default will be an empty string `''` if not set.                        |  
+| description | String    | Device description. Default will be an empty string `''` if not set.                                       |  
+| location    | String    | Location of this device. Default will be an empty string `''`  if not set.                                 |  
+| _Others_    | _Depends_ | Other props                                                                                                |  
 

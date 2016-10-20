@@ -101,7 +101,7 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 
 | Property     | Type    | Mandatory | Description                                                                                                                                                    |
 |--------------|---------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| address      | Object  | Required  | 裝置位址紀錄物件 `{ permanent, dynamic }`，為必填。其中 `permanent` 與 `dynamic` 分別為永久位址及動態位置，皆為必填且只能是字串                                |
+| address      | Object  | Required  | 裝置位址紀錄物件 `{ permanent, dynamic }`，為必填。其中 `permanent` 與 `dynamic` 分別為永久位址及動態位置，皆為必填。`permanent` 位址只能是字串，而 `dynamic` 位址可以是字串或數字  |
 | role         | String  | Optional  | 裝置的網路角色，依據不同的協定可能有不同的字串來表示其地位，例如 zigbee 可能使用 'router'、'end-device'，而 BLE 可能使用 'central'、'peripheral'               |
 | parent       | String  | Optional  | 裝置父節點的永久位址，如果不是 mesh 網路，所有裝置可能都是中央集權至 netcore，即 netcore 是所有節點的父節點，那麼該欄位請填字串 '0'，預設也是這個值            |
 | maySleep     | Boolean | Optional  | 用於載明這個裝置是否可能進入睡眠狀態，預設是 false。如果你確定裝置可能會睡眠，請為該裝置的此欄位設為 true，因這會牽涉到 freebird 如何確認裝置是否上線的演算法  |
@@ -113,11 +113,11 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 
 | Property     | Type    | Mandatory | Description                                                                                                                                                                              |
 |--------------|---------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| manufacturer | String  | Optional  | 製造商名稱或識別子                                                                                                                                                                       |
-| model        | String  | Optional  | 硬體模組型號                                                                                                                                                                             |
-| serial       | String  | Optional  | 硬體番號或流水碼                                                                                                                                                                         |
-| version      | Object  | Optional  | 此物件 `{ hw, sw, fw }` 之各屬性用於紀錄硬體(hw)、軟體(sw)及韌體(fw)之版本號，版本號皆必須為**字串**                                                                                     |
-| power        | Object  | Optional  | 此物件 `{ type, voltage }` 用於紀錄硬體之供電類型，其中 `type` 屬性接受 `'line'`, `'battery'` 或 `'harvester'` 三種字串來表示供電形式，而 `voltage` 則以含單位之字串填寫之，例如 `'5 V'` |
+| manufacturer | String  | Optional  | 製造商名稱或識別子                                                                                                                                                                         |
+| model        | String  | Optional  | 硬體模組型號                                                                                                                                                                              |
+| serial       | String  | Optional  | 硬體番號或流水碼                                                                                                                                                                          |
+| version      | Object  | Optional  | 此物件 `{ hw, sw, fw }` 之各屬性用於紀錄硬體(hw)、軟體(sw)及韌體(fw)之版本號，版本號皆必須為**字串**                                                                                          |
+| power        | Object  | Optional  | 此物件 `{ type, voltage }` 用於紀錄硬體之供電類型，其中 `type` 屬性接受 `'line'`, `'battery'` 或 `'harvester'` 三種字串來表示供電形式，而 `voltage` 則以含單位之字串填寫之，例如 `'5 V'`         |
 
 
 ## 5. 統一物品模型: 物品實例的資料設定

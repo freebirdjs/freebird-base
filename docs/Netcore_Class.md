@@ -1,18 +1,15 @@
 # Netcore Class
-The Netcore Class provides methods of network management.  
+The Netcore Class provides methods for network management, remote operations upon devices and gadgets.  
 
-<a name="Basic"></a>
-## 1. Basic Methods
-
-* [Netcore()](#API_Netcore)
-* [getName()](#API_getName)
-* [isEnabled()](#API_isEnabled)
-* [isRegistered()](#API_isRegistered)
-* [isJoinable()](#API_isJoinable)
-* [enable()](#API_enable)
-* [disable()](#API_disable)
-* [dump()](#API_dump)
-
+* Netcore Constructor and Basic Methods
+    * [Netcore()](#API_Netcore)
+    * [getName()](#API_getName)
+    * [isEnabled()](#API_isEnabled)
+    * [isRegistered()](#API_isRegistered)
+    * [isJoinable()](#API_isJoinable)
+    * [enable()](#API_enable)
+    * [disable()](#API_disable)
+    * [dump()](#API_dump)
 * Network Management
     * [start()](#API_start)
     * [stop()](#API_stop)
@@ -27,12 +24,10 @@ The Netcore Class provides methods of network management.
     * [getBlacklist()](#API_getBlacklist)
     * [clearBlacklist()](#API_clearBlacklist)
     * [isBlacklisted()](#API_isBlacklisted)
-
 * Remote Device Operations
     * [devRead()](#API_devRead)
     * [devWrite()](#API_devWrite)
     * [identify()](#API_identify)
-
 * Remote Gadget Operations
     * [gadRead()](#API_gadRead)
     * [gadWrite()](#API_gadWrite)
@@ -41,6 +36,8 @@ The Netcore Class provides methods of network management.
     * [setReportCfg()](#API_setReportCfg)
 
 ********************************************
+## Netcore Constructor and Basic Methods
+
 <a name="API_Netcore"></a>
 ### Netcore(name, controller, protocol[, opt])
 Netcore constructor. It is suggested to use freebird-base `.createNetcore()` method to create a new instance of Netcore.  
@@ -53,15 +50,19 @@ Netcore constructor. It is suggested to use freebird-base `.createNetcore()` met
 
     | Property | Type    | Mandatory | Description          |
     |----------|---------|-----------|----------------------|
-    | phy      | String  | required  | Physic layer         |
-    | dll      | String  | optional  | Data link layer      |
-    | nwk      | String  | required  | Network layer        |
-    | tl       | String  | optional  | Transportation layer |
-    | sl       | String  | optional  | Session layer        |
-    | pl       | String  | optional  | Presentation layer   |
-    | apl      | String  | optional  | Application layer    |
+    | phy      | String  | Required  | Physic layer         |
+    | dll      | String  | Optional  | Data link layer      |
+    | nwk      | String  | Required  | Network layer        |
+    | tl       | String  | Optional  | Transportation layer |
+    | sl       | String  | Optional  | Session layer        |
+    | pl       | String  | Optional  | Presentation layer   |
+    | apl      | String  | Optional  | Application layer    |
 
 4. `opt` (_Object_): Optional settings
+
+    | Property        | Type    | Description                                                                                                                                                  |
+    |-----------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | defaultJoinTime | Number  | Default timespan of 180 seconds to allow devices for joingiing the network. When calling `permitJoin()` without `duration`, this default value will be used. |
 
 **Returns:**  
 
@@ -146,7 +147,7 @@ nc.isRegistered();  // false
 ********************************************
 <a name="API_isJoinable"></a>
 ### .isJoinable()
-To see if the netcore is currently allowing for devices to join the network.  
+To see if the netcore is currently allowing devices to join the network.  
 
 **Arguments:**  
 
@@ -184,7 +185,7 @@ nc.enable();
 ********************************************
 <a name="API_disable"></a>
 ### .disable()
-Disable network. Any transportation will be ignore if netcore is disabled, and all remote operations become no use as well.  
+Disable network. Any transportation will be ignore if netcore is disabled, and all remote operations become inapplicable as well.  
   
 **Arguments:**  
 
@@ -233,6 +234,8 @@ nc.dump();
 ```
 
 ********************************************
+## Network Management
+
 <a name="API_start"></a>
 ### .start(callback)
 Start the network controller.  
@@ -250,7 +253,9 @@ Start the network controller.
 ```js
 nc.start(function (err) {
     if (!err)
-        console.log('netcore is up.');
+        console.log('netcore is up');
+    else
+        console.log(err);
 });
 ```
 
@@ -273,19 +278,21 @@ Stop the network controller.
 ```js
 nc.stop(function (err) {
     if (!err)
-        console.log('netcore is down.');
+        console.log('netcore is down');
+    else
+        console.log(err);
 });
 ```
 
 ********************************************
 <a name="API_reset"></a>
-### .reset([mode,] callback)   [TBD]
+### .reset([mode,] callback)
 Reset the network controller.  
   
 **Arguments:**  
 
-1. `mode` (_Number_): [TODO]  
-2. `callback` (_Function_):  `function (err, result) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
+1. `mode` (_Number_): `0` for a soft reset and `1` for a hard reset. It will be a soft reset if `mode` is not given.  
+2. `callback` (_Function_):  `function (err) {}`. Get called after reset is applied. When netcore restarted, `nc.onReady()` will be called.  
 
 **Returns:**  
 
@@ -294,8 +301,15 @@ Reset the network controller.
 **Examples:**  
   
 ```js
-nc.reset(0, function (err, result) {
-    
+nc.onReady = function () {
+    console.log('Netcore is ready');
+};
+
+nc.reset(0, function (err) {
+    if (!err)
+        console.log('netcore starts to run its reset procedure');
+    else
+        console.log(err);
 });
 ```
 
@@ -307,7 +321,7 @@ Let the network controller allow devices to join its network.
 **Arguments:**  
 
 1. `duration` (_Number_): Duration in seconds for netcore allowing devices to join the network. Set it to `0` can immediately close the admission.  
-2. `callback` (_Function_):  `function (err, timeLeft) { }`. Get called when netcore starts/stops to permit joining, where `timeLeft` is a number that indicates time left for device joining in seconds, e.g., 180.
+2. `callback` (_Function_):  `function (err, timeLeft) {}`. Get called when netcore starts/stops to permit joining, where `timeLeft` is a number that indicates time left for device joining in seconds, e.g., 180.
 
 **Returns:**  
 
@@ -318,7 +332,7 @@ Let the network controller allow devices to join its network.
 ```js
 nc.permitJoin(180, function (err, timeLeft) {
     if (!err)
-        console.log(timeLeft);  // 160
+        console.log(timeLeft);  // 180
 });
 
 nc.permitJoin(0, function (err, timeLeft) {
@@ -335,7 +349,7 @@ Remove a remote device from the network.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, permAddr) { }`. Get called after removal, where `permAddr` is permananet address of that device.
+2. `callback` (_Function_):  `function (err, permAddr) {}`. Get called after device removed, where `permAddr` is permananet address of that device.
 
 **Returns:**  
 
@@ -353,12 +367,12 @@ nc.remove('00:0c:29:ff:ed:7c', function (err, permAddr) {
 ********************************************
 <a name="API_ban"></a>
 ### .ban(permAddr, callback)
-Ban a device from the network. Once a device is banned, it can never join the network till you unban it.  
+Ban a device from the network. Once a device is banned, it can never join the network unless you unban it.  
   
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, permAddr) { }`. Get called after device banned, where `permAddr` is permananet address of that device.  
+2. `callback` (_Function_):  `function (err, permAddr) {}`. Get called after device banned, where `permAddr` is permananet address of that device.  
 
 **Returns:**  
 
@@ -381,7 +395,7 @@ Unban a device.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, val) { }`. Get called after device unbanned, where `permAddr` is permananet address of that device.  
+2. `callback` (_Function_):  `function (err, val) {}`. Get called after device unbanned, where `permAddr` is permananet address of that device.  
 
 **Returns:**  
 
@@ -404,7 +418,7 @@ Ping a remote device.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, time) { }`. Get called after ping response comes back, where `time` is the round-trip time in milliseconds, e.g., 16.
+2. `callback` (_Function_):  `function (err, time) {}`. Get called after ping response comes back, where `time` is the round-trip time in milliseconds, e.g., 16.
 
 **Returns:**  
 
@@ -551,7 +565,7 @@ Read device attribute from the remote device.
 **Examples:**  
   
 ```js
-nc.devRead('00:0c:29:ff:ed:7c', 'model', function (err, val) {
+nc.devRead('00:0c:29:ff:ed:7c', 'model', function (err, data) {
     if (!err)
         console.log(data);  // 'lwmqn-7688-duo'
 });
@@ -567,7 +581,7 @@ Remotely write a value to an attribue on this device.
 1. `permAddr` (_String_): Device permanent address  
 2. `attrName` (_Object_): Attribute name  
 3. `val` (_Depends_): Attribute value to write to the device  
-4. `callback` (_Function_):  `function (err, data) { }`  
+4. `callback` (_Function_):  `function (err, data) {}`  
 
 **Returns:**  
 
@@ -579,21 +593,23 @@ Remotely write a value to an attribue on this device.
 nc.devWrite('00:0c:29:ff:ed:7c', 'model', 'lwmqn-7688-happy-duo', function (err, data) {
     if (!err)
         console.log(data);  // 'lwmqn-7688-happy-duo'
+    else
+        console.log(err);
 
-    // Most devices don't accept writie operation upon the attribute!
-    // Thus you probably will get an error.
+    // In practice, most remote devices don't accept the write operation upon the attribute!
+    // Thus you probably will get an error back.
 });
 ```
 
 ********************************************
 <a name="API_identify"></a>
 ### .identify(permAddr, callback)
-Identify a remote device. If remote device does not implement this freature, it would be no effect.  
+Identify a remote device. If a remote device does not implement this freature, it would be inapplicable to identify a device.  
   
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err) { }`  
+2. `callback` (_Function_):  `function (err) {}`  
 
 **Returns:**  
 
@@ -605,6 +621,8 @@ Identify a remote device. If remote device does not implement this freature, it 
 nc.identify('00:0c:29:ff:ed:7c', function (err) {
     if (!err)
         console.log('The device is enter identifying mode.');
+    else
+        console.log(err);
 });
 ```
 
@@ -620,7 +638,7 @@ Read an attribute from a gadget on the remote device.
 1. `permAddr` (_String_): Device permanent address  
 2. `auxId` (_String_ | _Number_): Auxiliary id of the gadget on a device  
 3. `attrName` (_Object_): Attribute name  
-4. `callback` (_Function_):  `function (err, data) { }`  
+4. `callback` (_Function_):  `function (err, data) {}`  
 
 **Returns:**  
 
@@ -632,6 +650,8 @@ Read an attribute from a gadget on the remote device.
 nc.gadRead('00:0c:29:ff:ed:7c', 'humidity/2', 'sensorValue', function (err, data) {
     if (!err)
         console.log(data);  // 52.6
+    else
+        console.log(err);
 });
 ```
 
@@ -658,13 +678,15 @@ Write a value to an attribute to a gadget on the remote device.
 nc.gadWrite('00:0c:29:ff:ed:7c', 'lightCtrl/0', 'onOff', 1, function (err, data) {
     if (!err)
         console.log(data); // 1
+    else
+        console.log(err);
 });
 ```
 
 ********************************************
 <a name="API_gadExec"></a>
 ### .gadExec(permAddr, auxId, attrName, args, callback)
-Remotely invoke the procedure on this gadget.  
+Remotely invoke a procedure on this gadget.  
   
 **Arguments:**  
 
@@ -672,7 +694,7 @@ Remotely invoke the procedure on this gadget.
 2. `auxId` (_String_ | _Number_): Auxiliary id of the gadget on a device  
 3. `attrName` (_Object_): Attribute name  
 4. `args` (_Array_): Arguments to invoke with  
-5. `callback` (_Function_):  `function (err, data) { }`  
+5. `callback` (_Function_):  `function (err, data) {}`  
 
 **Returns:**  
 
@@ -683,7 +705,9 @@ Remotely invoke the procedure on this gadget.
 ```js
 nc.gadExec('00:0c:29:ff:ed:7c', 'led/3', 'blink', [ 3 ], function (err, data) {
     if (!err)
-        console.log(data);  // Depends
+        console.log(data);  // Depends on the implementation
+    else
+        console.log(err);
 });
 
 ```
@@ -698,7 +722,7 @@ Get the report configuration from a gadget on the remote device.
 1. `permAddr` (_String_): Device permanent address  
 2. `auxId` (_String_ | _Number_): Auxiliary id of the gadget on a device  
 3. `attrName` (_Object_): Attribute name  
-4. `callback` (_Function_):  `function (err, cfg) { }`  
+4. `callback` (_Function_):  `function (err, cfg) {}`  
 
 **Returns:**  
 
@@ -709,8 +733,9 @@ Get the report configuration from a gadget on the remote device.
 ```js
 nc.getReportCfg('00:0c:29:ff:ed:7c', 'temperature/0', 'sensorValue', function (err, cfg) {
     if (!err)
-        console.log(cfg);
-        // { pmin: 60, pmax: 180 }
+        console.log(cfg);   // { pmin: 60, pmax: 180 }
+    else
+        console.log(err);
 });
 ```
 
@@ -735,11 +760,7 @@ Set the report configuration to a gadget on the remote device.
     | stp      | Number  | optional  | Step. The Client Device should notify its value when the change of the Resource value, since the last report happened, is greater than this setting.                                                    |
     | enable   | Boolean | optional  | Set to `true` for a Client Device to enable observation on the allocated Resource or Object Instance.                                                                                                   |
 
-4. `callback` (_Function_):  `function (err, rsp) { }`. The `rsp` object has a status code to indicate whether the operation is successful.  
-
-    | Property | Type    | Description                                                             |
-    |----------|---------|-------------------------------------------------------------------------|
-    |  status  | Number  | Status code of the response. Possible status codes are 204, 400, 404, and 408. See [Status Code](#).                      |
+4. `callback` (_Function_):  `function (err) { }`
 
 **Returns:**  
 
@@ -751,35 +772,7 @@ Set the report configuration to a gadget on the remote device.
 nc.setReportCfg('00:0c:29:ff:ed:7c', 'temperature/0', 'sensorValue', { pmin: 60, pmax: 180 }, function (err) {
     if (!err)
         console.log('success!');
+    else
+        console.log(err);
 });
 ```
-
-********************************************
-## Standalone Usage
-
-// function attachOnEventHandlers(nc) {
-//     nc.onError = null;
-//     nc.onReady = null;
-//     nc.onEnabled = null;
-//     nc.onPermitJoin = null;
-//     nc.onDevIncoming = null;
-//     nc.onDevLeaving = null;
-//     nc.onDevReporting = null;
-//     nc.onDevNetChanging = null;
-//     nc.onGadIncoming = null;
-//     nc.onGadReporting = null;
-//     nc.onBannedDevIncoming = null;
-//     nc.onBannedDevReporting = null;
-//     nc.onBannedGadIncoming = null;
-//     nc.onBannedGadReporting = null;
-
-//     nc.onDevError = null;
-//     nc.onDevNetChanged = null;
-//     nc.onDevPropsChanged = null;
-//     nc.onDevAttrsChanged = null;
-
-//     nc.onGadError = null;
-//     nc.onGadPanelChanged = null;
-//     nc.onGadPropsChanged = null;
-//     nc.onGadAttrsChanged = null;
-// }
