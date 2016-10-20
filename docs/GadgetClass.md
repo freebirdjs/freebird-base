@@ -325,12 +325,9 @@ Getter to get the required information.
 |----------------------|----------------------------------------------------------------------------------------------|----------------------------|-------------------------------------|  
 | 'id'                 | Get gadget id assigned by freebird. It will be `null` if it is not registered to freebird.   | `myGadget.get('id')`       | Number \| String                    |  
 | 'auxId'              | Get gadget auxiliary id.                                                                     | `myGadget.get('auxId')`    | Number \| String                    |  
-| 'rawGad'             | Get raw data which may be `undefined` if it was not given at instance creation.              | `myGadget.get('rawGad')`   | Object                              |  
-| 'raw'                | Alias of 'rawGad'.                                                                           | `myGadget.get('raw')`      | Object                              |  
+| 'ra'                 | Get raw data which may be `undefined` if it was not given at instance creation.              | `myGadget.get('raw')`      | Object                              |  
 | 'device'             | Get the device that owns this gadget.                                                        | `myGadget.get('device')`   | Object ([Device])                   |  
-| 'dev'                | Alias of 'device'.                                                                           | `myGadget.get('dev')`      | Object ([Device])                   |  
 | 'nectcore'           | Get the netcore that manages this gadget.                                                    | `myGadget.get('netcore')`  | Object ([Netcore])                  |  
-| 'nc'                 | Alias of 'netcore'.                                                                          | `myGadget.get('nc')`       | Object ([Netcore])                  |  
 | 'permAddr'           | Get the permanent address from which device owns this gadget.                                | `myGadget.get('permAddr')` | String                              |  
 | 'dynAddr'            | Get the dynamic address from which device owns this gadget.                                  | `myGadget.get('dynAddr')`  | Number \| String                    |  
 | 'location'           | Get the location of which device owns this gadget.                                           | `myGadget.get('location')` | String                              |  
@@ -344,18 +341,11 @@ Getter to get the required information.
 myGadget.get('id');         // 122
 myGadget.get('auxId');      // 'temperature/3'
 
-myDevice.get('raw');
-myDevice.get('rawGad');     // { ... } or null
-
-myGadget.get('dev');
+myGadget.get('raw');        // { ... } or null
 myGadget.get('device');     // device instance
-
-myGadget.get('nc');
 myGadget.get('netcore');    // netcore instance
-
 myGadget.get('permAddr');   // '0x123456789abcdef'
 myGadget.get('dynAddr');    // 10163
-
 myGadget.get('location');   // 'kitchen'
 
 myGadget.get('panel');

@@ -240,12 +240,9 @@ Getter to get the required information.
 | Name                | Description                                                                                                                             | Example                 | Returned Data Type             |  
 |---------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------|--------------------------------|  
 | 'id'                | Get device id assigned by freebird. It will be `null` if it is not registered to freebird.                                              | `dev.get('id')`         |  Number \| String              |  
-| 'rawDev'            | Get raw device data which may be `undefined` if it was not given at instance creation.                                                  | `dev.get('rawDev')`     |  Object                        |  
-| 'raw'               | Alias of `'rawDev'`.                                                                                                                    | `dev.get('raw')`        |  Object                        |  
+| 'raw'               | Get raw device data which may be `undefined` if it was not given at instance creation.                                                  | `dev.get('raw')`        |  Object                        |  
 | 'nectcore'          | Get the netcore that manages this device.                                                                                               | `dev.get('netcore')`    |  Object ([Netcore])            |
-| 'nc'                | Alias of `'netcore'`.                                                                                                                   | `dev.get('nc')`         |  Object ([Netcore])            |  
 | 'address'           | Get device permanent and dynamic addresses. Returned object has a shape of `{ permanent, dynamic }`.                                    | `dev.get('address')`    |  Object                        |  
-| 'addr'              | Alias of `'address'`.                                                                                                                   | `dev.get('addr')`       |  Object                        |  
 | 'permAddr'          | Get device permanent address. For exameple, `'00:0c:29:ff:ed:7c'`.                                                                      | `dev.get('permAddr')`   |  String                        |  
 | 'dynAddr'           | Get device dynamic address. For exameple, `'192.168.1.96'`.                                                                             | `dev.get('dynAddr')`    |  String \| Number              |  
 | 'status'            | Get device status. Could be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.                                                        | `dev.get('status')`     |  String                        |  
@@ -266,19 +263,11 @@ Getter to get the required information.
 myDevice.get('foo_name');   // undefined
 
 myDevice.get('id');         // 18
-
-myDevice.get('raw');
-myDevice.get('rawGad');     // { ieeeAddr: '0x123456789abcdef', nwkAddr: 0x27B3, ... }
-
-myDevice.get('nc');
+myDevice.get('raw');         // { ieeeAddr: '0x123456789abcdef', nwkAddr: 0x27B3, ... }
 myDevice.get('netcore');    // netcore instance
-
-myDevice.get('addr');
 myDevice.get('address');    // { permanent: '0x123456789abcdef', dynamic: 10163 };
-
 myDevice.get('permAddr');   // '0x123456789abcdef'
 myDevice.get('dynAddr');    // 10163
-
 myDevice.get('status');   // 'online'. Can be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.  
 
 myDevice.get('gadTable');
