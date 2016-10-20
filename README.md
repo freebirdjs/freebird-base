@@ -93,6 +93,4 @@ The documentation of [Device Class]().
 The documentation of [Gadget Class]().
 
 
-
-
 If you are willing to create your own netcore with freebird, just simply install this module and use `createNetcore()` method to get a netcore instance. After you got the instance, you should follow some rules to accomplish your own implementations on it, such as network drivers, to meet the minimum requirements for your netcore to operate well with freebird framework.  

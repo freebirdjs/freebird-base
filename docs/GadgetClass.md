@@ -455,6 +455,6 @@ myGadget.set('props', {
 
 | Property    | Type      | Description                                                                                                |  
 |-------------|-----------|------------------------------------------------------------------------------------------------------------|  
-| name        | String    | Human-redable name of this gadget, default will be an empty string `''` if not set                         |  
+| name        | String    | Human-redable name of this gadget, default will be a string of `'unknown'` if not set                      |  
 | description | String    | Gadget description. Default will be an empty string `''` if not set                                        |  
 | _Others_    | _Depends_ | Other props                                                                                                |  
