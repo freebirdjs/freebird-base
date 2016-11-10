@@ -126,12 +126,12 @@ describe('Device tests', function () {
     describe('#Getter test', function () {
         it('should get netcore', function () {
             expect(dev1.get('netcore')).to.be.equal(nc);
-            expect(dev1.get('nc')).to.be.equal(nc);
+            // expect(dev1.get('nc')).to.be.equal(nc);
         });
 
         it('should get raw dev', function () {
             expect(dev1.get('raw')).to.be.equal(rawDev1);
-            expect(dev1.get('rawDev')).to.be.equal(rawDev1);
+            // expect(dev1.get('rawDev')).to.be.equal(rawDev1);
         });
 
         it('should get dev id', function () {
@@ -143,7 +143,7 @@ describe('Device tests', function () {
         });
 
         it('should get address object', function () {
-            expect(dev1.get('addr')).to.be.deep.equal({ permanent: rawDev1.permAddr, dynamic: rawDev1.dynAddr });
+            expect(dev1.get('address')).to.be.deep.equal({ permanent: rawDev1.permAddr, dynamic: rawDev1.dynAddr });
         });
 
         it('should get permanent address', function () {
@@ -523,8 +523,8 @@ describe('Gadget tests', function () {
         });
 
         it('should get device', function () {
-            expect(gad1.get('dev')).to.be.equal(dev1);
-            expect(gad2.get('dev')).to.be.equal(dev1);
+            // expect(gad1.get('dev')).to.be.equal(dev1);
+            // expect(gad2.get('dev')).to.be.equal(dev1);
             expect(gad1.get('device')).to.be.equal(dev1);
             expect(gad2.get('device')).to.be.equal(dev1);
         });
@@ -532,8 +532,8 @@ describe('Gadget tests', function () {
         it('should get raw gadget', function () {
             expect(gad1.get('raw')).to.be.equal(rawGad1);
             expect(gad2.get('raw')).to.be.equal(rawGad2);
-            expect(gad1.get('rawGad')).to.be.equal(rawGad1);
-            expect(gad2.get('rawGad')).to.be.equal(rawGad2);
+            // expect(gad1.get('rawGad')).to.be.equal(rawGad1);
+            // expect(gad2.get('rawGad')).to.be.equal(rawGad2);
         });
 
         it('should get permanent address', function () {
@@ -552,8 +552,8 @@ describe('Gadget tests', function () {
         it('should get netcore', function () {
             expect(gad1.get('netcore')).to.be.equal(nc);
             expect(gad2.get('netcore')).to.be.equal(nc);
-            expect(gad1.get('nc')).to.be.equal(nc);
-            expect(gad2.get('nc')).to.be.equal(nc);
+            // expect(gad1.get('nc')).to.be.equal(nc);
+            // expect(gad2.get('nc')).to.be.equal(nc);
         });
 
         it('should get location', function () {
@@ -613,9 +613,9 @@ describe('Gadget tests', function () {
         it('dump()', function () {
             expect(gad1.dump()).to.be.deep.equal({
                 id: gad1.get('id'),
-                netcore: gad1.get('dev').get('nc').getName(),
+                netcore: gad1.get('device').get('netcore').getName(),
                 dev: {
-                    id: gad1.get('dev').get('id'),
+                    id: gad1.get('device').get('id'),
                     permAddr: gad1.get('permAddr')
                 },
                 auxId: gad1.get('auxId'),

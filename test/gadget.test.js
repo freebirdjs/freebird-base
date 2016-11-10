@@ -160,14 +160,14 @@ describe('Device Constructor', function() {
     describe('#get netcore', function() {
         it('should equal to ncMock', function () {
             expect(mygad.get('netcore')).to.be.equal(ncMock);
-            expect(mygad.get('nc')).to.be.equal(ncMock);
+            // expect(mygad.get('nc')).to.be.equal(ncMock);
         });
     });
 
     describe('#get raw gad', function() {
         it('should equal to rawDev.gads[0]', function () {
             expect(mygad.get('raw')).to.be.equal(rawDev.gads[0]);
-            expect(mygad.get('rawGad')).to.be.equal(rawDev.gads[0]);
+            // expect(mygad.get('rawGad')).to.be.equal(rawDev.gads[0]);
         });
     });
 
@@ -185,7 +185,7 @@ describe('Device Constructor', function() {
 
     describe('#get dev', function() {
         it('should equal to dev', function () {
-            expect(mygad.get('dev')).to.be.equal(dev);
+            // expect(mygad.get('dev')).to.be.equal(dev);
             expect(mygad.get('device')).to.be.equal(dev);
         });
     });
