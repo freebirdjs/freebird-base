@@ -325,7 +325,7 @@ Getter to get the required information.
 |----------------------|----------------------------------------------------------------------------------------------|----------------------------|-------------------------------------|  
 | 'id'                 | Get gadget id assigned by freebird. It will be `null` if it is not registered to freebird.   | `myGadget.get('id')`       | Number \| String                    |  
 | 'auxId'              | Get gadget auxiliary id.                                                                     | `myGadget.get('auxId')`    | Number \| String                    |  
-| 'ra'                 | Get raw data which may be `undefined` if it was not given at instance creation.              | `myGadget.get('raw')`      | Object                              |  
+| 'raw'                | Get raw data which may be `undefined` if it was not given at instance creation.              | `myGadget.get('raw')`      | Object                              |  
 | 'device'             | Get the device that owns this gadget.                                                        | `myGadget.get('device')`   | Object ([Device])                   |  
 | 'nectcore'           | Get the netcore that manages this gadget.                                                    | `myGadget.get('netcore')`  | Object ([Netcore])                  |  
 | 'permAddr'           | Get the permanent address from which device owns this gadget.                                | `myGadget.get('permAddr')` | String                              |  

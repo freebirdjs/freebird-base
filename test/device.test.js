@@ -27,7 +27,7 @@ rawDev = {
 };
 
 ncMock = {
-    _fb: fb,
+    _freebird: fb,
     _controller: {},
     _net: {
         name: 'mock_nc',
@@ -65,7 +65,7 @@ ncMock = {
         }
 
         if (true) {
-            this._fb.emit(evt, emitData);
+            this._freebird.emit(evt, emitData);
             emitted = true;
         }
 
