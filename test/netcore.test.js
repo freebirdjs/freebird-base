@@ -12,6 +12,7 @@ var EventEmitter = require('events'),
 
 var fb = Object.create(new EventEmitter());
 fb.getAllDevs = function () { return []; };
+fb.filter = function () { return []; };
 
 fb.on('_nc:error', function (err) {
     // console.log(err);

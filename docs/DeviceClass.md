@@ -17,7 +17,7 @@ The Device Class defines a device which can have many gadgets(applications) on i
     - [write()](#API_write)
     - [identify()](#API_identify)
     - [ping()](#API_ping)
-    - [refresh()](#API_refresh)
+    - [maintain()](#API_maintain)
 * Data Formats
     - [netInfoObj](#Dev_net)
     - [devPropsObj](#Dev_props)
@@ -478,8 +478,8 @@ myDevice.ping(function (err, time) {
 ```
 
 ********************************************
-<a name="API_refresh"></a>
-### .refresh(callback)
+<a name="API_maintain"></a>
+### .maintain(callback)
 Refresh the status and attributes from the remote device.  
   
 **Arguments:**  
@@ -493,7 +493,7 @@ Refresh the status and attributes from the remote device.
 **Examples:**  
   
 ```js
-myDevice.refresh(function (err, attrs) {
+myDevice.maintain(function (err, attrs) {
     if (!err)
         console.log('device refreshed.');
 });
