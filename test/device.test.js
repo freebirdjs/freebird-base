@@ -462,19 +462,19 @@ describe('APIs Signature Check', function() {
         });
     });
 
-    describe('#refresh(cb)', function() {
+    describe('#maintain(cb)', function() {
         it('should throw if callback is not a function', function () {
-            expect(function () { return mydev.refresh([]); }).to.throw(TypeError);
-            expect(function () { return mydev.refresh({}); }).to.throw(TypeError);
-            expect(function () { return mydev.refresh(null); }).to.throw(TypeError);
-            expect(function () { return mydev.refresh(NaN); }).to.throw(TypeError);
-            expect(function () { return mydev.refresh(true); }).to.throw(TypeError);
-            expect(function () { return mydev.refresh(); }).to.throw(TypeError);
-            expect(function () { return mydev.refresh('_id'); }).to.throw(TypeError);
+            expect(function () { return mydev.maintain([]); }).to.throw(TypeError);
+            expect(function () { return mydev.maintain({}); }).to.throw(TypeError);
+            expect(function () { return mydev.maintain(null); }).to.throw(TypeError);
+            expect(function () { return mydev.maintain(NaN); }).to.throw(TypeError);
+            expect(function () { return mydev.maintain(true); }).to.throw(TypeError);
+            expect(function () { return mydev.maintain('_id'); }).to.throw(TypeError);
         });
 
-        it('should not throw if callback is a function', function () {
-            expect(function () { return mydev.refresh(function () {}); }).not.to.throw(TypeError);
+        it('should not throw if callback is a function or not given', function () {
+            expect(function () { return mydev.maintain(function () {}); }).not.to.throw(TypeError);
+            expect(function () { return mydev.maintain(); }).not.to.throw(TypeError);
         });
     });
 
