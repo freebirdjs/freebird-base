@@ -96,15 +96,6 @@ describe('Drivers test - with optional', function () {
         });
     });
 
-    describe('#identify()', function () {
-        it('should call cb', function (done) {
-            nc.identify('0x1111', function (err, d) {
-                if (!err && d === 'identify')
-                    done();
-            });
-        });
-    });
-
     describe('#gadExec()', function () {
         it('should call cb', function (done) {
             var p = '0x1234',

@@ -11,6 +11,7 @@ var EventEmitter = require('events'),
     Netcore = require('../lib/netcore.js');
 
 var fb = Object.create(new EventEmitter());
+fb.findByNet = function () {};
 fb.getAllDevs = function () { return []; };
 fb.filter = function () { return []; };
 
@@ -119,12 +120,12 @@ describe('Constructor Base Property Check', function () {
         expect(net.defaultJoinTime).to.be.equal(180);
     });
 
-    it('has a null cookRawDev method', function () {
-        expect(nc.cookRawDev).to.be.equal(null);
+    it('has a null _cookRawDev method', function () {
+        expect(nc._cookRawDev).to.be.equal(null);
     });
 
-    it('has a null cookRawGad method', function () {
-        expect(nc.cookRawGad).to.be.equal(null);
+    it('has a null _cookRawGad method', function () {
+        expect(nc._cookRawGad).to.be.equal(null);
     });
 
     it('has all null net drivers', function () {
@@ -329,8 +330,8 @@ describe('Check Signature', function () {
 
     describe('#start(cb)', function() {
         it('should throw if callback is not a function', function () {
-            nc.cookRawGad = function () {};
-            nc.cookRawDev = function () {};
+            nc._cookRawGad = function () {};
+            nc._cookRawDev = function () {};
             nc._drivers.net = fakeNetDrvs;
             nc._drivers.dev = fakeDevDrvs;
             nc._drivers.gad = fakeGadDrvs;
@@ -492,116 +493,6 @@ describe('Check Signature', function () {
             expect(function () { return nc.ping('x', null); }).to.throw(TypeError);
             expect(function () { return nc.ping('x', NaN); }).to.throw(TypeError);
             expect(function () { return nc.ping('x', true); }).to.throw(TypeError);
-        });
-    });
-
-    describe('#devRead(permAddr, attrName, callback)', function() {
-        var cb = function () {};
-
-        it('should throw if permAddr is not a string', function () {
-            expect(function () { return nc.devRead(cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead(1, 'attr', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead([], 'attr', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead(null, 'attr', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead(NaN, 'attr', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead(true, 'attr', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead(function () {}, 'attr', cb); }).to.throw(TypeError);
-        });
-
-        it('should throw if attrName is not a string', function () {
-            expect(function () { return nc.devRead('addr', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', 1, cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', [], cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', null, cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', NaN, cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', true, cb); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', function () {}, cb); }).to.throw(TypeError);
-        });
-
-        it('should not throw if attrName is a string', function () {
-            expect(function () { return nc.devRead('addr', 'xxx', cb); }).not.to.throw(TypeError);
-        });
-
-        it('should throw if cb is not a function', function () {
-            expect(function () { return nc.devRead('addr', 'x'); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', 'x', 1); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', 'x', []); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', 'x', null); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', 'x', NaN); }).to.throw(TypeError);
-            expect(function () { return nc.devRead('addr', 'x', true); }).to.throw(TypeError);
-        });
-
-        it('should not throw if cb is a function', function () {
-            expect(function () { return nc.devRead('addr', 'xxx', cb); }).not.to.throw(TypeError);
-        });
-    });
-
-    describe('#devWrite(permAddr, attrName, val, callback)', function() {
-        var cb = function () {};
-        it('should throw if permAddr is not a string', function () {
-            expect(function () { return nc.devWrite(1, 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite([], 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite(null, 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite(NaN, 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite(true, 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite(function () {}, 'x', 'x', cb); }).to.throw(TypeError);
-        });
-
-        it('should throw if attrName is not a string', function () {
-            expect(function () { return nc.devWrite('addr', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', 1, 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', [], 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', null, 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', NaN, 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', true, 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', function () {}, 'x', cb); }).to.throw(TypeError);
-        });
-
-        it('should not throw if attrName is a string', function () {
-            expect(function () { return nc.devWrite('addr', 'xxx', 'x', cb); }).not.to.throw(TypeError);
-        });
-
-        it('should throw if cb is not a function', function () {
-            expect(function () { return nc.devWrite('addr', 'x', 'x'); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', 'x', 'x', 1); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', 'x', 'x', []); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', 'x', 'x', null); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', 'x', 'x', NaN); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', 'x', 'x', true); }).to.throw(TypeError);
-        });
-
-        it('should not throw if cb is a function', function () {
-            expect(function () { return nc.devWrite('addr', 'xxx', 'x', cb); }).not.to.throw(TypeError);
-        });
-
-        it('should throw if val is undefined', function () {
-            expect(function () { return nc.devWrite('addr', 'xxx', undefined, cb); }).to.throw(TypeError);
-            expect(function () { return nc.devWrite('addr', 'xxx', cb); }).to.throw(TypeError);
-
-        });
-    });
-
-    describe('#identify(permAddr, callback)', function() {
-        var cb = function () {};
-        it('should throw if permAddr is not a string', function () {
-            expect(function () { return nc.identify([], cb); }).to.throw(TypeError);
-            expect(function () { return nc.identify({}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.identify(null, cb); }).to.throw(TypeError);
-            expect(function () { return nc.identify(NaN), cb; }).to.throw(TypeError);
-            expect(function () { return nc.identify(true, cb); }).to.throw(TypeError);
-            expect(function () { return nc.identify(10, cb); }).to.throw(TypeError);
-        });
-
-        it('should not throw if permAddr is a tring', function () {
-            expect(function () { return nc.identify('x', cb); }).not.to.throw(TypeError);
-        });
-
-        it('should throw if cb is not a function', function () {
-            expect(function () { return nc.identify('x', []); }).to.throw(TypeError);
-            expect(function () { return nc.identify('x', {}); }).to.throw(TypeError);
-            expect(function () { return nc.identify('x', null); }).to.throw(TypeError);
-            expect(function () { return nc.identify('x', NaN); }).to.throw(TypeError);
-            expect(function () { return nc.identify('x', true); }).to.throw(TypeError);
         });
     });
 

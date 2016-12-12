@@ -533,24 +533,6 @@ describe('APIs Signature Check', function() {
         });
     });
 
-    describe('#_callDriver(drvName, args)', function() {
-        it('should throw if drvName is not a string', function () {
-            expect(function () { return mydev._callDriver([], 1); }).to.throw(TypeError);
-            expect(function () { return mydev._callDriver({}, 1); }).to.throw(TypeError);
-            expect(function () { return mydev._callDriver(null, 1); }).to.throw(TypeError);
-            expect(function () { return mydev._callDriver(NaN, 1); }).to.throw(TypeError);
-            expect(function () { return mydev._callDriver(true, 1); }).to.throw(TypeError);
-            expect(function () { return mydev._callDriver(function () {}, 1); }).to.throw(TypeError);
-            expect(function () { return mydev._callDriver(1); }).to.throw(TypeError);
-        });
-
-        it('should not throw if drvName is a string', function () {
-            expect(function () { return mydev._callDriver('_id', 1); }).not.to.throw(TypeError);
-            expect(function () { return mydev._callDriver('in', 2); }).not.to.throw(TypeError);
-            expect(function () { return mydev._callDriver('out', 10); }).not.to.throw(TypeError);
-        });
-    });
-
     describe('#_linkGad(auxId)', function() {
         it('should throw if auxId is not a string or a number', function () {
             expect(function () { return mydev._linkGad([]); }).to.throw(TypeError);

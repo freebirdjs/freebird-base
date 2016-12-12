@@ -8,6 +8,7 @@ var EventEmitter = require('events'),
 
 var fb = Object.create(new EventEmitter());
 
+fb.findByNet = function () {};
 var ncname = 'mync';
 var controller = {};
 var protocol = {
@@ -46,17 +47,17 @@ fb.on('_nc:error', function (err) {
 
 describe('Drivers test', function () {
     describe('#start()', function () {
-        it('start(callback) - no cookRawDev', function () {
+        it('start(callback) - no _cookRawDev', function () {
             expect(function () { return nc.start(function () {}); }).to.throw(Error);
         });
 
-        it('start(callback) - no cookRawGad', function () {
-            nc.cookRawDev = function () {};
+        it('start(callback) - no _cookRawGad', function () {
+            nc._cookRawDev = function () {};
             expect(function () { nc.start(function (err) {}); }).to.throw(Error);
         });
 
         it('start(callback) - not enable - check enable after', function (done) {
-            nc.cookRawGad = function () {};
+            nc._cookRawGad = function () {};
             nc.start(function (err) {
                 if (!err && nc.isEnabled())
                     done();
@@ -174,49 +175,6 @@ describe('Drivers test', function () {
                     done();
             });
             nc.ping('0x1111', function () {});
-        });
-    });
-
-    describe('#devRead()', function () {
-        it('should call cb', function (done) {
-            nc.devRead('0x1111', 'x', function (err, d) {
-                if (!err && d === 'read')
-                    done();
-            });
-        });
-
-        it('should receive _nc:devRead event', function (done) {
-            fb.once('_nc:devRead', function (d) {
-                if (d.permAddr === '0x1111' && d.data.x === 'read')
-                    done();
-            });
-            nc.devRead('0x1111', 'x', function () {});
-        });
-    });
-
-    describe('#devWrite()', function () {
-        it('should call cb', function (done) {
-            nc.devWrite('0x1111', 'x', 2, function (err, d) {
-                if (!err && d === 'written')
-                    done();
-            });
-        });
-
-        it('should receive _nc:devWrite event', function (done) {
-            fb.once('_nc:devWrite', function (d) {
-                if (d.permAddr === '0x1111' && d.data.x === 'written')
-                    done();
-            });
-            nc.devWrite('0x1111', 'x', 3, function () {});
-        });
-    });
-
-    describe('#identify() - [Need to be tested with real device]', function () {
-        it('should call cb', function (done) {
-            nc.identify('0x1111', function (err, d) {
-                if (err)    // not implemented
-                    done();
-            });
         });
     });
 

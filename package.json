@@ -18,7 +18,7 @@
   "homepage": "https://github.com/freebirdjs/freebird-base#readme",
   "dependencies": {
     "busyman": "^0.2.1",
-    "freebird-constants": "^0.2.0",
+    "freebird-constants": "^0.2.1",
     "proving": "^0.0.2"
   },
   "devDependencies": {

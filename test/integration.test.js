@@ -15,7 +15,7 @@ var fb = Object.create(new EventEmitter());
 var cntrl = Object.create(new EventEmitter());
 var nc = new Netcore('mync', cntrl, { phy: 'myphy', nwk: 'mynwk' }, {});
 
-nc.cookRawDev = function(dev, rawDev, callback) {
+nc._cookRawDev = function(dev, rawDev, callback) {
     dev.set('net', {
         role: chance.string({ length: 5, pool: 'abcdefghijklmnopqrstuvwxyz' }),
         parent: '0x' + chance.string({ pool: '0123456789ABCDEF', length: 16 }),
@@ -45,7 +45,7 @@ nc.cookRawDev = function(dev, rawDev, callback) {
     callback(null, dev);
 };
 
-nc.cookRawGad = function(gad, rawGad, callback) {
+nc._cookRawGad = function(gad, rawGad, callback) {
     gad.set('panel', {
         profile: rawGad.devId < 2 ? 'HA' : 'SE',
         classId: 'test'
