@@ -89,8 +89,8 @@ ncMock = {
     gadRead: function () {},
     gadWrite: function () {},
     gadExec: function () {},
-    setReportCfg: function () {},
-    getReportCfg: function () {}
+    writeReportCfg: function () {},
+    readReportCfg: function () {}
 };
 
 // fb.on('_gad:error', function (err) {
@@ -595,70 +595,70 @@ describe('APIs Signature Check', function() {
         });
     });
 
-    describe('#getReportCfg(attrName, callback)', function() {
+    describe('#readReportCfg(attrName, callback)', function() {
         var cb = function () {};
         it('should throw if attrName is not a string', function () {
-            expect(function () { return mygad.getReportCfg(cb); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(1, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg([], cb); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(null, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(NaN, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(true, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg(function () {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg(cb); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg(1, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg([], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg(null, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg(NaN, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg(true, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg(function () {}, cb); }).to.throw(TypeError);
         });
 
         it('should not throw if attrName is a string', function () {
-            expect(function () { return mygad.getReportCfg('xxx', cb); }).not.to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg('xxx', cb); }).not.to.throw(TypeError);
         });
 
         it('should throw if cb is not a function', function () {
-            expect(function () { return mygad.getReportCfg('x'); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg('x', 1); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg('x', []); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg('x', null); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg('x', NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.getReportCfg('x', true); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg('x'); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg('x', 1); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg('x', []); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg('x', null); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg('x', NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg('x', true); }).to.throw(TypeError);
         });
 
         it('should not throw if cb is a function', function () {
-            expect(function () { return mygad.getReportCfg('xxx', cb); }).not.to.throw(TypeError);
+            expect(function () { return mygad.readReportCfg('xxx', cb); }).not.to.throw(TypeError);
         });
     });
 
-    describe('#setReportCfg(attrName, cfg, callback)', function() {
+    describe('#writeReportCfg(attrName, cfg, callback)', function() {
         var cb = function () {};
         it('should throw if attrName is not a string', function () {
-            expect(function () { return mygad.setReportCfg(cb); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(1, {}, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg([], {}, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(null, {}, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(NaN, {}, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(true, {}, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg(function () {}, {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg(cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg(1, {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg([], {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg(null, {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg(NaN, {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg(true, {}, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg(function () {}, {}, cb); }).to.throw(TypeError);
         });
 
         it('should not throw if attrName is a string', function () {
-            expect(function () { return mygad.setReportCfg('xxx', {}, cb); }).not.to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('xxx', {}, cb); }).not.to.throw(TypeError);
         });
 
         it('should throw if cb is not a function', function () {
-            expect(function () { return mygad.setReportCfg('x', {}); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('x', {}, 1); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('x', {}, []); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('x', {}, null); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('x', {}, NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('x', {}, true); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('x', {}); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('x', {}, 1); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('x', {}, []); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('x', {}, null); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('x', {}, NaN); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('x', {}, true); }).to.throw(TypeError);
         });
 
         it('should not throw if cb is a function', function () {
-            expect(function () { return mygad.setReportCfg('xxx', {}, cb); }).not.to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('xxx', {}, cb); }).not.to.throw(TypeError);
         });
 
         it('should throw if val is not an object', function () {
-            expect(function () { return mygad.setReportCfg('xxx', undefined, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('xxx', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('xxx', null, cb); }).to.throw(TypeError);
-            expect(function () { return mygad.setReportCfg('xxx', [], cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('xxx', undefined, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('xxx', 'x', cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('xxx', null, cb); }).to.throw(TypeError);
+            expect(function () { return mygad.writeReportCfg('xxx', [], cb); }).to.throw(TypeError);
         });
     });
 

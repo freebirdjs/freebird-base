@@ -50,7 +50,7 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ### 驅動程式  
 * 網路驅動程式，將驅動程式以 `{ start, stop, reset, permitJoin, remove, ban, unban, ping }` 物件包裝後，使用 `nc.registerNetDrivers(netDrvs)` 向 netcore 註冊
 * 裝置操作驅動程式，將驅動程式以 `{ read, write, identify }` 物件包裝後，使用 `nc.registerDevDrivers(devDrvs)` 向 netcore 註冊
-* 物品操作驅動程式，將驅動程式以 `{ read, write, exec, setReportCfg, getReportCfg }` 物件包裝後，使用 `nc.registerGadDrivers(devDrvs)` 向 netcore 註冊
+* 物品操作驅動程式，將驅動程式以 `{ read, write, exec, writeReportCfg, readReportCfg }` 物件包裝後，使用 `nc.registerGadDrivers(devDrvs)` 向 netcore 註冊
 
 #### 網路驅動程式各方法之簽署與說明
 
@@ -86,9 +86,9 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
     - 寫入物品屬性，其中 `permAddr` 為裝置之永久位址、`auxId` 為輔助 id、`attrName` 為屬性之名稱而 `val` 為欲寫入之值。當遠端傳回響應後，實作者需呼叫 `done(err[, val])`，其中 `val` 為該屬性成功寫入後之值，`val` 可選擇傳回或不傳回，建議應傳回
 * `exec: function (permAddr, auxId, attrName, args, done) {}`
     - 遠端執行物品上之程序，其中 `permAddr` 為裝置之永久位址、`auxId` 為輔助 id、`attrName` 為屬性之名稱而 `args` 為執行遠端程序所需之參數陣列
-* `getReportCfg: function (permAddr, auxId, attrName, done) {}`
+* `readReportCfg: function (permAddr, auxId, attrName, done) {}`
     - 讀取物品屬性之報告設定，其中 `permAddr` 為裝置之永久位址、`auxId` 為輔助 id、`attrName` 為屬性之名稱。當遠端傳回設定之響應後，實作者需呼叫 `done(err, cfg)`，其中 `cfg` 為該屬性之報告設定
-* `setReportCfg: function (permAddr, auxId, attrName, cfg, done) {}`
+* `writeReportCfg: function (permAddr, auxId, attrName, cfg, done) {}`
     - 設定物品屬性之報告設定，其中 `permAddr` 為裝置之永久位址、`auxId` 為輔助 id、`attrName` 為屬性之名稱而 `cfg` 為該屬性的報告設定物件。當遠端傳回設定之響應後，實作者需呼叫 `done(err, result)`，其中 `result` 之布林值用以表明設定成功 (true) 或失敗 (false)
 
     

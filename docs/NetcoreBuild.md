@@ -203,10 +203,10 @@ That's all!
     - exec: `function(permAddr, auxId, attrName, args, done) {}`
         * `done(err, result)`
         * result (_Depends_): can be anything, depends on firmware
-    - setReportCfg: `function(permAddr, auxId, attrName, cfg, done) {}`
+    - writeReportCfg: `function(permAddr, auxId, attrName, cfg, done) {}`
         * `done(err, result)`
         * result (_Depends_): set succeeds? (Boolean, true or false)
-    - getReportCfg: `function(permAddr, auxId, attrName, done) {}`
+    - readReportCfg: `function(permAddr, auxId, attrName, done) {}`
         * `done(err, cfg)`
         * cfg (_Object_): config object (Object, ex: { pmin: 10, pmax: 60, gt: 200 })
 
@@ -308,13 +308,13 @@ Register gadget drivers to the netcore.
 
 1. `drvs` (_Object_): An object contains all device operation drivers required by the netcore.  
 
-    | Property     | Type     | Mandatory | Description                                                  |
-    |--------------|----------|-----------|--------------------------------------------------------------|
-    | read         | Function | required  | Driver to read an attribute from a remote gadget             |
-    | write        | Function | required  | Driver to write an attribute value to a remote gadget        |
-    | exec         | Function | optional  | [TODO]                                                       |
-    | getReportCfg | Function | optional  | [TODO]                                                       |
-    | setReportCfg | Function | optional  | [TODO]                                                       |
+    | Property       | Type     | Mandatory | Description                                                  |
+    |----------------|----------|-----------|--------------------------------------------------------------|
+    | read           | Function | required  | Driver to read an attribute from a remote gadget             |
+    | write          | Function | required  | Driver to write an attribute value to a remote gadget        |
+    | exec           | Function | optional  | [TODO]                                                       |
+    | readReportCfg  | Function | optional  | [TODO]                                                       |
+    | writeReportCfg | Function | optional  | [TODO]                                                       |
 
 **Returns:**  
 
@@ -328,8 +328,8 @@ var bleGadDrivers = {
     read: function () {},
     write: function () {},
     exec: function () {},
-    getReportCfg: function () {},
-    setReportCfg: function () {}
+    readReportCfg: function () {},
+    writeReportCfg: function () {}
 };
 
 nc.registerDevDrivers(bleDevDrivers);
@@ -559,11 +559,11 @@ var myGadDrivers = {
         // your implementation
         callback(err, data);
     },
-    getReportCfg: function (permAddr, auxId, attrName, cfg, callback) {
+    readReportCfg: function (permAddr, auxId, attrName, cfg, callback) {
         // your implementation
         callback(err, data);
     },
-    setReportCfg: function (permAddr, auxId, attrName, callback) {
+    writeReportCfg: function (permAddr, auxId, attrName, callback) {
         // your implementation
         callback(err, data);
     }
@@ -612,3 +612,122 @@ controller.on('gadget_reporting_event', function (gadAttrChanges) {
 });
 
 ```
+
+    * [Netcore()](#API_Netcore)
+
+<a name="API_Netcore"></a>
+### Netcore(name, controller, protocol[, opt])
+Netcore constructor. It is suggested to use freebird-base `.createNetcore()` method to create a new instance of Netcore.  
+  
+**Arguments:**  
+
+1. `name` (_String_): Netocre name
+2. `controller` (_Object_): Low-level controller, for example, `ble-shepherd`
+3. `protocol` (_Object_): Information of the used protocol
+
+    | Property | Type    | Mandatory | Description          |
+    |----------|---------|-----------|----------------------|
+    | phy      | String  | Required  | Physic layer         |
+    | dll      | String  | Optional  | Data link layer      |
+    | nwk      | String  | Required  | Network layer        |
+    | tl       | String  | Optional  | Transportation layer |
+    | sl       | String  | Optional  | Session layer        |
+    | pl       | String  | Optional  | Presentation layer   |
+    | apl      | String  | Optional  | Application layer    |
+
+4. `opt` (_Object_): Optional settings
+
+    | Property        | Type    | Description                                                                                                                                                  |
+    |-----------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | defaultJoinTime | Number  | Default timespan of 180 seconds to allow devices for joingiing the network. When calling `permitJoin()` without `duration`, this default value will be used. |
+
+**Returns:**  
+
+* (_Object_): netcore, the instance of Netcore class
+
+**Examples:**  
+  
+```js
+var FreebirdBase = require('freebird-base'),
+    Netcore = FreebirdBase.Netcore,
+    bShep = require('ble-shepherd');
+
+var nc = new Netcore('my_netcore', bShep, {
+    phy: 'ieee802.15.1',
+    nwk: 'ble',
+});
+
+// Use shorthand
+var nc = FreebirdBase.createNetcore('my_netcore', bShep, {
+    phy: 'ieee802.15.1',
+    nwk: 'ble',
+});
+```
+
+********************************************
+
+registerNetDrivers
+registerDevDrivers
+registerGadDrivers
+commitReady
+commitDevNetChanging
+commitDevIncoming
+commitDevLeaving
+commitGadIncoming
+commitDevReporting
+commitGadReporting
+dangerouslyCommitGadReporting
+
+
+    - [new Device()](#API_Device)
+
+<a name="API_Device"></a>
+### new Device(netcore[, rawDev])
+New a device instance.  
+  
+**Arguments:**  
+
+1. `netcore` (_Object_): The netcore that manages this device. Should be an instance of the _Netcore_ class.  
+2. `rawDev` (_Object_): Optional. The `rawDev` maybe a data object that contains many raw information about this device.  
+
+**Returns:**  
+
+* (_Object_): device
+
+**Examples:**  
+  
+```js
+var myNetcore = require('./my_foo_netcore');
+var deviceRawData = {
+    ieeeAddr: '0x123456789abcdef',
+    nwkAddr: 0x27B3,
+    // ...
+};
+
+var myDevice = new Device(myNetcore, deviceRawData);
+```
+
+********************************************
+
+    - [new Gadget()](#API_Gadget)
+<a name="API_Gadget"></a>
+### new Gadget(dev, auxId[, rawGad])
+New a gadget instance. If your are managing your machine network with freebird, the freebird will always create a gadget for you when there is a new gadget incoming to the network.  
+  
+**Arguments:**  
+
+1. `dev` (_Device_): An instance of Device class  
+2. `auxId` (_String | Number_): Auxiliary id to identify a gadget on the device
+3. `rawGad` (_Object_): Raw data of the gadget  
+
+**Returns:**  
+
+* (_Gadget_): gadget
+
+**Examples:**  
+  
+```js
+var myGadget = new Gadget(fooDev, 28, barGadRawData);
+```
+
+********************************************

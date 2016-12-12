@@ -1,8 +1,7 @@
 # Netcore Class
-The Netcore Class provides methods for network management, remote operations upon devices and gadgets.  
+The Netcore Class provides methods for network management.  
 
-* Netcore Constructor and Basic Methods
-    * [Netcore()](#API_Netcore)
+* Basic Methods
     * [getName()](#API_getName)
     * [isEnabled()](#API_isEnabled)
     * [isRegistered()](#API_isRegistered)
@@ -24,60 +23,12 @@ The Netcore Class provides methods for network management, remote operations upo
     * [getBlacklist()](#API_getBlacklist)
     * [clearBlacklist()](#API_clearBlacklist)
     * [isBlacklisted()](#API_isBlacklisted)
+* API for Netcore Implementers
+    * Please refer to [How to create your own netcore](https://github.com/freebirdjs/freebird-base/blob/master/docs/NetcoreBuild.md)
 
 ********************************************
-## Netcore Constructor and Basic Methods
+## Basic Methods
 
-<a name="API_Netcore"></a>
-### Netcore(name, controller, protocol[, opt])
-Netcore constructor. It is suggested to use freebird-base `.createNetcore()` method to create a new instance of Netcore.  
-  
-**Arguments:**  
-
-1. `name` (_String_): Netocre name
-2. `controller` (_Object_): Low-level controller, for example, `ble-shepherd`
-3. `protocol` (_Object_): Information of the used protocol
-
-    | Property | Type    | Mandatory | Description          |
-    |----------|---------|-----------|----------------------|
-    | phy      | String  | Required  | Physic layer         |
-    | dll      | String  | Optional  | Data link layer      |
-    | nwk      | String  | Required  | Network layer        |
-    | tl       | String  | Optional  | Transportation layer |
-    | sl       | String  | Optional  | Session layer        |
-    | pl       | String  | Optional  | Presentation layer   |
-    | apl      | String  | Optional  | Application layer    |
-
-4. `opt` (_Object_): Optional settings
-
-    | Property        | Type    | Description                                                                                                                                                  |
-    |-----------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-    | defaultJoinTime | Number  | Default timespan of 180 seconds to allow devices for joingiing the network. When calling `permitJoin()` without `duration`, this default value will be used. |
-
-**Returns:**  
-
-* (_Object_): netcore, the instance of Netcore class
-
-**Examples:**  
-  
-```js
-var FreebirdBase = require('freebird-base'),
-    Netcore = FreebirdBase.Netcore,
-    bShep = require('ble-shepherd');
-
-var nc = new Netcore('my_netcore', bShep, {
-    phy: 'ieee802.15.1',
-    nwk: 'ble',
-});
-
-// Use shorthand
-var nc = FreebirdBase.createNetcore('my_netcore', bShep, {
-    phy: 'ieee802.15.1',
-    nwk: 'ble',
-});
-```
-
-********************************************
 <a name="API_getName"></a>
 ### .getName()
 Get netcore name.  
@@ -145,7 +96,7 @@ To see if the netcore is currently allowing devices to join the network.
 
 **Returns:**  
 
-* (_Boolean_): `true` if joinable, otherwise `false`.  
+* (_Boolean_): `true` if network is currently joinable, otherwise `false`.  
 
 **Examples:**  
   
@@ -156,7 +107,7 @@ nc.isJoinable();  // true
 ********************************************
 <a name="API_enable"></a>
 ### .enable()
-Enable netcore. Transportation is working when netcore is enabled.   
+Enable netcore. Transportation is active when netcore is enabled.   
   
 **Arguments:**  
 
@@ -175,7 +126,7 @@ nc.enable();
 ********************************************
 <a name="API_disable"></a>
 ### .disable()
-Disable network. Any transportation will be ignore if netcore is disabled, and all remote operations become inapplicable as well.  
+Disable netcore. Any transportation will be inactivated if netcore is disabled, and remote operations are inapplicable.  
   
 **Arguments:**  
 
@@ -228,7 +179,7 @@ nc.dump();
 
 <a name="API_start"></a>
 ### .start(callback)
-Start the network controller.  
+Start the netcore. This is different from `enable()` which turns transportation on. `start()` is highly depending on the low-layer driver of the network contoller.  
 
 **Arguments:**  
 
@@ -252,7 +203,7 @@ nc.start(function (err) {
 ********************************************
 <a name="API_stop"></a>
 ### .stop(callback)
-Stop the network controller.  
+Stop the netcore. This is different from `disable()` which turns transportation off. `stop()` is highly depending on the low-layer driver of the network contoller.  
   
 **Arguments:**  
 
@@ -281,8 +232,8 @@ Reset the network controller.
   
 **Arguments:**  
 
-1. `mode` (_Number_): `0` for a soft reset and `1` for a hard reset. It will be a soft reset if `mode` is not given.  
-2. `callback` (_Function_):  `function (err) {}`. Get called after reset is applied. When netcore restarted, `nc.onReady()` will be called.  
+1. `mode` (_Number_): `0` for a soft reset and `1` for a hard reset. It will perform the soft reset if `mode` is not given.  
+2. `callback` (_Function_):  `function (err) {}`. Get called after reset is applied (not completely restarted). After netcore restarts successfully, `nc.onReady()` will be called.  
 
 **Returns:**  
 
@@ -306,12 +257,12 @@ nc.reset(0, function (err) {
 ********************************************
 <a name="API_permitJoin"></a>
 ### .permitJoin(duration[, callback])
-Let the network controller allow devices to join its network.  
+Let the netcore allow devices to join its network.  
   
 **Arguments:**  
 
-1. `duration` (_Number_): Duration in seconds for netcore allowing devices to join the network. Set it to `0` can immediately close the admission.  
-2. `callback` (_Function_):  `function (err, timeLeft) {}`. Get called when netcore starts/stops to permit joining, where `timeLeft` is a number that indicates time left for device joining in seconds, e.g., 180.
+1. `duration` (_Number_): Duration in seconds for the netcore to allow devices to join the network. Set it to `0` can immediately close the admission.  
+2. `callback` (_Function_):  `function (err, timeLeft) {}`. Get called when netcore starts/stops to permit joining, where `timeLeft` is a number that indicates time left for device joining in seconds, e.g., 180.  
 
 **Returns:**  
 
@@ -339,7 +290,7 @@ Remove a remote device from the network.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, permAddr) {}`. Get called after device removed, where `permAddr` is permananet address of that device.
+2. `callback` (_Function_):  `function (err, permAddr) {}`. Get called after device been removed, where `permAddr` is the permananet address of that device.
 
 **Returns:**  
 
@@ -350,7 +301,7 @@ Remove a remote device from the network.
 ```js
 nc.remove('00:0c:29:ff:ed:7c', function (err, permAddr) {
     if (!err)
-        console.log(permAddr);  // 00:0c:29:ff:ed:7c
+        console.log(permAddr);  // '00:0c:29:ff:ed:7c'
 });
 ```
 
@@ -362,7 +313,7 @@ Ban a device from the network. Once a device is banned, it can never join the ne
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, permAddr) {}`. Get called after device banned, where `permAddr` is permananet address of that device.  
+2. `callback` (_Function_):  `function (err, permAddr) {}`. Get called after device been banned, where `permAddr` is the permananet address of that device.  
 
 **Returns:**  
 
@@ -373,7 +324,7 @@ Ban a device from the network. Once a device is banned, it can never join the ne
 ```js
 nc.ban('00:0c:29:ff:ed:7c', function (err, permAddr) {
     if (!err)
-        console.log(permAddr);  // 00:0c:29:ff:ed:7c
+        console.log(permAddr);  // '00:0c:29:ff:ed:7c'
 });
 ```
 
@@ -385,7 +336,7 @@ Unban a device.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, val) {}`. Get called after device unbanned, where `permAddr` is permananet address of that device.  
+2. `callback` (_Function_):  `function (err, val) {}`. Get called after device been unbanned, where `permAddr` is the permananet address of that device.  
 
 **Returns:**  
 
@@ -396,7 +347,7 @@ Unban a device.
 ```js
 nc.unban('00:0c:29:ff:ed:7c', function (err, permAddr) {
     if (!err)
-        console.log(permAddr);  // 00:0c:29:ff:ed:7c
+        console.log(permAddr);  // '00:0c:29:ff:ed:7c'
 });
 ```
 
@@ -408,7 +359,7 @@ Ping a remote device.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, time) {}`. Get called after ping response comes back, where `time` is the round-trip time in milliseconds, e.g., 16.
+2. `callback` (_Function_):  `function (err, time) {}`. Get called when ping response comes back, where `time` is the round-trip time in milliseconds, e.g., 16.  
 
 **Returns:**  
 
@@ -473,7 +424,6 @@ Reset the traffic record.
 nc.resetTraffic();
 nc.resetTraffic('in');
 nc.resetTraffic('out');
-nc.resetTraffic();
 ```
 
 ********************************************
@@ -499,7 +449,7 @@ nc.getBlacklist();
 ********************************************
 <a name="API_clearBlacklist"></a>
 ### .clearBlacklist()
-Clear the blacklist.  
+Clear the blacklist. This will simply unban all banned devices.  
   
 **Arguments:**  
 

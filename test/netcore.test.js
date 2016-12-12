@@ -50,8 +50,8 @@ var fakeGadDrvs = {
     read: function (permAddr, auxId, attr, cb) { cb(); },
     write: function (permAddr, auxId, attr, cb) { cb(); },
     exec: function (permAddr, auxId, attr, args, cb) { cb(); },
-    setReportCfg: function (permAddr, auxId, attrName, cfg, cb) { cb(); },
-    getReportCfg: function (permAddr, auxId, attrName, cb) { cb(); }
+    writeReportCfg: function (permAddr, auxId, attrName, cfg, cb) { cb(); },
+    readReportCfg: function (permAddr, auxId, attrName, cb) { cb(); }
 };
 
 describe('Netcore Constructor', function () {
@@ -151,8 +151,8 @@ describe('Constructor Base Property Check', function () {
         expect(drvs.read).to.be.equal(null);
         expect(drvs.write).to.be.equal(null);
         expect(drvs.exec).to.be.equal(null);
-        expect(drvs.setReportCfg).to.be.equal(null);
-        expect(drvs.getReportCfg).to.be.equal(null);
+        expect(drvs.writeReportCfg).to.be.equal(null);
+        expect(drvs.readReportCfg).to.be.equal(null);
     });
 });
 
@@ -321,8 +321,8 @@ describe('Check Signature', function () {
                 read: function () {},
                 write: function () {},
                 exec: function () {},
-                setReportCfg: function () {},
-                getReportCfg: function () {}
+                writeReportCfg: function () {},
+                readReportCfg: function () {}
             }); }).not.to.throw(TypeError);
         });
     });
@@ -742,94 +742,94 @@ describe('Check Signature', function () {
         });
     });
 
-    describe('#getReportCfg(permAddr, auxId, attrName, callback)', function() {
+    describe('#readReportCfg(permAddr, auxId, attrName, callback)', function() {
         var cb = function () {};
         it('should throw if permAddr is not a string', function () {
-            expect(function () { return nc.getReportCfg(1, 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg([], 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg(null, 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg(NaN, 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg(true, 'x', 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg(function () {}, 'x', 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg(1, 'x', 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg([], 'x', 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg(null, 'x', 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg(NaN, 'x', 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg(true, 'x', 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg(function () {}, 'x', 'x', cb); }).to.throw(TypeError);
         });
 
         it('should throw if auxId is not a string or a number', function () {
-            expect(function () { return nc.getReportCfg('addr', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', [], 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', null, 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', NaN, 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', true, 'x', cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', function () {}, 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', [], 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', null, 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', NaN, 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', true, 'x', cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', function () {}, 'x', cb); }).to.throw(TypeError);
         });
 
         it('should throw if attrName is not a string', function () {
-            expect(function () { return nc.getReportCfg('addr', 'x', [], cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', 'x', null, cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', 'x', NaN, cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', 'x', true, cb); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', 'x', function () {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', [], cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', null, cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', NaN, cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', true, cb); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', function () {}, cb); }).to.throw(TypeError);
         });
 
         it('should throw if cb is not a function', function () {
-            expect(function () { return nc.getReportCfg('addr', 'x', 'x'); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', 'x', 'x', 1); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', 'x', 'x', []); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', 'x', 'x', null); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', 'x', 'x', NaN); }).to.throw(TypeError);
-            expect(function () { return nc.getReportCfg('addr', 'x', 'x', true); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', 'x'); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', 'x', 1); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', 'x', []); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', 'x', null); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', 'x', NaN); }).to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'x', 'x', true); }).to.throw(TypeError);
         });
 
         it('should not throw if arguments are allright', function () {
-            expect(function () { return nc.getReportCfg('addr', 'xxx', 'x', cb); }).not.to.throw(TypeError);
+            expect(function () { return nc.readReportCfg('addr', 'xxx', 'x', cb); }).not.to.throw(TypeError);
         });
     });
 
-    describe('#setReportCfg(permAddr, auxId, attrName, cfg, callback)', function() {
+    describe('#writeReportCfg(permAddr, auxId, attrName, cfg, callback)', function() {
         var cb = function () {};
         it('should throw if permAddr is not a string', function () {
-            expect(function () { return nc.setReportCfg(1, 'x', 'x', {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg([], 'x', 'x', {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg(null, 'x', 'x', {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg(NaN, 'x', 'x', {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg(true, 'x', 'x', {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg(function () {}, 'x', 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg(1, 'x', 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg([], 'x', 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg(null, 'x', 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg(NaN, 'x', 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg(true, 'x', 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg(function () {}, 'x', 'x', {}, cb); }).to.throw(TypeError);
         });
 
         it('should throw if auxId is not a string or a number', function () {
-            expect(function () { return nc.setReportCfg('addr', 1, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', [], 'x', {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', null, 'x', {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', NaN, 'x', {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', true, 'x', {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', function () {}, 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 1, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', [], 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', null, 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', NaN, 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', true, 'x', {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', function () {}, 'x', {}, cb); }).to.throw(TypeError);
         });
 
         it('should throw if attrName is not a string', function () {
-            expect(function () { return nc.setReportCfg('addr', 'x', [], {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', null, {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', NaN, {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', true, {}, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', function () {}, {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', [], {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', null, {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', NaN, {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', true, {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', function () {}, {}, cb); }).to.throw(TypeError);
         });
 
         it('should throw if cfg is not an object', function () {
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', 'y', cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', null, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', NaN, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', true, cb); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', function () {}, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', 'y', cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', null, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', NaN, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', true, cb); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', function () {}, cb); }).to.throw(TypeError);
         });
 
         it('should throw if cb is not a function', function () {
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', {}, 1); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', {}, []); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', {}, null); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', {}, NaN); }).to.throw(TypeError);
-            expect(function () { return nc.setReportCfg('addr', 'x', 'x', {}, true); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', {}, 1); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', {}, []); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', {}, null); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', {}, NaN); }).to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'x', 'x', {}, true); }).to.throw(TypeError);
         });
 
         it('should not throw if arguments are allright', function () {
-            expect(function () { return nc.setReportCfg('addr', 'xxx', 'x', {}, cb); }).not.to.throw(TypeError);
+            expect(function () { return nc.writeReportCfg('addr', 'xxx', 'x', {}, cb); }).not.to.throw(TypeError);
         });
     });
 

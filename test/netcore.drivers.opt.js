@@ -56,8 +56,8 @@ describe('Drivers test - with optional', function () {
 
     nc.registerGadDrivers({
         exec: function (permAddr, auxId, attr, args, cb) { return cb(null, 'exec'); },
-        setReportCfg: function (permAddr, auxId, attr, cfg, cb) { return cb(null, 'reportcfg'); },
-        getReportCfg: function (permAddr, auxId, attr, cb) { return cb(null, 'reportcfg'); },
+        writeReportCfg: function (permAddr, auxId, attr, cfg, cb) { return cb(null, 'reportcfg'); },
+        readReportCfg: function (permAddr, auxId, attr, cb) { return cb(null, 'reportcfg'); },
     });
 
     nc.enable();
@@ -131,55 +131,55 @@ describe('Drivers test - with optional', function () {
         });
     });
 
-    describe('#setReportCfg()', function () {
+    describe('#writeReportCfg()', function () {
         it('should call cb', function (done) {
             var p = '0x1234',
                 aux = 3,
                 r = {};
 
-            nc.setReportCfg(p, aux, 'x', r, function (err, da) {
+            nc.writeReportCfg(p, aux, 'x', r, function (err, da) {
                 if (!err && da === 'reportcfg')
                     done();
             });
         });
 
-        it('should receive _nc:gadSetReportCfg event', function (done) {
+        it('should receive _nc:gadWriteReportCfg event', function (done) {
             var p = '0x1234',
                 aux = 3,
                 r = {};
 
-            fb.once('_nc:gadSetReportCfg', function (d) {
+            fb.once('_nc:gadWriteReportCfg', function (d) {
                 if (d.permAddr === p && d.auxId === aux && d.data.x === 'reportcfg')
                     done();
             });
 
-            nc.setReportCfg(p, aux, 'x', r, function (err, da) {});
+            nc.writeReportCfg(p, aux, 'x', r, function (err, da) {});
         });
     });
 
-    describe('#getReportCfg()', function () {
+    describe('#readReportCfg()', function () {
         it('should call cb', function (done) {
             var p = '0x1234',
                 aux = 3,
                 r = {};
 
-            nc.getReportCfg(p, aux, 'x', function (err, da) {
+            nc.readReportCfg(p, aux, 'x', function (err, da) {
                 if (!err && da === 'reportcfg')
                     done();
             });
         });
 
-        it('should receive _nc:gadGetReportCfg event', function (done) {
+        it('should receive _nc:gadReadReportCfg event', function (done) {
             var p = '0x1234',
                 aux = 3,
                 r = {};
 
-            fb.once('_nc:gadGetReportCfg', function (d) {
+            fb.once('_nc:gadReadReportCfg', function (d) {
                 if (d.permAddr === p && d.auxId === aux && d.data.x === 'reportcfg')
                     done();
             });
 
-            nc.getReportCfg(p, aux, 'x', function (err, da) {});
+            nc.readReportCfg(p, aux, 'x', function (err, da) {});
         });
     });
 });

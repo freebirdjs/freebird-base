@@ -283,28 +283,28 @@ describe('Drivers test', function () {
         });
     });
 
-    describe('#setReportCfg()', function () {
+    describe('#writeReportCfg()', function () {
         it('should get erro back [Need to be test with real gadget]', function (done) {
             var p = '0x1234',
                 aux = 3,
                 cfg = {};
 
             // [TODO] should test with implementation
-            nc.setReportCfg(p, aux, 'x', cfg, function (err, da) {
-                if (err)    // setReportCfg not implemented
+            nc.writeReportCfg(p, aux, 'x', cfg, function (err, da) {
+                if (err)    // writeReportCfg not implemented
                     done();
             });
         });
     });
 
-    describe('#getReportCfg()', function () {
+    describe('#readReportCfg()', function () {
         it('should get erro back [Need to be test with real gadget]', function (done) {
             var p = '0x1234',
                 aux = 3,
                 cfg = {};
 
             // [TODO] should test with implementation
-            nc.getReportCfg(p, aux, 'x', function (err, da) {
+            nc.readReportCfg(p, aux, 'x', function (err, da) {
                 if (err)    // exec not implemented
                     done();
             });

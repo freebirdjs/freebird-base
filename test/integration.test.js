@@ -80,8 +80,8 @@ nc.registerGadDrivers({
     read: function (permAddr, auxId, attr, cb) { return cb(null, 'read'); },
     write: function (permAddr, auxId, attr, val, cb) { return cb(null, 'written'); },
     exec: function (permAddr, auxId, attr, args, cb) { return cb(null, 'exec'); },
-    setReportCfg: function (permAddr, auxId, attr, cfg, cb) { return cb(null, 'reportcfg'); },
-    getReportCfg: function (permAddr, auxId, attr, cb) { return cb(null, 'reportcfg'); }
+    writeReportCfg: function (permAddr, auxId, attr, cfg, cb) { return cb(null, 'reportcfg'); },
+    readReportCfg: function (permAddr, auxId, attr, cb) { return cb(null, 'reportcfg'); }
 });
 
 // registered to freebird
@@ -649,15 +649,15 @@ describe('Gadget tests', function () {
             });
         });
 
-        it('should setReportCfg properly', function (done) {
-            gad1.setReportCfg('x', {}, function (err, d) {
+        it('should writeReportCfg properly', function (done) {
+            gad1.writeReportCfg('x', {}, function (err, d) {
                 if (d === 'reportcfg')
                     done();
             });
         });
 
-        it('should getReportCfg properly', function (done) {
-            gad1.getReportCfg('x', function (err, d) {
+        it('shoul readReportCfg properly', function (done) {
+            gad1.readReportCfg('x', function (err, d) {
                 if (d === 'reportcfg')
                     done();
             });
@@ -781,4 +781,3 @@ function mockGadGen() {
         attrs : attrs
     };
 }
-
