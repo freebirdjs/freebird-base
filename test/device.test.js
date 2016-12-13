@@ -436,20 +436,20 @@ describe('APIs Signature Check', function() {
         });
     });
 
-    describe('#recoverFromRecord(rec)', function() {
+    describe('#_recoverFromRecord(rec)', function() {
         it('should throw if rec is not an object', function () {
-            expect(function () { return mydev.recoverFromRecord(); }).to.throw(TypeError);
-            expect(function () { return mydev.recoverFromRecord([]); }).to.throw(TypeError);
-            expect(function () { return mydev.recoverFromRecord(null); }).to.throw(TypeError);
-            expect(function () { return mydev.recoverFromRecord(NaN); }).to.throw(TypeError);
-            expect(function () { return mydev.recoverFromRecord(true); }).to.throw(TypeError);
-            expect(function () { return mydev.recoverFromRecord(function () {}); }).to.throw(TypeError);
-            expect(function () { return mydev.recoverFromRecord(1); }).to.throw(TypeError);
-            expect(function () { return mydev.recoverFromRecord('xxx'); }).to.throw(TypeError);
+            expect(function () { return mydev._recoverFromRecord(); }).to.throw(TypeError);
+            expect(function () { return mydev._recoverFromRecord([]); }).to.throw(TypeError);
+            expect(function () { return mydev._recoverFromRecord(null); }).to.throw(TypeError);
+            expect(function () { return mydev._recoverFromRecord(NaN); }).to.throw(TypeError);
+            expect(function () { return mydev._recoverFromRecord(true); }).to.throw(TypeError);
+            expect(function () { return mydev._recoverFromRecord(function () {}); }).to.throw(TypeError);
+            expect(function () { return mydev._recoverFromRecord(1); }).to.throw(TypeError);
+            expect(function () { return mydev._recoverFromRecord('xxx'); }).to.throw(TypeError);
         });
 
         it('should not throw if propName is a string', function () {
-            expect(function () { return mydev.recoverFromRecord({
+            expect(function () { return mydev._recoverFromRecord({
                 id: 100,
                 net: {
                     enabled: false,

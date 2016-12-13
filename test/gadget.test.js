@@ -468,20 +468,20 @@ describe('APIs Signature Check', function() {
         });
     });
 
-    describe('#recoverFromRecord(rec)', function() {
+    describe('#_recoverFromRecord(rec)', function() {
         it('should throw if rec is not an object', function () {
-            expect(function () { return mygad.recoverFromRecord(); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord([]); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(null); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(NaN); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(true); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(function () {}); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord(1); }).to.throw(TypeError);
-            expect(function () { return mygad.recoverFromRecord('xxx'); }).to.throw(TypeError);
+            expect(function () { return mygad._recoverFromRecord(); }).to.throw(TypeError);
+            expect(function () { return mygad._recoverFromRecord([]); }).to.throw(TypeError);
+            expect(function () { return mygad._recoverFromRecord(null); }).to.throw(TypeError);
+            expect(function () { return mygad._recoverFromRecord(NaN); }).to.throw(TypeError);
+            expect(function () { return mygad._recoverFromRecord(true); }).to.throw(TypeError);
+            expect(function () { return mygad._recoverFromRecord(function () {}); }).to.throw(TypeError);
+            expect(function () { return mygad._recoverFromRecord(1); }).to.throw(TypeError);
+            expect(function () { return mygad._recoverFromRecord('xxx'); }).to.throw(TypeError);
         });
 
         it('should not throw if propName is a string', function () {
-            expect(function () { return mygad.recoverFromRecord({
+            expect(function () { return mygad._recoverFromRecord({
                 id: 100,
                 panel: {
                     enabled: false,
@@ -659,24 +659,6 @@ describe('APIs Signature Check', function() {
             expect(function () { return mygad.writeReportCfg('xxx', 'x', cb); }).to.throw(TypeError);
             expect(function () { return mygad.writeReportCfg('xxx', null, cb); }).to.throw(TypeError);
             expect(function () { return mygad.writeReportCfg('xxx', [], cb); }).to.throw(TypeError);
-        });
-    });
-
-    describe('#_callDriver(drvName, args)', function() {
-        it('should throw if drvName is not a string', function () {
-            expect(function () { return mygad._callDriver([], 1); }).to.throw(TypeError);
-            expect(function () { return mygad._callDriver({}, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._callDriver(null, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._callDriver(NaN, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._callDriver(true, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._callDriver(function () {}, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._callDriver(1); }).to.throw(TypeError);
-        });
-
-        it('should not throw if drvName is a string', function () {
-            expect(function () { return mygad._callDriver('_id', 1); }).not.to.throw(TypeError);
-            expect(function () { return mygad._callDriver('in', 2); }).not.to.throw(TypeError);
-            expect(function () { return mygad._callDriver('out', 10); }).not.to.throw(TypeError);
         });
     });
 

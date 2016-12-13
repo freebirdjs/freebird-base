@@ -96,6 +96,8 @@ describe('Drivers test', function () {
         it('should call cb', function (done) {
             nc.enable();
             nc.permitJoin(20, function (err, d) {
+                            console.log(err);
+                                console.log(d);
                 if (!err && d === 20)
                     done();
             });

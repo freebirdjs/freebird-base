@@ -9,6 +9,11 @@ module.exports = {
     EVENTS: require('./lib/constants.js').EVENTS,
     createNetcore: function (name, controller, protocol, opt) {
         return new Netcore(name, controller, protocol, opt);
+    },
+    createDevice: function (netcore, rawDev) {
+        return new Device(netcore, rawDev);
+    },
+    createGadget: function Gadget(dev, auxId, rawGad) {
+        return new Gadget(dev, auxId, rawGad);
     }
-//    Errors: require('./lib/errors.js')    //[TODO]
 };

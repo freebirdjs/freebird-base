@@ -116,8 +116,6 @@ describe('Constructor Base Property Check', function () {
         expect(net.enabled).to.be.equal(false);
         expect(net.protocol).to.be.equal(protocol);
         expect(net.startTime).to.be.equal(0);
-        expect(net.defaultJoinTime).to.be.equal(180);
-        expect(net.defaultJoinTime).to.be.equal(180);
     });
 
     it('has a null _cookRawDev method', function () {
@@ -338,10 +336,7 @@ describe('Check Signature', function () {
 
             expect(function () { return nc.start([]); }).to.throw(TypeError);
             expect(function () { return nc.start({}); }).to.throw(TypeError);
-            expect(function () { return nc.start(null); }).to.throw(TypeError);
-            expect(function () { return nc.start(NaN); }).to.throw(TypeError);
             expect(function () { return nc.start(true); }).to.throw(TypeError);
-            expect(function () { return nc.start(); }).to.throw(TypeError);
             expect(function () { return nc.start('_id'); }).to.throw(TypeError);
             nc.cookRawGad = null;
             nc.cookRawDev = null;
@@ -359,10 +354,7 @@ describe('Check Signature', function () {
         it('should throw if callback is not a function', function () {
             expect(function () { return nc.stop([]); }).to.throw(TypeError);
             expect(function () { return nc.stop({}); }).to.throw(TypeError);
-            expect(function () { return nc.stop(null); }).to.throw(TypeError);
-            expect(function () { return nc.stop(NaN); }).to.throw(TypeError);
             expect(function () { return nc.stop(true); }).to.throw(TypeError);
-            expect(function () { return nc.stop(); }).to.throw(TypeError);
             expect(function () { return nc.stop('_id'); }).to.throw(TypeError);
         });
 
@@ -383,19 +375,17 @@ describe('Check Signature', function () {
             expect(function () { return nc.permitJoin(null); }).to.throw(TypeError);
             expect(function () { return nc.permitJoin(NaN); }).to.throw(TypeError);
             expect(function () { return nc.permitJoin(true); }).to.throw(TypeError);
+            expect(function () { return nc.permitJoin(function () {}); }).to.throw(TypeError);
         });
 
         it('should not throw if duration is a number or not given', function () {
             expect(function () { return nc.permitJoin(1); }).not.to.throw(TypeError);
-            expect(function () { return nc.permitJoin(function () {}); }).not.to.throw(TypeError);
             expect(function () { return nc.permitJoin(100, function () {}); }).not.to.throw(TypeError);
         });
 
         it('should throw if cb is not a function when given', function () {
             expect(function () { return nc.permitJoin(1, []); }).to.throw(TypeError);
             expect(function () { return nc.permitJoin(1, {}); }).to.throw(TypeError);
-            expect(function () { return nc.permitJoin(1, null); }).to.throw(TypeError);
-            expect(function () { return nc.permitJoin(1, NaN); }).to.throw(TypeError);
             expect(function () { return nc.permitJoin(1, true); }).to.throw(TypeError);
         });
     });
@@ -418,8 +408,6 @@ describe('Check Signature', function () {
         it('should throw if cb is not a function', function () {
             expect(function () { return nc.remove('x', []); }).to.throw(TypeError);
             expect(function () { return nc.remove('x', {}); }).to.throw(TypeError);
-            expect(function () { return nc.remove('x', null); }).to.throw(TypeError);
-            expect(function () { return nc.remove('x', NaN); }).to.throw(TypeError);
             expect(function () { return nc.remove('x', true); }).to.throw(TypeError);
         });
     });
@@ -703,24 +691,6 @@ describe('Check Signature', function () {
             expect(function () { return nc._fire('x', 'x'); }).not.to.throw(TypeError);
         });
     });
-
-    describe('#_callDriver(type, name, args, originCb, callback)', function() {
-        var ocb = function () {};
-
-        it('should throw if callback is not a function', function () {
-            expect(function () { return nc._callDriver('x', 'y', [], ocb, 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._callDriver('x', 'y', [], ocb, []); }).to.throw(TypeError);
-            expect(function () { return nc._callDriver('x', 'y', [], ocb, {}); }).to.throw(TypeError);
-            expect(function () { return nc._callDriver('x', 'y', [], ocb, null); }).to.throw(TypeError);
-            expect(function () { return nc._callDriver('x', 'y', [], ocb, NaN); }).to.throw(TypeError);
-            expect(function () { return nc._callDriver('x', 'y', [], ocb, true); }).to.throw(TypeError);
-            expect(function () { return nc._callDriver('x', 'y', [], ocb, 10); }).to.throw(TypeError);
-        });
-
-        it('should not throw if callback is a function', function () {
-            expect(function () { return nc._callDriver('x', 'y', [], ocb, function () {}); }).not.to.throw(TypeError);
-        });
-    });
 });
 
 describe('Functional Test', function () {
@@ -853,8 +823,7 @@ describe('Functional Test', function () {
                 name: 'mync',
                 enabled: false,
                 protocol: { phy: 'myphy', nwk: 'mynwk' },
-                startTime: 0,
-                defaultJoinTime: 180
+                startTime: 0
             });
         });
     });

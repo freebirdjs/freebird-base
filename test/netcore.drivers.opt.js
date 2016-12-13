@@ -46,8 +46,8 @@ fb.on('_nc:error', function (err) {
 
 describe('Drivers test - with optional', function () {
     nc.registerNetDrivers({
-        ban: function (permAddr, cb) { return cb(null, 'ban'); },
-        unban: function (permAddr, cb) { return cb(null, 'unban'); }
+        ban: function (permAddr, cb) { return cb(null, permAddr); },
+        unban: function (permAddr, cb) { return cb(null, permAddr); }
     });
 
     nc.registerDevDrivers({

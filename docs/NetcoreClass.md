@@ -168,8 +168,7 @@ nc.dump();
         phy: 'ieee802.15.1',
         nwk: 'ble'
     },
-    startTime: 12345678,
-    defaultJoinTime: 180
+    startTime: 12345678
 }
 */
 ```
@@ -178,7 +177,7 @@ nc.dump();
 ## Network Management
 
 <a name="API_start"></a>
-### .start(callback)
+### .start([callback])
 Start the netcore. This is different from `enable()` which turns transportation on. `start()` is highly depending on the low-layer driver of the network contoller.  
 
 **Arguments:**  
@@ -202,7 +201,7 @@ nc.start(function (err) {
 
 ********************************************
 <a name="API_stop"></a>
-### .stop(callback)
+### .stop([callback])
 Stop the netcore. This is different from `disable()` which turns transportation off. `stop()` is highly depending on the low-layer driver of the network contoller.  
   
 **Arguments:**  
@@ -227,7 +226,7 @@ nc.stop(function (err) {
 
 ********************************************
 <a name="API_reset"></a>
-### .reset([mode,] callback)
+### .reset([mode], callback)
 Reset the network controller.  
   
 **Arguments:**  
@@ -284,7 +283,7 @@ nc.permitJoin(0, function (err, timeLeft) {
 
 ********************************************
 <a name="API_remove"></a>
-### .remove(permAddr, callback)
+### .remove(permAddr[, callback])
 Remove a remote device from the network.  
   
 **Arguments:**  
