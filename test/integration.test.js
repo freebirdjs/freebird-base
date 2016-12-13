@@ -656,7 +656,7 @@ describe('Gadget tests', function () {
             });
         });
 
-        it('shoul readReportCfg properly', function (done) {
+        it('should readReportCfg properly', function (done) {
             gad1.readReportCfg('x', function (err, d) {
                 if (d === 'reportcfg')
                     done();
