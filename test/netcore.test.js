@@ -652,45 +652,6 @@ describe('Check Signature', function () {
             expect(function () { return nc.dangerouslyCommitGadReporting('addr', 'x', 1); }).to.throw(TypeError);
         });
     });
-
-    describe('#_findDriver(type, name)', function() {
-        it('should throw if type is not a string', function () {
-            expect(function () { return nc._findDriver([], 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver({}, 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver(null, 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver(NaN, 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver(true, 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver(10, 'x'); }).to.throw(TypeError);
-        });
-
-        it('should throw if name is not a string', function () {
-            expect(function () { return nc._findDriver('x', []); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver('x', {}); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver('x', null); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver('x', NaN); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver('x', true); }).to.throw(TypeError);
-            expect(function () { return nc._findDriver('x', 10); }).to.throw(TypeError);
-        });
-
-        it('should not throw if type and name are strings', function () {
-            expect(function () { return nc._findDriver('x', 'x'); }).not.to.throw(TypeError);
-        });
-    });
-
-    describe('#_fire(evt, data)', function() {
-        it('should throw if evt is not a string', function () {
-            expect(function () { return nc._fire([], 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._fire({}, 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._fire(null, 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._fire(NaN, 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._fire(true, 'x'); }).to.throw(TypeError);
-            expect(function () { return nc._fire(10, 'x'); }).to.throw(TypeError);
-        });
-
-        it('should not throw if type and name are ok', function () {
-            expect(function () { return nc._fire('x', 'x'); }).not.to.throw(TypeError);
-        });
-    });
 });
 
 describe('Functional Test', function () {
@@ -741,7 +702,9 @@ describe('Functional Test', function () {
 
     describe('#_fire() - registered', function () {
         it('should fire correctly', function (done) {
+            nc.enable();
             fb.once('test', function (data) {
+                nc.disable();
                 if (data.d === 3)
                     data.done();
             });
@@ -753,9 +716,11 @@ describe('Functional Test', function () {
     describe('#_fire() - registered, nc:error', function () {
         it('should fire correctly', function (done) {
             nc._freebird = fb;
-            fb.once('_nc:error', function (err) {
-                if (err.info.d === 3)
-                    err.info.done();
+            nc.enable();
+            fb.once('_nc:error', function (errInfo) {
+                nc.disable();
+                if (errInfo.d === 3)
+                    errInfo.done();
             });
 
             expect(nc._fire('_nc:error', { error: new Error('x'), d: 3, done: done })).to.be.true;

@@ -662,24 +662,6 @@ describe('APIs Signature Check', function() {
         });
     });
 
-    describe('#_fire(evt, data)', function() {
-        it('should throw if evt is not a string', function () {
-            expect(function () { return mygad._fire([], 1); }).to.throw(TypeError);
-            expect(function () { return mygad._fire({}, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._fire(null, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._fire(NaN, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._fire(true, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._fire(function () {}, 1); }).to.throw(TypeError);
-            expect(function () { return mygad._fire(1); }).to.throw(TypeError);
-        });
-
-        it('should not throw if evt is a string', function () {
-            expect(function () { return mygad._fire('_id', 1); }).not.to.throw(TypeError);
-            expect(function () { return mygad._fire('in', 2); }).not.to.throw(TypeError);
-            expect(function () { return mygad._fire('out', 10); }).not.to.throw(TypeError);
-        });
-    });
-
     describe('#_clear()', function() {
         it('should always pass - no signature', function (done) {
             done();
