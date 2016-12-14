@@ -86,16 +86,7 @@ ncMock = {
         this._net.enabled = false;
     },
     ping: function () {},
-    gadRead: function () {},
-    gadWrite: function () {},
-    gadExec: function () {},
-    writeReportCfg: function () {},
-    readReportCfg: function () {}
 };
-
-// fb.on('_gad:error', function (err) {
-//     console.log(err);
-// });
 
 /*************************************************************************************************/
 /*** Device Mockup Generation                                                                  ***/
