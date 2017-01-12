@@ -1,3 +1,6 @@
+[TODOs]
+1. maintain()
+
 # Netcore Class
 The Netcore Class provides methods for network management.  
 
@@ -215,7 +218,6 @@ Stop the netcore. This is different from `disable()` which turns transportation 
 **Examples:**  
   
 ```js
-```js
 nc.stop(function (err) {
     if (!err)
         console.log('netcore is down');
@@ -335,7 +337,7 @@ Unban a device.
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address  
-2. `callback` (_Function_):  `function (err, val) {}`. Get called after device been unbanned, where `permAddr` is the permananet address of that device.  
+2. `callback` (_Function_):  `function (err, permAddr) {}`. Get called after device been unbanned, where `permAddr` is the permananet address of that device.  
 
 **Returns:**  
 

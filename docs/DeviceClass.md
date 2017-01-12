@@ -378,7 +378,7 @@ myDevice.read('model', function (err, data) {
 
 ********************************************
 <a name="API_write"></a>
-### .write(attrName, val[, callback])
+### .write(attrName, val, callback)
 Remotely write a value to an attribue on this device.  
   
 **Arguments:**  
@@ -460,7 +460,7 @@ Refresh the status and attributes from the remote device. All gadgets owned by t
 
 **Returns:**  
 
-* (_Object_): device
+* _none_
 
 **Examples:**  
   

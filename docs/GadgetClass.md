@@ -232,7 +232,7 @@ myGadget.exec('blink', [ 10 ], function (err, data) {
 
 ********************************************
 <a name="API_readReportCfg"></a>
-### .readReportCfg(attrName, cfg, callback)
+### .readReportCfg(attrName, callback)
 Remotely get the report settings from the gadget.  
   
 **Arguments:**  
@@ -274,7 +274,7 @@ Write the report configuration to a gadget on the remote device. To start the re
     | stp      | Number  | optional  | Step. The Client Device should notify its value when the change of the Resource value, since the last report happened, is greater than this setting.                                                    |
     | enable   | Boolean | optional  | Set to `true` for a Client Device to enable observation on the allocated Resource or Object Instance.                                                                                                   |
 
-3. `callback` (_Function_):  `function (err) {}`  
+3. `callback` (_Function_):  `function (err, data) {}`  
 
 **Returns:**  
 
@@ -283,9 +283,9 @@ Write the report configuration to a gadget on the remote device. To start the re
 **Examples:**  
   
 ```js
-myGadget.writeReportCfg('sensorValue', { pmin: 60, pmax: 180 }, function (err) {
+myGadget.writeReportCfg('sensorValue', { pmin: 60, pmax: 180 }, function (err, data) {
     if (!err)
-        console.log('success!');
+        console.log(data);  // { sensorValue: true }, true for success and false for fail
 });
 ```
 ********************************************

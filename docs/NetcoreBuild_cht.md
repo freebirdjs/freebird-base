@@ -21,7 +21,7 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 * 物品類別 (Gadget Class)  
     - 關於一個 gadget 內的資料，首重**應用**方面的資訊，你可以使用 gadget 的方法 `gad.set('panel', panelInfoObj)` 來設定它的基本資訊  
     - gadget 的應用，必定有與其狀態相關的屬性。至於一個 gadget 應該擁有哪些基本屬性，則由 panelInfoObj 所定義的 classId 所決定  
-    - classId 應遵照 IPSO 所提供的 53 種 **Objects** 來定義其名，smartobject 的[這份文件](https://github.com/PeterEB/smartobject/blob/master/docs/templates.md)列出了支援的 Object Ids，這份文件也指出了一個 gadget 所必須擁有的屬性  
+    - classId 應遵照 IPSO 所提供的 51 種 **Objects** 來定義其名，smartobject 的[這份文件](https://github.com/PeterEB/smartobject/blob/master/docs/templates.md)列出了支援的 Object Ids，這份文件也指出了一個 gadget 所必須擁有的屬性  
     - 一旦開發者決定了 classId，則還有填滿 gadget 屬性的責任。要填滿屬性，必須使用 gadget 的 set('attrs', gadAttrsObj) 來加以設定  
     - `panelInfoObj` 與 `gadAttrsObj` 之格式列於第 4 節
     
