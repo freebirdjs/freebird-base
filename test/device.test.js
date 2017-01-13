@@ -46,7 +46,7 @@ ncMock = {
     _drivers: {},
     _findDriver: function () { return function () {}; },
     getName: function () { return ncMock._net.name; },
-    _fire: function (evt, data) {
+    _fireup: function (evt, data) {
         var emitData,
             emitted = false,
             isErrEvt = (evt === '_nc:error') || (evt === '_dev:error') || (evt === '_gad:error');

@@ -700,7 +700,7 @@ describe('Functional Test', function () {
         });
     });
 
-    describe('#_fire() - registered', function () {
+    describe('#_fireup() - registered', function () {
         it('should fire correctly', function (done) {
             nc.enable();
             fb.once('test', function (data) {
@@ -709,11 +709,11 @@ describe('Functional Test', function () {
                     data.done();
             });
 
-            expect(nc._fire('test', { d: 3, done: done })).to.be.true;
+            expect(nc._fireup('test', { d: 3, done: done })).to.be.true;
         });
     });
 
-    describe('#_fire() - registered, nc:error', function () {
+    describe('#_fireup() - registered, nc:error', function () {
         it('should fire correctly', function (done) {
             nc._freebird = fb;
             nc.enable();
@@ -723,7 +723,7 @@ describe('Functional Test', function () {
                     errInfo.done();
             });
 
-            expect(nc._fire('_nc:error', { error: new Error('x'), d: 3, done: done })).to.be.true;
+            expect(nc._fireup('_nc:error', { error: new Error('x'), d: 3, done: done })).to.be.true;
         });
     });
 

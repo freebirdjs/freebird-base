@@ -304,7 +304,7 @@ describe('Device tests', function () {
         });
     });
 
-    describe('#_fire test', function () {
+    describe('#_handoff test', function () {
         it('should fire properly', function (done) {
             dev1._id = 3;   // assume registered to freebird
 
@@ -314,7 +314,7 @@ describe('Device tests', function () {
                 }
             });
 
-            expect(dev1._fire('noevt', { x: 'faa' })).to.be.true;
+            expect(dev1._handoff('noevt', { x: 'faa' })).to.be.true;
             dev1._id = null;
         });
     });
@@ -459,22 +459,22 @@ describe('Device tests', function () {
             dev1.set('attrs', { manufacturer: 'hi', version: { hw: 'v2' } });
         });
 
-        it('should receive _dev:netChanged event when resetTraffic("out")', function (done) {
-            fb.once('_dev:netChanged', function (d) {
-                if (d.data.traffic.out.hits === 0 && d.data.traffic.out.bytes === 0)
-                    done();
-            });
-            dev1.resetTraffic('out');
-        });
+        // it('should receive _dev:netChanged event when resetTraffic("out")', function (done) {
+        //     fb.once('_dev:netChanged', function (d) {
+        //         if (d.data.traffic.out.hits === 0 && d.data.traffic.out.bytes === 0)
+        //             done();
+        //     });
+        //     dev1.resetTraffic('out');
+        // });
 
-        it('should receive _dev:netChanged event when resetTraffic("in")', function (done) {
-            fb.once('_dev:netChanged', function (d) {
-                if (d.data.traffic.in.hits === 0 && d.data.traffic.in.bytes === 0)
-                    done();
-            });
+        // it('should receive _dev:netChanged event when resetTraffic("in")', function (done) {
+        //     fb.once('_dev:netChanged', function (d) {
+        //         if (d.data.traffic.in.hits === 0 && d.data.traffic.in.bytes === 0)
+        //             done();
+        //     });
 
-            dev1.resetTraffic('in');
-        });
+        //     dev1.resetTraffic('in');
+        // });
     });
 });
 
