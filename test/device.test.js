@@ -466,8 +466,6 @@ describe('APIs Signature Check', function() {
         it('should throw if callback is not a function', function () {
             expect(function () { return mydev.maintain([]); }).to.throw(TypeError);
             expect(function () { return mydev.maintain({}); }).to.throw(TypeError);
-            expect(function () { return mydev.maintain(null); }).to.throw(TypeError);
-            expect(function () { return mydev.maintain(NaN); }).to.throw(TypeError);
             expect(function () { return mydev.maintain(true); }).to.throw(TypeError);
             expect(function () { return mydev.maintain('_id'); }).to.throw(TypeError);
         });

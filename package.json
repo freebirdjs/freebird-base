@@ -1,6 +1,6 @@
 {
   "name": "freebird-base",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Base classes for freebird",
   "main": "index.js",
   "scripts": {
@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/freebirdjs/freebird-base#readme",
   "dependencies": {
-    "busyman": "^0.2.1",
-    "freebird-constants": "^0.2.1",
-    "proving": "^0.0.2"
+    "busyman": "^0.3.0",
+    "freebird-constants": "^0.2.3",
+    "proving": "^0.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
