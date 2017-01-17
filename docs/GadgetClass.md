@@ -25,6 +25,8 @@ The Gadget Class defines a gadget which is a single and small application, such 
 ## Basic Methods
 
 <a name="API_isEnabled"></a>
+<br />
+********************************************
 ### .isEnabled()
 To see if this gadget is enabled.  
   
@@ -42,8 +44,9 @@ To see if this gadget is enabled.
 myGadget.isEnabled();   // false
 ```
 
-********************************************
 <a name="API_isRegistered"></a>
+<br />
+********************************************
 ### .isRegistered()
 To see if this gadget is registered to freebird framework.  
   
@@ -61,8 +64,9 @@ To see if this gadget is registered to freebird framework.
 myGadget.isRegistered();    // false
 ```
 
-********************************************
 <a name="API_enable"></a>
+<br />
+********************************************
 ### .enable()
 Enable this gadget.  
   
@@ -80,8 +84,9 @@ Enable this gadget.
 myGadget.enable();
 ```
 
-********************************************
 <a name="API_disable"></a>
+<br />
+********************************************
 ### .disable()
 Disable this gadget. Any transportation to this gadget will be inactivated if it is disabled, and any remote operation upon this gadget is inapplicable.  
   
@@ -99,8 +104,9 @@ Disable this gadget. Any transportation to this gadget will be inactivated if it
 myGadget.disable();
 ```
 
-********************************************
 <a name="API_dump"></a>
+<br />
+********************************************
 ### .dump()
 Dump the information of this gadget.  
   
@@ -156,6 +162,8 @@ myGadget.dump();
 ## Remote Operations
 
 <a name="API_read"></a>
+<br />
+********************************************
 ### .read(attrName, callback)
 Read an attribute from a gadget on the remote device.  
   
@@ -177,8 +185,9 @@ myGadget.read('sensorValue', function (err, data) {
 });
 ```
 
-********************************************
 <a name="API_write"></a>
+<br />
+********************************************
 ### .write(attrName, val, callback)
 Remotely write the value to an attribue on this gadget.  
   
@@ -206,8 +215,9 @@ myGadget.write('onOff', 1, function (err, data) {
 });
 ```
 
-********************************************
 <a name="API_exec"></a>
+<br />
+********************************************
 ### .exec(attrName, args, callback)
 Remotely invoke the procedure on this gadget.  
   
@@ -230,8 +240,9 @@ myGadget.exec('blink', [ 10 ], function (err, data) {
 });
 ```
 
-********************************************
 <a name="API_readReportCfg"></a>
+<br />
+********************************************
 ### .readReportCfg(attrName, callback)
 Remotely get the report settings from the gadget.  
   
@@ -255,8 +266,9 @@ myGadget.readReportCfg('sensorValue', function (err, cfg) {
 });
 ```
 
-********************************************
 <a name="API_writeReportCfg"></a>
+<br />
+********************************************
 ### .writeReportCfg(attrName, cfg, callback)
 Write the report configuration to a gadget on the remote device. To start the reporting, one must set `cfg.enable = true`.  
   
@@ -288,10 +300,13 @@ myGadget.writeReportCfg('sensorValue', { pmin: 60, pmax: 180 }, function (err, d
         console.log(data);  // { sensorValue: true }, true for success and false for fail
 });
 ```
+  
 ********************************************
 ## Getter and Setter
 
 <a name="API_get"></a>
+<br />
+********************************************
 ### .get(name)
 Getter to get the information by the property `name`.  
   
@@ -355,8 +370,10 @@ myGadget.get('props');
 
 ```
 
-********************************************
+
 <a name="API_set"></a>
+<br />
+********************************************
 ### .set(name, data)
 Setter to set data to the gadget.  
   
@@ -402,6 +419,8 @@ myGadget.set('props', {
 
 
 <a name="Gad_panel"></a>
+<br />
+********************************************
 ### Panel information: `panelInfoObj`
 * (_Object_): Panel information about this gadget.  
 
@@ -412,6 +431,8 @@ myGadget.set('props', {
 | classId   | String  | Gadget class to tell what kind of an application is on this gadget |
 
 <a name="Gad_attrs"></a>
+<br />
+********************************************
 ### Attributes on the **remote** gadget: `gadAttrsObj`
 
 | Property    | Type      | Description                                                                                                                                                                       |  
@@ -419,6 +440,8 @@ myGadget.set('props', {
 | _Others_    | _Depends_ | Remote attributes depend on classId of gadget. For a temperature sensor, it will have an attribute `sensorValue`, and may have attributes like `units` and `resetMinMaxMeaValues`. The possilbe attributes are listed [here](https://github.com/PeterEB/smartobject/blob/master/docs/templates.md). |  
 
 <a name="Gad_props"></a>
+<br />
+********************************************
 ### User-defined properties on this gadget: `gadPropsObj`
 
 | Property    | Type      | Description                                                                                                |  

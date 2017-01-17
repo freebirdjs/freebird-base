@@ -32,7 +32,10 @@ The Netcore Class provides methods for network management.
 ********************************************
 ## Basic Methods
 
+
 <a name="API_getName"></a>
+<br />
+********************************************
 ### .getName()
 Get netcore name.  
   
@@ -50,8 +53,10 @@ Get netcore name.
 nc.getName();  // 'my_netcore'
 ```
 
-********************************************
+
 <a name="API_isEnabled"></a>
+<br />
+********************************************
 ### .isEnabled()
 To see if the netcore is enabled.  
   
@@ -69,8 +74,9 @@ To see if the netcore is enabled.
 nc.isEnabled(); // true
 ```
 
-********************************************
 <a name="API_isRegistered"></a>
+<br />
+********************************************
 ### .isRegistered()
 To see if the netcore has been registered to freebird.  
   
@@ -88,8 +94,9 @@ To see if the netcore has been registered to freebird.
 nc.isRegistered();  // false
 ```
 
-********************************************
 <a name="API_isJoinable"></a>
+<br />
+********************************************
 ### .isJoinable()
 To see if the netcore is currently allowing devices to join the network.  
 
@@ -107,8 +114,9 @@ To see if the netcore is currently allowing devices to join the network.
 nc.isJoinable();  // true
 ```
 
-********************************************
 <a name="API_enable"></a>
+<br />
+********************************************
 ### .enable()
 Enable netcore. Transportation is active when netcore is enabled.   
   
@@ -126,8 +134,9 @@ Enable netcore. Transportation is active when netcore is enabled.
 nc.enable();
 ```
 
-********************************************
 <a name="API_disable"></a>
+<br />
+********************************************
 ### .disable()
 Disable netcore. Any transportation will be inactivated if netcore is disabled, and remote operations are inapplicable.  
   
@@ -145,8 +154,9 @@ Disable netcore. Any transportation will be inactivated if netcore is disabled, 
 nc.disable();
 ```
 
-********************************************
 <a name="API_dump"></a>
+<br />
+********************************************
 ### .dump()
 Dump information about this netcore.  
   
@@ -180,6 +190,8 @@ nc.dump();
 ## Network Management
 
 <a name="API_start"></a>
+<br />
+********************************************
 ### .start([callback])
 Start the netcore. This is different from `enable()` which turns transportation on. `start()` is highly depending on the low-layer driver of the network contoller.  
 
@@ -202,8 +214,9 @@ nc.start(function (err) {
 });
 ```
 
-********************************************
 <a name="API_stop"></a>
+<br />
+********************************************
 ### .stop([callback])
 Stop the netcore. This is different from `disable()` which turns transportation off. `stop()` is highly depending on the low-layer driver of the network contoller.  
   
@@ -226,8 +239,9 @@ nc.stop(function (err) {
 });
 ```
 
-********************************************
 <a name="API_reset"></a>
+<br />
+********************************************
 ### .reset([mode], callback)
 Reset the network controller.  
   
@@ -255,8 +269,9 @@ nc.reset(0, function (err) {
 });
 ```
 
-********************************************
 <a name="API_permitJoin"></a>
+<br />
+********************************************
 ### .permitJoin(duration[, callback])
 Let the netcore allow devices to join its network.  
   
@@ -283,8 +298,9 @@ nc.permitJoin(0, function (err, timeLeft) {
 });
 ```
 
-********************************************
 <a name="API_remove"></a>
+<br />
+********************************************
 ### .remove(permAddr[, callback])
 Remove a remote device from the network.  
   
@@ -306,8 +322,9 @@ nc.remove('00:0c:29:ff:ed:7c', function (err, permAddr) {
 });
 ```
 
-********************************************
 <a name="API_ban"></a>
+<br />
+********************************************
 ### .ban(permAddr, callback)
 Ban a device from the network. Once a device is banned, it can never join the network unless you unban it.  
   
@@ -329,8 +346,9 @@ nc.ban('00:0c:29:ff:ed:7c', function (err, permAddr) {
 });
 ```
 
-********************************************
 <a name="API_unban"></a>
+<br />
+********************************************
 ### .unban(permAddr, callback)
 Unban a device.  
   
@@ -352,8 +370,9 @@ nc.unban('00:0c:29:ff:ed:7c', function (err, permAddr) {
 });
 ```
 
-********************************************
 <a name="API_ping"></a>
+<br />
+********************************************
 ### .ping(permAddr, callback)
 Ping a remote device.  
   
@@ -375,8 +394,9 @@ nc.ping('00:0c:29:ff:ed:7c', function (err, time) {
 });
 ```
 
-********************************************
 <a name="API_getTraffic"></a>
+<br />
+********************************************
 ### .getTraffic()
 Get traffic record of the netcore.  
   
@@ -406,8 +426,9 @@ nc.getTraffic();
 */
 ```
 
-********************************************
 <a name="API_resetTraffic"></a>
+<br />
+********************************************
 ### .resetTraffic([dir])
 Reset the traffic record.  
   
@@ -427,8 +448,9 @@ nc.resetTraffic('in');
 nc.resetTraffic('out');
 ```
 
-********************************************
 <a name="API_getBlacklist"></a>
+<br />
+********************************************
 ### .getBlacklist()
 Get the blacklist of banned devices. This method returns an array of permanent addresses.  
   
@@ -447,8 +469,9 @@ nc.getBlacklist();
 // [ '0x12345678', '0xabcd5768', '0x1234abcd', '0x5678abcd' ]
 ```
 
-********************************************
 <a name="API_clearBlacklist"></a>
+<br />
+********************************************
 ### .clearBlacklist()
 Clear the blacklist. This will simply unban all banned devices.  
   
@@ -466,8 +489,9 @@ Clear the blacklist. This will simply unban all banned devices.
 nc.clearBlacklist();
 ```
 
-********************************************
 <a name="API_isBlacklisted"></a>
+<br />
+********************************************
 ### .isBlacklisted(permAddr)
 To see if a device is banned.  
   

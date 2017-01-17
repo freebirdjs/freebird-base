@@ -26,6 +26,8 @@ The Device Class defines a device which can have many gadgets(applications) on i
 ## Basic Methods
 
 <a name="API_isEnabled"></a>
+<br />
+********************************************
 ### .isEnabled()
 Checks if this device is enabled.  
   
@@ -43,8 +45,9 @@ Checks if this device is enabled.
 myDevice.isEnabled();   // true
 ```
 
-********************************************
 <a name="API_isRegistered"></a>
+<br />
+********************************************
 ### .isRegistered()
 Checks if this device has been registered to freebird.  
   
@@ -62,8 +65,9 @@ Checks if this device has been registered to freebird.
 myDevice.isRegistered();   // false
 ```
 
-********************************************
 <a name="API_enable"></a>
+<br />
+********************************************
 ### .enable()
 Enable this device. Transportation is active when device is enabled.  
   
@@ -81,8 +85,9 @@ Enable this device. Transportation is active when device is enabled.
 myDevice.enable();
 ```
 
-********************************************
 <a name="API_disable"></a>
+<br />
+********************************************
 ### .disable()
 Disable this device. Any transportation will be inactivated if device is disabled, and any remote operation upon this device is inapplicable.  
   
@@ -100,8 +105,9 @@ Disable this device. Any transportation will be inactivated if device is disable
 myDevice.disable();
 ```
 
-********************************************
 <a name="API_resetTraffic"></a>
+<br />
+********************************************
 ### .resetTraffic([dir])
 Reset traffic record of the device.  
   
@@ -121,8 +127,9 @@ myDevice.resetTraffic('out');
 myDevice.resetTraffic();
 ```
 
-********************************************
 <a name="API_dump"></a>
+<br />
+********************************************
 ### .dump()
 Dump the information of this device.  
   
@@ -202,6 +209,8 @@ myDevice.dump();
 ## Getter and Setter
 
 <a name="API_get"></a>
+<br />
+********************************************
 ### .get(name)
 Getter to get the required information.  
   
@@ -310,8 +319,9 @@ myDevice.get('props');
 */
 ```
 
-********************************************
 <a name="API_set"></a>
+<br />
+********************************************
 ### .set(name, data)
 Setter to set a value to the device. This method is mostly called by the netcore **implementers**. The possilbe usage for netcore **users** is  to call `.set('props', devPropsObj)`.
   
@@ -355,6 +365,8 @@ myDevice.set('props', {
 ## Remote Operations
 
 <a name="API_read"></a>
+<br />
+********************************************
 ### .read(attrName, callback)
 Read device attribute from the remote device.  
   
@@ -376,8 +388,9 @@ myDevice.read('model', function (err, data) {
 });
 ```
 
-********************************************
 <a name="API_write"></a>
+<br />
+********************************************
 ### .write(attrName, val, callback)
 Remotely write a value to an attribue on this device.  
   
@@ -403,8 +416,9 @@ myDevice.write('model', 'lwmqn-7688-happy-duo', function (err, data) {
 });
 ```
 
-********************************************
 <a name="API_identify"></a>
+<br />
+********************************************
 ### .identify(callback)
 Identify this device. If remote device does not implement this freature, it would be inapplicable.  
   
@@ -427,8 +441,9 @@ myDevice.identify(function (err) {
 });
 ```
 
-********************************************
 <a name="API_ping"></a>
+<br />
+********************************************
 ### .ping(callback)
 Ping this remote device.  
   
@@ -449,8 +464,9 @@ myDevice.ping(function (err, time) {
 });
 ```
 
-********************************************
 <a name="API_maintain"></a>
+<br />
+********************************************
 ### .maintain(callback)
 Refresh the status and attributes from the remote device. All gadgets owned by this device will be refreshed as well.  
   
@@ -475,6 +491,8 @@ myDevice.maintain(function (err) {
 ## Data Formats
 
 <a name="Dev_net"></a>
+<br />
+********************************************
 ### `netInfoObj`: Network information
 
 | Property    | Type    | Description                                                                                                  |  
@@ -491,6 +509,8 @@ myDevice.maintain(function (err) {
 | address     | Object  | The permanent and dynamic adrresses of this device. This object is in the shape of `{ permanent, dynamic }`. |  
 
 <a name="Dev_attrs"></a>
+<br />
+********************************************
 ### `devAttrsObj`: Attributes on the **remote** device
 
 | Property     | Type            | Description                                                                                                                           |
@@ -502,6 +522,8 @@ myDevice.maintain(function (err) {
 | power        | Object          | Power source. This object is in the shape of `{ type: 'battery', voltage: '5 V' }`. The type can be 'line', 'battery' or 'harvester'. |
 
 <a name="Dev_props"></a>
+<br />
+********************************************
 ### `devPropsObj`: User-defined properties on this device
 
 | Property    | Type      | Description                                                                                                |  
