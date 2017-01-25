@@ -14,6 +14,9 @@ var fb = Object.create(new EventEmitter());
 fb.findByNet = function () {};
 fb.getAllDevs = function () { return []; };
 fb.filter = function () { return []; };
+fb._fire = function (evt, emitData) {
+    fb.emit(evt, emitData);
+};
 
 fb.on('_nc:error', function (err) {
     // console.log(err);

@@ -7,6 +7,9 @@ var EventEmitter = require('events'),
     _ = require('busyman');
 
 var fb = Object.create(new EventEmitter());
+fb._fire = function (evt, emitData) {
+    fb.emit(evt, emitData);
+};
 
 var ncname = 'mync';
 var controller = {};

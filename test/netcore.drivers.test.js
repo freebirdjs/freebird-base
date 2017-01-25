@@ -8,6 +8,9 @@ var EventEmitter = require('events'),
 
 var fb = Object.create(new EventEmitter());
 
+fb._fire = function (evt, emitData) {
+    fb.emit(evt, emitData);
+};
 fb.findByNet = function () {};
 var ncname = 'mync';
 var controller = {};

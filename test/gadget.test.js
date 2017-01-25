@@ -17,6 +17,10 @@ var fb = Object.create(new EventEmitter()), // freebird mock
     auxId = 60,                             // gadget auxId
     gad ;                                   // ripe gadget mock
 
+fb._fire = function (evt, emitData) {
+    fb.emit(evt, emitData);
+};
+
 rawDev = {
     name: 'fakeRaw',
     permAddr: '0x12345678',

@@ -10,6 +10,9 @@ var _ = require('busyman'),
 
 // mock freebird
 var fb = Object.create(new EventEmitter());
+fb._fire = function (evt, emitData) {
+    fb.emit(evt, emitData);
+};
 
 // mock controller
 var cntrl = Object.create(new EventEmitter());
