@@ -12,7 +12,7 @@ module.exports = {
     createDevice: function (netcore, rawDev) {
         return new Device(netcore, rawDev);
     },
-    createGadget: function Gadget(dev, auxId, rawGad) {
+    createGadget: function (dev, auxId, rawGad) {
         return new Gadget(dev, auxId, rawGad);
     }
 };
