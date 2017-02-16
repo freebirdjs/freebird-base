@@ -180,4 +180,6 @@ describe('Drivers test', function () {
             nc.ping('0x1111', function () {});
         });
     });
+
+    // maintain?
 });
