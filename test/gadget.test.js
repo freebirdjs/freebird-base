@@ -657,6 +657,20 @@ describe('APIs Signature Check', function() {
         });
     });
 
+    describe('#maintain(cb)', function() {
+        it('should throw if callback is not a function', function () {
+            expect(function () { return mygad.maintain([]); }).to.throw(TypeError);
+            expect(function () { return mygad.maintain({}); }).to.throw(TypeError);
+            expect(function () { return mygad.maintain(true); }).to.throw(TypeError);
+            expect(function () { return mygad.maintain('_id'); }).to.throw(TypeError);
+        });
+
+        it('should not throw if callback is a function or not given', function () {
+            expect(function () { return mygad.maintain(function () {}); }).not.to.throw(TypeError);
+            expect(function () { return mygad.maintain(); }).not.to.throw(TypeError);
+        });
+    });
+
     describe('#_clear()', function() {
         it('should always pass - no signature', function (done) {
             done();
@@ -669,7 +683,7 @@ describe('APIs Signature Check', function() {
         });
     });
 
-    describe('#_dangerouslyAppendAttrs', function() {
+    describe('#_dangerouslyAppendAttrs()', function() {
         it('should throw if input attrs is not an object', function () {
             expect(function () { return mygad._dangerouslyAppendAttrs(1); }).to.throw(TypeError);
             expect(function () { return mygad._dangerouslyAppendAttrs(null); }).to.throw(TypeError);
