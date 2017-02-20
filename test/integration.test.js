@@ -24,7 +24,6 @@ nc._cookRawDev = function(dev, rawDev, callback) {
         parent: '0x' + chance.string({ pool: '0123456789ABCDEF', length: 16 }),
         maySleep: chance.bool(),
         sleepPeriod: 30,
-        status: 'unknown',
         address: {              // {RPT}
             permanent: rawDev.permAddr,
             dynamic: rawDev.dynAddr
@@ -34,6 +33,7 @@ nc._cookRawDev = function(dev, rawDev, callback) {
     dev.set('attrs', {
         manufacturer: rawDev.manuf,
         model: rawDev.attrs.model,
+        serial: '',
         version: {
             hw: rawDev.attrs.hwVer,
             sw: rawDev.attrs.swVer,
@@ -107,10 +107,10 @@ describe('Device tests', function () {
             expect(dev1.isEnabled()).to.be.equal(false);
             dev1.enable();
             expect(dev1.isEnabled()).to.be.equal(true);
-            expect(dev1.isEnabled()).to.be.equal(true);
         });
 
         it('should be disabled', function () {
+            expect(dev1.isEnabled()).to.be.equal(true);
             dev1.disable();
             expect(dev1.isEnabled()).to.be.equal(false);
             expect(dev1.isRegistered()).to.be.equal(false);
@@ -120,7 +120,7 @@ describe('Device tests', function () {
             dev1._id = 3;
             expect(dev1.isRegistered()).to.be.equal(true);
             dev1._id = null;
-            expect(dev1.isEnabled()).to.be.equal(false);
+            expect(dev1.isRegistered()).to.be.equal(false);
             dev1.enable();
             expect(dev1.isEnabled()).to.be.equal(true);
         });
@@ -616,7 +616,7 @@ describe('Gadget tests', function () {
         it('dump()', function () {
             expect(gad1.dump()).to.be.deep.equal({
                 id: gad1.get('id'),
-                netcore: gad1.get('device').get('netcore').getName(),
+                netcore: gad1.get('netcore').getName(),
                 dev: {
                     id: gad1.get('device').get('id'),
                     permAddr: gad1.get('permAddr')
