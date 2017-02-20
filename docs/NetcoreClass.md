@@ -1,6 +1,3 @@
-[TODOs]
-1. maintain()
-
 # Netcore Class
 The Netcore Class provides methods for network management.  
 
@@ -21,6 +18,7 @@ The Netcore Class provides methods for network management.
     * [ban()](#API_ban)
     * [unban()](#API_unban)
     * [ping()](#API_ping)
+    * [maintain()](#API_maintain)
     * [getTraffic()](#API_getTraffic)
     * [resetTraffic()](#API_resetTraffic)
     * [getBlacklist()](#API_getBlacklist)
@@ -29,13 +27,14 @@ The Netcore Class provides methods for network management.
 * API for Netcore Implementers
     * Please refer to [How to create your own netcore](https://github.com/freebirdjs/freebird-base/blob/master/docs/NetcoreBuild.md)
 
+</br>
+
 ********************************************
+
 ## Basic Methods
 
 
 <a name="API_getName"></a>
-<br />
-********************************************
 ### .getName()
 Get netcore name.  
   
@@ -166,7 +165,14 @@ Dump information about this netcore.
 
 **Returns:**  
 
-* (_Object_): A data object to describe information about this netcore.  
+* (_Object_): A data object to describe information about this netcore. The following table shows the properties of netcore information object.
+
+| Property  | Type    | Description                                             |
+|-----------|---------|---------------------------------------------------------|
+| name      | String  | Netocre name.                                           |
+| enabled   | Boolean | Tells if this device is enabled.                        |
+| protocol  | Object  | Information of the used protocol.                       |
+| startTime | Number  | Device joined time, which is an UNIX(POSIX) time in ms. |
 
 **Examples:**  
   
@@ -186,12 +192,11 @@ nc.dump();
 */
 ```
 
+</br>
 ********************************************
 ## Network Management
 
 <a name="API_start"></a>
-<br />
-********************************************
 ### .start([callback])
 Start the netcore. This is different from `enable()` which turns transportation on. `start()` is highly depending on the low-layer driver of the network contoller.  
 
@@ -391,6 +396,29 @@ Ping a remote device.
 nc.ping('00:0c:29:ff:ed:7c', function (err, time) {
     if (!err)
         console.log(time);  // 42
+});
+```
+
+<a name="API_maintain"></a>
+<br />
+********************************************
+### .maintain([callback])
+Maintain all remote devices of the netcore. This will refresh devices information by rediscovering the remote devices.
+
+**Arguments:** 
+
+1. `callback` (_Function_):  `function (err) {}`. Get called after devices been maintained.
+
+**Returns:**  
+
+* _none_
+
+**Examples:**
+
+```js
+nc.maintain(function (err) {
+    if (!err)
+        console.log('netcore is maintained.')
 });
 ```
 
