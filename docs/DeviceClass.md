@@ -229,9 +229,9 @@ Getter to get the required information.
 | 'status'            | Get device status. Could be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.                                                        | `dev.get('status')`     |  String                        |  
 | 'gadTable'          | Get the table of gadget records on this device. Returns an array in a shape of `[ { gadId, auxId }, ... ]`.                             | `dev.get('gadTable')`   |  Array                         |  
 | 'traffic'           | Get the current traffic record of this device. Returns an object in a shape of `{ in: { hits, bytes }, out: { hits, bytes } }`.         | `dev.get('traffic')`    |  Object                        |  
-| 'net'               | Get network information of this device. You can give a single key or an array of keys to choose what information you'd like to get.     | `dev.get('net')`        |  Object ([netInfoObj](#Dev_net))    |  
+| 'net'               | Get network information of this device.                                                                                                | `dev.get('net')`        |  Object ([netInfoObj](#Dev_net))    |  
 | 'attrs'             | Get attributes of this device.                                                                                                          | `dev.get('attrs')`      |  Object ([devAttrsObj](#Dev_attrs)) |  
-| 'props'             | Get user-defined properties of this device. You can give a single key or an array of keys to choose what information you'd like to get. | `dev.get('props')`      |  Object ([devPropsObj](#Dev_props)) |  
+| 'props'             | Get user-defined properties of this device.                                                                                            | `dev.get('props')`      |  Object ([devPropsObj](#Dev_props)) |  
 
 
 **Returns:**  
@@ -507,6 +507,7 @@ myDevice.maintain(function (err) {
 | sleepPeriod | Number  | The sleep period in seconds. This property is only valid when maySleep is `true`.                            |  
 | status      | String  | Can be `'unknown'`, `'online'`, `'offline'`, or `'sleep'`.                                                   |  
 | address     | Object  | The permanent and dynamic adrresses of this device. This object is in the shape of `{ permanent, dynamic }`. |  
+| _Others_    | _Depends_ | Other net                                                                                                |  
 
 <a name="Dev_attrs"></a>
 <br />
@@ -520,6 +521,7 @@ myDevice.maintain(function (err) {
 | serial       | String          | Serial number of this device.                                                                                                         |
 | version      | Object          | Version tags. This object is in the shape of `{ hw: '', sw: 'v1.2.2', fw: 'v0.0.8' }`                                                 |
 | power        | Object          | Power source. This object is in the shape of `{ type: 'battery', voltage: '5 V' }`. The type can be 'line', 'battery' or 'harvester'. |
+| _Others_    | _Depends_ | Other attrs                                                                                                |  
 
 <a name="Dev_props"></a>
 <br />
