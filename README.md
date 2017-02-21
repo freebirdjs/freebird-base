@@ -1,6 +1,12 @@
 # freebird-base
 Base classes used in freebird framework.  
 
+[![NPM](https://nodei.co/npm/freebird-base.png?downloads=true)](https://nodei.co/npm/freebird-base/)  
+
+[![Travis branch](https://img.shields.io/travis/freebirdjs/freebird-base/master.svg?maxAge=2592000)](https://travis-ci.org/freebirdjs/freebird-base)
+[![npm](https://img.shields.io/npm/v/freebird-base.svg?maxAge=2592000)](https://www.npmjs.com/package/freebird-base)
+[![npm](https://img.shields.io/npm/l/freebird-base.svg?maxAge=2592000)](https://www.npmjs.com/package/freebird-base)
+
 ## Table of Contents
 
 1. [Overiew](#Overiew)
@@ -10,11 +16,12 @@ Base classes used in freebird framework.
 4. [Netcore Class](#Netcore)
 5. [Device Class](#Device)
 6. [Gadget Class](#Gadget)
+7. [License](#License)
 
 <a name="Overiew"></a>
 ## 1. Overview
 
-**freebird-base** includes base classes of Netcore, Device, and Gadget that are used in the [freebird](https://github.com/freebirdjs/freebird) IoT network and application framework. These classes are abstractions of the network controller, network device, and real appliance, respectively.  
+**freebird-base** provides the base classes including Netcore, Device, and Gadget used by [freebird](https://github.com/freebirdjs/freebird) IoT network and application framework. These classes are abstractions of the network controller, network device, and real appliance, respectively.  
 
 * **Netcore** is a network controller responsible for message transportation and network management. For example, a zigbee coordinator.
 * **Device** is a wired/wireless machine in the network. For example, a zigbee end-device, a BLE peripheral, a MQTT client, or a CoAP server(LWM2M client).
@@ -28,7 +35,7 @@ Base classes used in freebird framework.
 <a name="Abstractions"></a>
 ## 3. Abstractions
 
-**freebird** framework.  [TODO]  
+The **freebird** framework has **net**, **dev**, and **gad** subsystems responsible for network, device, and gadget management, respectively. In brief, a network is formed with many devices, and each device may have some gadgets on it. A gadget is the real application in a manchine network.
 
 These classes are unified Device and Gadget class, and freebird doesn't know what your raw device and raw gadget data is.  
 
@@ -74,23 +81,26 @@ Device is a wired/wireless machine in the network. For example, a zigbee end-dev
 <a name="Basic"></a>
 ## 3. Basic Usage
 
-* If you are a netcore user, please see [How to use a netcore]().  
-* If you are trying to create your own netcore, please see [How to build your netcore]().  
+* If you are a netcore user, please see [How to use a netcore](https://github.com/freebirdjs/freebird#Basic).  
+* If you are trying to create your own netcore, please see [How to build your netcore](https://github.com/freebirdjs/freebird-base/blob/master/docs/NetcoreBuild.md).  
 
 <a name="Netcore"></a>
 ## 4. Netcore Class
 
-The documentation of [Netcore Class]().
+The documentation of [Netcore Class](https://github.com/freebirdjs/freebird-base/blob/master/docs/NetcoreClass.md).
 
 <a name="Device"></a>
 ## 5. Device Class
 
-The documentation of [Device Class]().
+The documentation of [Device Class](https://github.com/freebirdjs/freebird-base/blob/master/docs/DeviceClass.md).
 
 <a name="Gadget"></a>
 ## 6. Gadget Class
 
-The documentation of [Gadget Class]().
+The documentation of [Gadget Class](https://github.com/freebirdjs/freebird-base/blob/master/docs/GadgetClass.md).
 
+<a name="License"></a>
+## 7. License 
 
-If you are willing to create your own netcore with freebird, just simply install this module and use `createNetcore()` method to get a netcore instance. After you got the instance, you should follow some rules to accomplish your own implementations on it, such as network drivers, to meet the minimum requirements for your netcore to operate well with freebird framework.  
+Licensed under [MIT](https://github.com/freebirdjs/freebird-base/blob/master/LICENSE).
+

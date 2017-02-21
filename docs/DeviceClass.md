@@ -1,7 +1,22 @@
 # Device Class
 The Device Class defines a device which can have many gadgets(applications) on it. A device is a real machine-node in the network, such as a CC2530 ZigBee SoC, a CC2540 BLE SoC, a ESP8266 WiFi SoC, and a MT7688 WiFi module. This document will show you what methods does a device have.  
 
-* Device Constructor and Basic Methods
+To get a device registered to freebird, use `freebird.findById()` or `freebird.findByNet()`.
+
+```js
+var dev1 = freebird.findById('device', 26);
+var dev2 = freebird.findByNet('device', 'my-netcore-mqtt', '00:0c:29:ff:ed:7c');
+
+if (dev1)
+    dev1.disable();
+
+if (dev2)
+    console.log(dev2.get('id'));
+```
+
+<br />
+
+* Basic Methods
     - [isEnabled()](#API_isEnabled)
     - [isRegistered()](#API_isRegistered)
     - [enable()](#API_enable)
