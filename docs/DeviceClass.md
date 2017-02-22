@@ -231,16 +231,16 @@ Getter to get the required information.
   
 **Arguments:**  
 
-1. `name` (_String_): Possible names are listed in the follwoing table.  
+1. `name` (_String_): Possible names are listed in the following table.  
 
 | Name                | Description                                                                                                                             | Example                 | Returned Data Type             |  
 |---------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------|--------------------------------|  
 | 'id'                | Get device id assigned by freebird. It will be `null` if it is not registered to freebird.                                              | `dev.get('id')`         |  Number \| String \| `null`    |  
 | 'raw'               | Get raw device data which may be `undefined` if it was not given at instance creation.                                                  | `dev.get('raw')`        |  Object \| `undefined`         |  
-| 'nectcore'          | Get the netcore that manages this device.                                                                                               | `dev.get('netcore')`    |  Object (netcore instance)     |
+| 'netcore'           | Get the netcore that manages this device.                                                                                               | `dev.get('netcore')`    |  Object (netcore instance)     |
 | 'address'           | Get device permanent and dynamic addresses. Returned object has a shape of `{ permanent, dynamic }`.                                    | `dev.get('address')`    |  Object                        |  
-| 'permAddr'          | Get device permanent address. For exameple, `'00:0c:29:ff:ed:7c'`.                                                                      | `dev.get('permAddr')`   |  String                        |  
-| 'dynAddr'           | Get device dynamic address. For exameple, `'192.168.1.96'`.                                                                             | `dev.get('dynAddr')`    |  String \| Number              |  
+| 'permAddr'          | Get device permanent address. For example, `'00:0c:29:ff:ed:7c'`.                                                                      | `dev.get('permAddr')`   |  String                        |  
+| 'dynAddr'           | Get device dynamic address. For example, `'192.168.1.96'`.                                                                             | `dev.get('dynAddr')`    |  String \| Number              |  
 | 'status'            | Get device status. Could be `'online'`, `'offline'`, `'sleep'`, and `'unknown'`.                                                        | `dev.get('status')`     |  String                        |  
 | 'gadTable'          | Get the table of gadget records on this device. Returns an array in a shape of `[ { gadId, auxId }, ... ]`.                             | `dev.get('gadTable')`   |  Array                         |  
 | 'traffic'           | Get the current traffic record of this device. Returns an object in a shape of `{ in: { hits, bytes }, out: { hits, bytes } }`.         | `dev.get('traffic')`    |  Object                        |  
@@ -338,7 +338,7 @@ myDevice.get('props');
 <br />
 ********************************************
 ### .set(name, data)
-Setter to set a value to the device. This method is mostly called by the netcore **implementers**. The possilbe usage for netcore **users** is  to call `.set('props', devPropsObj)`.
+Setter to set a value to the device. This method is mostly called by the netcore **implementers**. The possible usage for netcore **users** is to call `.set('props', devPropsObj)`.
   
 **Arguments:**  
 
@@ -407,7 +407,7 @@ myDevice.read('model', function (err, data) {
 <br />
 ********************************************
 ### .write(attrName, val, callback)
-Remotely write a value to an attribue on this device.  
+Remotely write a value to an attribute on this device.  
   
 **Arguments:**  
 
@@ -426,7 +426,7 @@ myDevice.write('model', 'lwmqn-7688-happy-duo', function (err, data) {
     if (!err)
         console.log(data);  // 'lwmqn-7688-happy-duo'
 
-    // Most devices don't accept writie operation upon the attribute!
+    // Most devices don't accept write operation upon the attribute!
     // Thus you probably will get an error.
 });
 ```
@@ -435,7 +435,7 @@ myDevice.write('model', 'lwmqn-7688-happy-duo', function (err, data) {
 <br />
 ********************************************
 ### .identify(callback)
-Identify this device. If remote device does not implement this freature, it would be inapplicable.  
+Identify this device. If remote device does not implement this feature, it would be inapplicable.  
   
 **Arguments:**  
 
@@ -521,7 +521,7 @@ myDevice.maintain(function (err) {
 | maySleep    | Boolean | Tells whether this device may sleep or not.                                                                  |  
 | sleepPeriod | Number  | The sleep period in seconds. This property is only valid when maySleep is `true`.                            |  
 | status      | String  | Can be `'unknown'`, `'online'`, `'offline'`, or `'sleep'`.                                                   |  
-| address     | Object  | The permanent and dynamic adrresses of this device. This object is in the shape of `{ permanent, dynamic }`. |  
+| address     | Object  | The permanent and dynamic addresses of this device. This object is in the shape of `{ permanent, dynamic }`. |  
 | _Others_    | _Depends_ | Other net                                                                                                |  
 
 <a name="Dev_attrs"></a>
@@ -545,7 +545,7 @@ myDevice.maintain(function (err) {
 
 | Property    | Type      | Description                                                                                                |  
 |-------------|-----------|------------------------------------------------------------------------------------------------------------|  
-| name        | String    | Human-redable name of this device, default will be an empty string `''` if not set.                        |  
+| name        | String    | Human-readable name of this device, default will be an empty string `''` if not set.                       |  
 | description | String    | Device description. Default will be an empty string `''` if not set.                                       |  
 | location    | String    | Location of this device. Default will be an empty string `''`  if not set.                                 |  
 | _Others_    | _Depends_ | Other props                                                                                                |  
