@@ -1,68 +1,49 @@
 var EventEmitter = require('events'),
-    util = require('util'),
-    expect = require('chai').expect,
+    expect = require('chai').expect;
+
+var Gadget = require('../lib/gadget.js'),
     Device = require('../lib/device.js'),
-    Gadget = require('../lib/gadget.js'),
-    Netcore = require('../lib/netcore.js'),
-    _ = require('busyman');
+    Netcore = require('../lib/netcore.js');
 
 var fb = Object.create(new EventEmitter());
 fb._fire = function (evt, emitData) {
     fb.emit(evt, emitData);
 };
 
-var ncname = 'mync';
-var controller = {};
-var protocol = {
-    phy: 'myphy',
-    nwk: 'mynwk'
-};
-var opt = {};
-
-var nc = new Netcore(ncname, controller, protocol, opt);
-nc._freebird = fb;
-
-nc.registerNetDrivers({
-    start: function (cb) { return cb(null); },
-    stop: function (cb) { return cb(null); },
-    reset: function (mode, cb) { 
-        return cb(null, mode);
-    },
-    permitJoin: function (duration, cb) { return cb(null, duration); },
-    remove: function (permAddr, cb) { return cb(null, permAddr);  },
-    ping: function (permAddr, cb) { return cb(null, 10); }
-});
-
-nc.registerDevDrivers({
-    read: function (permAddr, attr, cb) { return cb(null, 'read'); },
-    write: function (permAddr, attr, val, cb) { return cb(null, 'written'); }
-});
-
-nc.registerGadDrivers({
-    read: function (permAddr, auxId, attr, cb) { return cb(null, 'read'); },
-    write: function (permAddr, auxId, attr, val, cb) { return cb(null, 'written'); }
-});
-
 fb.on('_nc:error', function (err) {
     // console.log(err);
 });
 
-describe('Drivers test - with optional', function () {
-    nc.registerNetDrivers({
-        ban: function (permAddr, cb) { return cb(null, permAddr); },
-        unban: function (permAddr, cb) { return cb(null, permAddr); }
-    });
+var ncName = 'mync',
+    controller = {},
+    opt = {},
+    protocol = {
+        phy: 'myphy',
+        nwk: 'mynwk'
+    };
 
-    nc.registerDevDrivers({
-        identify: function (permAddr, cb) { return cb(null, 'identify'); },
-    });
+var nc = new Netcore(ncName, controller, protocol, opt),
+    dev = new Device(nc, {}),
+    gad = new Gadget(dev, 'xxx', {});
 
-    nc.registerGadDrivers({
-        exec: function (permAddr, auxId, attr, args, cb) { return cb(null, 'exec'); },
-        writeReportCfg: function (permAddr, auxId, attr, cfg, cb) { return cb(null, 'reportcfg'); },
-        readReportCfg: function (permAddr, auxId, attr, cb) { return cb(null, 'reportcfg'); },
-    });
+nc._freebird = fb;
 
+nc.registerNetDrivers({
+    ban: function (permAddr, cb) { return cb(null, permAddr); },
+    unban: function (permAddr, cb) { return cb(null, permAddr); }
+});
+
+nc.registerDevDrivers({
+    identify: function (permAddr, cb) { return cb(null, 'identify'); },
+});
+
+nc.registerGadDrivers({
+    exec: function (permAddr, auxId, attr, args, cb) { return cb(null, 'exec'); },
+    writeReportCfg: function (permAddr, auxId, attr, cfg, cb) { return cb(null, 'reportcfg'); },
+    readReportCfg: function (permAddr, auxId, attr, cb) { return cb(null, 'reportcfg'); },
+});
+
+describe('NetDrivers test - with optional', function () {
     nc.enable();
 
     describe('#ban()', function () {
@@ -98,5 +79,46 @@ describe('Drivers test - with optional', function () {
             nc.unban('0x1111', function () {});
         });
     });
+});
 
+describe('DevDrivers test - with optional', function () {
+    describe('#identify()', function () {
+        it('should identify properly', function (done) {
+            dev.enable();
+            dev.identify(function (err, r) {
+                if (!err && r === 'identify')
+                    done();
+            });
+        });
+    });
+});
+
+describe('GadDrivers test - with optional', function () {
+    describe('#exec()', function () {
+        it('should exec properly', function (done) {
+            gad.enable();
+            gad.exec('xx', [], function (err, r) {
+                if (!err && r === 'exec')
+                    done();
+            });
+        });
+    });
+
+    describe('#writeReportCfg()', function () {
+        it('should read properly', function (done) {
+            gad.writeReportCfg('xx', {}, function (err, r) {
+                if (!err && r === 'reportcfg')
+                    done();
+            });
+        });
+    });
+
+    describe('#readReportCfg()', function () {
+        it('should read properly', function (done) {
+            gad.readReportCfg('xx', function (err, r) {
+                if (!err && r === 'reportcfg')
+                    done();
+            });
+        });
+    });
 });

@@ -1,34 +1,40 @@
 var EventEmitter = require('events'),
-    util = require('util'),
-    expect = require('chai').expect,
+    expect = require('chai').expect;
+
+var Gadget = require('../lib/gadget.js'),
     Device = require('../lib/device.js'),
-    Gadget = require('../lib/gadget.js'),
-    Netcore = require('../lib/netcore.js'),
-    _ = require('busyman');
+    Netcore = require('../lib/netcore.js');
 
 var fb = Object.create(new EventEmitter());
 
+fb.findByNet = function () {};
+fb.filter = function () { return []; };
 fb._fire = function (evt, emitData) {
     fb.emit(evt, emitData);
 };
-fb.findByNet = function () {};
-var ncname = 'mync';
-var controller = {};
-var protocol = {
-    phy: 'myphy',
-    nwk: 'mynwk'
-};
-var opt = {};
 
-var nc = new Netcore(ncname, controller, protocol, opt);
+fb.on('_nc:error', function (err) {
+    // console.log(err);
+});
+
+var ncName = 'mync',
+    controller = {},
+    opt = {},
+    protocol = {
+        phy: 'myphy',
+        nwk: 'mynwk'
+    };
+
+var nc = new Netcore(ncName, controller, protocol, opt),
+    dev = new Device(nc, {}),
+    gad = new Gadget(dev, 'xxx', {});
+
 nc._freebird = fb;
 
 nc.registerNetDrivers({
     start: function (cb) { return cb(null); },
     stop: function (cb) { return cb(null); },
-    reset: function (mode, cb) { 
-        return cb(null, mode);
-    },
+    reset: function (mode, cb) { return cb(null, mode); },
     permitJoin: function (duration, cb) { return cb(null, duration); },
     remove: function (permAddr, cb) { return cb(null, permAddr);  },
     ping: function (permAddr, cb) { return cb(null, 10); }
@@ -44,11 +50,7 @@ nc.registerGadDrivers({
     write: function (permAddr, auxId, attr, val, cb) { return cb(null, 'written'); }
 });
 
-fb.on('_nc:error', function (err) {
-    // console.log(err);
-});
-
-describe('Drivers test', function () {
+describe('NetDrivers test', function () {
     describe('#start()', function () {
         it('start(callback) - no _cookRawDev', function () {
             expect(function () { return nc.start(function () {}); }).to.throw(Error);
@@ -56,7 +58,7 @@ describe('Drivers test', function () {
 
         it('start(callback) - no _cookRawGad', function () {
             nc._cookRawDev = function () {};
-            expect(function () { nc.start(function (err) {}); }).to.throw(Error);
+            expect(function () { return nc.start(function () {}); }).to.throw(Error);
         });
 
         it('start(callback) - not enable - check enable after', function (done) {
@@ -86,9 +88,9 @@ describe('Drivers test', function () {
     });
 
     describe('#reset()', function () {
-        it('reset(mode, callback) - cb', function (done) {
+        it('reset(mode, callback) - should call cb', function (done) {
             nc.enable();
-            nc.reset('xxxx', function (err, d) {
+            nc.reset('xxxx', function (err) {
                 if (!err)
                     done();
             });
@@ -96,7 +98,7 @@ describe('Drivers test', function () {
     });
 
     describe('#permitJoin()', function () {
-        it('should call cb', function (done) {
+        it('permitJoin(duration, callback) - should call cb', function (done) {
             nc.enable();
             nc.permitJoin(20, function (err, d) {
                 if (!err && d === 20)
@@ -106,28 +108,28 @@ describe('Drivers test', function () {
     });
 
     describe('#remove()', function () {
-        it('should call cb', function (done) {
+        it('remove(permAddr, callback) - should call cb', function (done) {
             nc.enable();
-            nc.remove('0x1111', function (err, d) {
-                if (!err && d === '0x1111')
+            nc.remove('0x1111', function (err, p) {
+                if (!err && p === '0x1111')
                     done();
             });
         });
     });
 
     describe('#ban()', function () {
-        it('should call cb', function (done) {
+        it('ban(permAddr, callback) - should call cb', function (done) {
             nc.enable();
-            nc.ban('0x1111', function (err, d) {
-                if (!err && d === '0x1111')
+            nc.ban('0x1111', function (err, p) {
+                if (!err && p === '0x1111')
                     done();
             });
         });
 
-        it('should receive _nc:netBan event', function (done) {
+        it('ban(permAddr, callback) - should receive _nc:netBan event', function (done) {
             nc.enable();
-            fb.once('_nc:netBan', function (d) {
-                if (d.permAddr === '0x1111')
+            fb.once('_nc:netBan', function (msg) {
+                if (msg.permAddr === '0x1111')
                     done();
             });
             nc.ban('0x1111', function () {});
@@ -135,27 +137,27 @@ describe('Drivers test', function () {
     });
 
     describe('#unban()', function () {
-        it('should call cb', function (done) {
+        it('unban(permAddr, callback) - should call cb', function (done) {
             nc.enable();
-            nc.unban('0x1111', function (err, d) {
-                if (!err && d === '0x1111')
+            nc.unban('0x1111', function (err, p) {
+                if (!err && p === '0x1111')
                     done();
             });
         });
 
-        it('should receive _nc:netUnban event - 0x1111', function (done) {
+        it('unban(permAddr, callback) - should receive _nc:netUnban event - 0x1111', function (done) {
             nc.enable();
-            fb.once('_nc:netUnban', function (d) {
-                if (d.permAddr === '0x1111')
+            fb.once('_nc:netUnban', function (msg) {
+                if (msg.permAddr === '0x1111')
                     done();
             });
             nc.unban('0x1111', function () {});
         });
 
-        it('should receive _nc:netUnban event - 0x122221', function (done) {
+        it('unban(permAddr, callback) - should receive _nc:netUnban event - 0x122221', function (done) {
             nc.enable();
-            fb.once('_nc:netUnban', function (d) {
-                if (d.permAddr === '0x122221')
+            fb.once('_nc:netUnban', function (msg) {
+                if (msg.permAddr === '0x122221')
                     done();
             });
             nc.unban('0x122221', function () {});
@@ -163,7 +165,7 @@ describe('Drivers test', function () {
     });
 
     describe('#ping()', function () {
-        it('should call cb', function (done) {
+        it('ping(permAddr, callback) - should call cb', function (done) {
             nc.enable();
             nc.ping('0x1111', function (err, d) {
                 if (!err && d === 10)
@@ -171,15 +173,55 @@ describe('Drivers test', function () {
             });
         });
 
-        it('should receive _nc:netUnban event - 0x122221', function (done) {
+        it('ping(permAddr, callback) - should receive _nc:netPing event', function (done) {
             nc.enable();
-            fb.once('_nc:netPing', function (d) {
-                if (d.permAddr === '0x1111' && d.data === 10)
+            fb.once('_nc:netPing', function (msg) {
+                if (msg.permAddr === '0x1111' && msg.data === 10)
                     done();
             });
             nc.ping('0x1111', function () {});
         });
     });
+});
 
-    // maintain?
+describe('DevDrivers test', function () {
+    describe('#read()', function () {
+        it('should read properly', function (done) {
+            dev.enable();
+            dev.read('xx', function (err, r) {
+                if (!err && r === 'read')
+                    done();
+            });
+        });
+    });
+
+    describe('#write()', function () {
+        it('should write properly', function (done) {
+            dev.write('xx', 3, function (err, r) {
+                if (!err && r === 'written')
+                    done();
+            });
+        });
+    });
+});
+
+describe('GadDrivers test', function () {
+    describe('#read()', function () {
+        it('should read properly', function (done) {
+            gad.enable();
+            gad.read('xx', function (err, r) {
+                if (!err && r === 'read')
+                    done();
+            });
+        });
+    });
+
+    describe('#write()', function () {
+        it('should write properly', function (done) {
+            gad.write('xx', 3, function (err, r) {
+                if (!err && r === 'written')
+                    done();
+            });
+        });
+    });
 });

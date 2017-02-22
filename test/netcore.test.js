@@ -1,19 +1,16 @@
-// Constructor
-
-
 var EventEmitter = require('events'),
-    util = require('util'),
-    _ = require('busyman'),
-    expect = require('chai').expect,
-    sinon = require('sinon'),
-    Device = require('../lib/device.js'),
-    Gadget = require('../lib/gadget.js'),
-    Netcore = require('../lib/netcore.js');
+    expect = require('chai').expect;
+
+var Netcore = require('../lib/netcore.js');
+
+var NC_UNKNOW_STATE = 0,
+    NC_NORMAL_STATE = 1;
 
 var fb = Object.create(new EventEmitter());
+
 fb.findByNet = function () {};
-fb.getAllDevs = function () { return []; };
 fb.filter = function () { return []; };
+fb.getAllDevs = function () { return []; };
 fb._fire = function (evt, emitData) {
     fb.emit(evt, emitData);
 };
@@ -22,15 +19,15 @@ fb.on('_nc:error', function (err) {
     // console.log(err);
 });
 
-var ncname = 'mync';
-var controller = {};
-var protocol = {
-    phy: 'myphy',
-    nwk: 'mynwk'
-};
-var opt = {};
+var ncName = 'mync',
+    controller = {},
+    opt = {},
+    protocol = {
+        phy: 'myphy',
+        nwk: 'mynwk'
+    };
 
-var nc = new Netcore(ncname, controller, protocol, opt);
+var nc = new Netcore(ncName, controller, protocol, opt);
 nc._freebird = fb;
 
 var fakeNetDrvs = {
@@ -97,6 +94,14 @@ describe('Netcore Constructor', function () {
 });
 
 describe('Constructor Base Property Check', function () {
+    it('has name state equals to \'mync\'', function () {
+        expect(nc.name).to.be.equal(ncName);
+    });
+
+    it('has unknow state', function () {
+        expect(nc._state).to.be.equal(NC_UNKNOW_STATE);
+    });
+
     it('has _freebird equals to fb', function () {
         expect(nc._freebird).to.be.equal(fb);
     });
@@ -109,13 +114,17 @@ describe('Constructor Base Property Check', function () {
         expect(nc._joinTicks).to.be.equal(0);
     });
 
+    it('has a false _resetting', function () {
+        expect(nc._resetting).to.be.equal(false);
+    });
+
     it('has _controller equals to controller', function () {
         expect(nc._controller).to.be.equal(controller);
     });
 
     it('has correct _net memebers', function () {
         var net = nc._net;
-        expect(net.name).to.be.equal(ncname);
+        expect(net.name).to.be.equal(ncName);
         expect(net.enabled).to.be.equal(false);
         expect(net.protocol).to.be.equal(protocol);
         expect(net.startTime).to.be.equal(0);
@@ -232,7 +241,7 @@ describe('Check Signature', function () {
             done();
         });
 
-        it('commitReady(), _dumpNcInfo() should always pass - no signature', function (done) {
+        it('commitReady() should always pass - no signature', function (done) {
             done();
         });
     });
@@ -247,7 +256,7 @@ describe('Check Signature', function () {
             expect(function () { return nc.resetTraffic(function () {}); }).to.throw(TypeError);
         });
 
-        it('should not throw if permAddr is a string or not given', function () {
+        it('should not throw if dir is a string or not given', function () {
             expect(function () { return nc.resetTraffic(); }).not.to.throw(TypeError);
             expect(function () { return nc.resetTraffic('xxx'); }).not.to.throw(TypeError);
         });
@@ -264,7 +273,6 @@ describe('Check Signature', function () {
             expect(function () { return nc.registerNetDrivers(1); }).to.throw(TypeError);
             expect(function () { return nc.registerNetDrivers('xxx'); }).to.throw(TypeError);
             expect(function () { return nc.registerNetDrivers({ start: 3 }); }).to.throw(TypeError);
-
         });
 
         it('should not throw if propName is a string', function () {
@@ -292,7 +300,6 @@ describe('Check Signature', function () {
             expect(function () { return nc.registerDevDrivers(1); }).to.throw(TypeError);
             expect(function () { return nc.registerDevDrivers('xxx'); }).to.throw(TypeError);
             expect(function () { return nc.registerDevDrivers({ read: 3 }); }).to.throw(TypeError);
-
         });
 
         it('should not throw if propName is a string', function () {
@@ -315,7 +322,6 @@ describe('Check Signature', function () {
             expect(function () { return nc.registerGadDrivers(1); }).to.throw(TypeError);
             expect(function () { return nc.registerGadDrivers('xxx'); }).to.throw(TypeError);
             expect(function () { return nc.registerGadDrivers({ read: 3 }); }).to.throw(TypeError);
-
         });
 
         it('should not throw if propName is a string', function () {
@@ -341,8 +347,9 @@ describe('Check Signature', function () {
             expect(function () { return nc.start({}); }).to.throw(TypeError);
             expect(function () { return nc.start(true); }).to.throw(TypeError);
             expect(function () { return nc.start('_id'); }).to.throw(TypeError);
-            nc.cookRawGad = null;
-            nc.cookRawDev = null;
+
+            nc._cookRawGad = null;
+            nc._cookRawDev = null;
             nc._drivers.net = {};
             nc._drivers.dev = {};
             nc._drivers.gad = {};
@@ -366,8 +373,16 @@ describe('Check Signature', function () {
         });
     });
 
-    describe.skip('#reset()', function() {
-        it('should always pass - no signature', function () {
+    describe('#reset(mode, cb)', function() {
+        it('should throw if callback is not a function', function () {
+            expect(function () { return nc.reset(0, []); }).to.throw(TypeError);
+            expect(function () { return nc.reset(0, {}); }).to.throw(TypeError);
+            expect(function () { return nc.reset(0, true); }).to.throw(TypeError);
+            expect(function () { return nc.reset(0, '_id'); }).to.throw(TypeError);
+        });
+
+        it('should not throw if mode is not given', function () {
+            expect(function () { return nc.reset(function () {}); }).not.to.throw(TypeError);
         });
     });
 
@@ -381,8 +396,7 @@ describe('Check Signature', function () {
             expect(function () { return nc.permitJoin(function () {}); }).to.throw(TypeError);
         });
 
-        it('should not throw if duration is a number or not given', function () {
-            expect(function () { return nc.permitJoin(1); }).not.to.throw(TypeError);
+        it('should not throw if duration is a number', function () {
             expect(function () { return nc.permitJoin(100, function () {}); }).not.to.throw(TypeError);
         });
 
@@ -393,7 +407,7 @@ describe('Check Signature', function () {
         });
     });
 
-    describe('#remove(permAddr, callback)', function() {
+    describe('#remove(permAddr, cb)', function() {
         var cb = function () {};
         it('should throw if permAddr is not a string', function () {
             expect(function () { return nc.remove([], cb); }).to.throw(TypeError);
@@ -411,11 +425,13 @@ describe('Check Signature', function () {
         it('should throw if cb is not a function', function () {
             expect(function () { return nc.remove('x', []); }).to.throw(TypeError);
             expect(function () { return nc.remove('x', {}); }).to.throw(TypeError);
-            expect(function () { return nc.remove('x', true); }).to.throw(TypeError);
+            expect(function () { return nc.ban('x', null); }).to.throw(TypeError);
+            expect(function () { return nc.ban('x', NaN); }).to.throw(TypeError);
+            expect(function () { return nc.ban('x', true); }).to.throw(TypeError);
         });
     });
 
-    describe('#ban(permAddr, callback)', function() {
+    describe('#ban(permAddr, cb)', function() {
         var cb = function () {};
         it('should throw if permAddr is not a string', function () {
             expect(function () { return nc.ban([], cb); }).to.throw(TypeError);
@@ -439,7 +455,7 @@ describe('Check Signature', function () {
         });
     });
 
-    describe('#unban(permAddr, callback)', function() {
+    describe('#unban(permAddr, cb)', function() {
         var cb = function () {};
         it('should throw if permAddr is not a string', function () {
             expect(function () { return nc.unban([], cb); }).to.throw(TypeError);
@@ -463,7 +479,7 @@ describe('Check Signature', function () {
         });
     });
 
-    describe('#ping(permAddr, callback)', function() {
+    describe('#ping(permAddr, cb)', function() {
         var cb = function () {};
         it('should throw if permAddr is not a string', function () {
             expect(function () { return nc.ping([], cb); }).to.throw(TypeError);
@@ -484,6 +500,18 @@ describe('Check Signature', function () {
             expect(function () { return nc.ping('x', null); }).to.throw(TypeError);
             expect(function () { return nc.ping('x', NaN); }).to.throw(TypeError);
             expect(function () { return nc.ping('x', true); }).to.throw(TypeError);
+        });
+    });
+
+    describe('#maintain(cb)', function() {
+        it('should throw if cb is not a function when given', function () {
+            expect(function () { return nc.maintain([]); }).to.throw(TypeError);
+            expect(function () { return nc.maintain({}); }).to.throw(TypeError);
+            expect(function () { return nc.maintain(true); }).to.throw(TypeError);
+        });
+
+        it('should not throw if cb is not given', function () {
+            expect(function () { return nc.maintain(); }).not.to.throw(TypeError);
         });
     });
 
@@ -619,7 +647,7 @@ describe('Check Signature', function () {
             expect(function () { return nc.commitGadReporting('addr', 1, {}); }).not.to.throw(TypeError);
         });
 
-        it('should throw if gadAttrs is notan object', function () {
+        it('should throw if gadAttrs is not an object', function () {
             expect(function () { return nc.commitGadReporting('addr', 'x'); }).to.throw(TypeError);
             expect(function () { return nc.commitGadReporting('addr', 'x', 1); }).to.throw(TypeError);
         });
@@ -650,7 +678,7 @@ describe('Check Signature', function () {
             expect(function () { return nc.dangerouslyCommitGadReporting('addr', 1, {}); }).not.to.throw(TypeError);
         });
 
-        it('should throw if gadAttrs is notan object', function () {
+        it('should throw if gadAttrs is not an object', function () {
             expect(function () { return nc.dangerouslyCommitGadReporting('addr', 'x'); }).to.throw(TypeError);
             expect(function () { return nc.dangerouslyCommitGadReporting('addr', 'x', 1); }).to.throw(TypeError);
         });
@@ -767,7 +795,6 @@ describe('Functional Test', function () {
             expect(nc.isEnabled()).to.be.true;
             nc.disable();
             expect(nc.isEnabled()).to.be.false;
-            nc.enable();
         });
     });
 
@@ -798,7 +825,7 @@ describe('Functional Test', function () {
 
     describe('#getName()', function () {
         it('should get the right name', function () {
-            expect(nc.getName()).to.be.equal(ncname);
+            expect(nc.getName()).to.be.equal(ncName);
         });
     });
 
@@ -810,7 +837,13 @@ describe('Functional Test', function () {
         });
     });
 
-    describe('#registerNetDrivers()', function () {
+    describe('#resetTraffic(dir)', function () {
+        it('should pass reset traffic test', function () {
+            expect(nc.resetTraffic()).to.be.equal(nc);
+        });
+    });
+
+    describe('#registerNetDrivers(drvs)', function () {
         it('should register any driver', function () {
             var q = function () {};
             expect(nc.registerNetDrivers({ q: q })).to.equal(nc);
@@ -818,7 +851,7 @@ describe('Functional Test', function () {
         });
     });
 
-    describe('#registerDevDrivers()', function () {
+    describe('#registerDevDrivers(drvs)', function () {
         it('should register any driver', function () {
             var z = function () {};
             expect(nc.registerDevDrivers({ z: z })).to.equal(nc);
@@ -826,11 +859,47 @@ describe('Functional Test', function () {
         });
     });
 
-    describe('#registerGadDrivers()', function () {
+    describe('#registerGadDrivers(drvs)', function () {
         it('should register any driver', function () {
             var m = function () {};
             expect(nc.registerGadDrivers({ m: m })).to.equal(nc);
             expect(nc._findDriver('gad', 'm')).to.be.equal(m);
+        });
+    });
+
+    describe('#commitDevNetChanging(permAddr, changes) - not banned', function () {
+        it('should receive _nc:devNetChanging event', function (done) {
+            nc.enable();
+            var p = '0x1234',
+                c = {};
+            fb.on('_nc:devNetChanging', function (data) {
+                if (data.permAddr === p && data.data === c)
+                    done();
+            });
+
+            nc.commitDevNetChanging(p, c);
+        });
+    });
+
+    describe('#commitDevNetChanging(permAddr, changes) - banned', function () {
+        it('should not commit out', function () {
+            var p = '0x1234',
+                c = {};
+            nc._block(p);
+            expect(nc.commitDevNetChanging(p, c)).to.be.false;
+            nc._unblock(p);
+            expect(nc.commitDevNetChanging(p, c)).to.be.true;
+        });
+    });
+
+    describe('#commitDevNetChanging(permAddr, changes) - disable', function () {
+        it('should not commit out', function () {
+            var p = '0x1234',
+                c = {};
+            nc.disable();
+            expect(nc.commitDevNetChanging(p, c)).to.be.false;
+            nc.enable();
+            expect(nc.commitDevNetChanging(p, c)).to.be.true;
         });
     });
 
@@ -874,8 +943,31 @@ describe('Functional Test', function () {
         });
     });
 
+    describe('#commitDevLeaving(permAddr) - enable', function () {
+        it('should receive _nc:devLeaving event', function (done) {
+            nc.enable();
+            var p = '0x1234';
+            fb.once('_nc:devLeaving', function (data) {
+                if (data.permAddr === p)
+                    done();
+            });
+
+            nc.commitDevLeaving(p);
+        });
+    });
+
+    describe('#commitDevLeaving(permAddr) - disable', function () {
+        it('should not commit out', function () {
+            var p = '0x1234';
+            nc.disable();
+            expect(nc.commitDevLeaving(p)).to.be.false;
+            nc.enable();
+            expect(nc.commitDevLeaving(p)).to.be.true;
+        });
+    });
+
     describe('#commitGadIncoming(permAddr, auxId, rawGad) - not banned', function () {
-        it('should receiver _nc:gadIncoming', function (done) {
+        it('should receive _nc:gadIncoming', function (done) {
             nc.enable();
             var p = '0xABCD1234',
                 aux = 3,
@@ -890,7 +982,7 @@ describe('Functional Test', function () {
     });
 
     describe('#commitGadIncoming(permAddr, auxId, rawGad) - banned', function () {
-        it('should receiver _nc:bannedGadIncoming', function (done) {
+        it('should receive _nc:bannedGadIncoming', function (done) {
             nc.enable();
             var p = '0x1234',
                 aux = 3,
@@ -957,10 +1049,25 @@ describe('Functional Test', function () {
         });
     });
 
-    describe('#commitGadReporting(permAddr, auxId, rawGad) - banned', function () {
-        it('should receive _nc:bannedGadReporting event', function (done) {
+    describe('#commitGadReporting(permAddr, auxId, gadAttrs) - not banned', function () {
+        it('should receive _nc:gadReporting event', function (done) {
             nc.enable();
             var p = '0xABCD1234',
+                aux = 3,
+                r = {};
+            fb.once('_nc:gadReporting', function (data) {
+                if (data.permAddr === p && data.data === r && data.auxId === aux)
+                    done();
+            });
+
+            nc.commitGadReporting(p, aux, r);
+        });
+    });
+
+    describe('#commitGadReporting(permAddr, auxId, gadAttrs) - banned', function () {
+        it('should receive _nc:bannedGadReporting event', function (done) {
+            nc.enable();
+            var p = '0x1234',
                 aux = 3,
                 r = {};
             nc.ban(p, function () {});
@@ -974,7 +1081,7 @@ describe('Functional Test', function () {
         });
     });
 
-    describe('#commitGadReporting(permAddr, auxId, rawGad) - disable', function () {
+    describe('#commitGadReporting(permAddr, auxId, gadAttrs) - disable', function () {
         it('should not commit', function () {
             var p = '0x1234',
                 aux = 3,
@@ -983,6 +1090,284 @@ describe('Functional Test', function () {
             expect(nc.commitGadReporting(p, aux, r)).to.be.false;
             nc.enable();
             expect(nc.commitGadReporting(p, aux, r)).to.be.true;
+        });
+    });
+
+    describe('#dangerouslyCommitGadReporting(permAddr, auxId, gadAttrs) - not banned', function () {
+        it('should receive _nc:gadReporting event', function (done) {
+            nc.enable();
+            var p = '0xABCD1234',
+                aux = 3,
+                r = {};
+            fb.once('_nc:gadReporting', function (data) {
+                if (data.permAddr === p && data.data === r && data.auxId === aux)
+                    done();
+            });
+
+            nc.dangerouslyCommitGadReporting(p, aux, r);
+        });
+    });
+
+    describe('#dangerouslyCommitGadReporting(permAddr, auxId, gadAttrs) - banned', function () {
+        it('should receive _nc:bannedGadReporting event', function (done) {
+            nc.enable();
+            var p = '0x1234',
+                aux = 3,
+                r = {};
+            nc.ban(p, function () {});
+
+            fb.once('_nc:bannedGadReporting', function (data) {
+                if (data.permAddr === p && data.data === r && data.auxId === aux)
+                    done();
+            });
+
+            nc.dangerouslyCommitGadReporting(p, aux, r);
+        });
+    });
+
+    describe('#dangerouslyCommitGadReporting(permAddr, auxId, gadAttrs) - disable', function () {
+        it('should not commit', function () {
+            var p = '0x1234',
+                aux = 3,
+                r = {};
+            nc.disable();
+            expect(nc.dangerouslyCommitGadReporting(p, aux, r)).to.be.false;
+            nc.enable();
+            expect(nc.dangerouslyCommitGadReporting(p, aux, r)).to.be.true;
+        });
+    });
+
+    describe('#start(callback)', function () {
+        it('should receive _nc:error event', function (done) {
+            nc._cookRawGad = function () {};
+            nc._cookRawDev = function () {};
+            fakeNetDrvs.start = function (cb) { cb(new Error('x')); };
+
+            fb.once('_nc:error', function (msg) {
+                if (msg.error.message === 'x')
+                    done();
+            });
+
+            nc.start();
+        });
+
+        it('should receive _nc:started and _nc:ready event', function (done) {
+            var startedCalled, readyCalled;
+
+            fakeNetDrvs.start = function (cb) { cb(null); };
+
+            fb.once('_nc:started', function (msg) {
+                if (msg.ncName === 'mync') {
+                    startedCalled = true;
+                    if (startedCalled && readyCalled) done();
+                }
+            });
+
+            fb.once('_nc:ready', function (msg) {
+                if (msg.ncName === 'mync') {
+                    readyCalled = true;
+                    if (startedCalled && readyCalled) done();
+                }
+            });
+
+            nc.start(function (err) {
+                if (!err) {
+                    expect(nc.isEnabled()).to.be.true;
+                    expect(nc._state).to.be.equal(NC_NORMAL_STATE);
+                }
+            });
+        });
+    });
+
+    describe('#stop(callback)', function () {
+        it('should receive _nc:error event', function (done) {
+            fakeNetDrvs.stop = function (cb) { cb(new Error('x')); };
+
+            fb.once('_nc:error', function (msg) {
+                if (msg.error.message === 'x')
+                    done();
+            });
+
+            nc.stop();
+        });
+
+        it('should receive _nc:stopped event', function (done) {
+            fakeNetDrvs.stop = function (cb) { cb(null); };
+
+            fb.once('_nc:stopped', function (msg) {
+                if (msg.ncName === 'mync')
+                    done();
+            });
+
+            nc.stop(function (err) {
+                if (!err) {
+                    expect(nc.isEnabled()).to.be.false;
+                    expect(nc._state).to.be.equal(NC_UNKNOW_STATE);
+                }
+            });
+        });
+    });
+
+    describe('#reset(mode, callback)', function () {
+        it('should receive _nc:error event', function (done) {
+            fakeNetDrvs.reset = function (mode, cb) { cb(new Error('x')); };
+            nc.enable();
+            fb.once('_nc:error', function (msg) {
+                if (msg.error.message === 'x')
+                    done();
+            });
+
+            nc.reset(function (err) {});
+        });
+
+        it('should pass reset test', function (done) {
+            fakeNetDrvs.reset = function (mode, cb) { cb(null); };
+
+            nc.reset(function (err) {
+                if (!err)
+                    done();
+            });
+        });
+    });
+
+    describe('#permitJoin(duration, callback)', function () {
+        it('should receive _nc:error event', function (done) {
+            fakeNetDrvs.permitJoin = function (duration, cb) { cb(new Error('x')); };
+            nc.enable();
+            fb.once('_nc:error', function (msg) {
+                if (msg.error.message === 'x')
+                    done();
+            });
+
+            nc.permitJoin(10);
+        });
+
+        it('should receive _nc:permitJoin event', function (done) {
+            var permitJoinLsn = function (msg) {
+                if (msg.timeLeft === 10) {
+                    fb.removeListener('_nc:permitJoin', permitJoinLsn);
+                    done();
+                }
+            };
+
+            fakeNetDrvs.permitJoin = function (duration, cb) { cb(null, duration); };
+
+            fb.on('_nc:permitJoin', permitJoinLsn);
+            nc.permitJoin(10);
+        });
+    });
+
+    describe('#remove(permAddr, callback)', function () {
+        it('should receive _nc:error event', function (done) {
+            var p = '0x1234';
+
+            fakeNetDrvs.remove = function (permAddr, cb) { cb(new Error('x')); };
+
+            fb.once('_nc:error', function (msg) {
+                if (msg.error.message === 'x')
+                    done();
+            });
+
+            nc.remove(p);
+        });
+
+        it('should pass remove test', function (done) {
+            var p = '0x1234';
+
+            fakeNetDrvs.remove = function (permAddr, cb) { cb(null, permAddr); };
+
+            nc.remove(p, function (err, pAddr) {
+                if (!err && pAddr === p)
+                    done();
+            });
+        });
+    });
+
+    describe('#ban(permAddr, callback)', function () {
+        it('should receive _nc:error event', function (done) {
+            var p = '0x1234';
+
+            fakeNetDrvs.ban = function (permAddr, cb) { cb(new Error('x')); };
+
+            fb.once('_nc:error', function (msg) {
+                if (msg.error.message === 'x')
+                    done();
+            });
+
+            nc.ban(p, function () {});
+        });
+
+        it('should receive _nc:netBan event', function (done) {
+            var p = '0x1234';
+
+            fakeNetDrvs.ban = function (permAddr, cb) { cb(null, permAddr); };
+
+            fb.once('_nc:netBan', function (msg) {
+                if (msg.permAddr === p) {
+                    expect(nc.getBlacklist()).to.deep.equal([ '0x1234' ]);
+                    done();
+                }
+            });
+
+            nc.ban(p, function () {});
+        });
+    });
+
+    describe('#unban(permAddr, callback)', function () {
+        it('should receive _nc:error event', function (done) {
+            var p = '0x1234';
+
+            fakeNetDrvs.unban = function (permAddr, cb) { cb(new Error('x')); };
+
+            fb.once('_nc:error', function (msg) {
+                if (msg.error.message === 'x')
+                    done();
+            });
+
+            nc.unban(p, function () {});
+        });
+
+        it('should receive _nc:netUnban event', function (done) {
+            var p = '0x1234';
+
+            fakeNetDrvs.unban = function (permAddr, cb) { cb(null, permAddr); };
+
+            fb.once('_nc:netUnban', function (msg) {
+                if (msg.permAddr === p) {
+                    expect(nc.getBlacklist()).to.deep.equal([]);
+                    done();
+                }
+            });
+
+            nc.unban(p, function () {});
+        });
+    });
+
+    describe('#ping(permAddr, callback)', function () {
+        it('should receive _nc:error event', function (done) {
+            var p = '0x1234';
+
+            fakeNetDrvs.ping = function (permAddr, cb) { cb(new Error('x')); };
+
+            fb.once('_nc:error', function (msg) {
+                if (msg.error.message === 'x')
+                    done();
+            });
+
+            nc.ping(p, function () {});
+        });
+
+        it('should receive _nc:netPing event', function (done) {
+            var p = '0x1234';
+
+            fakeNetDrvs.ping = function (permAddr, cb) { cb(null, 5); };
+
+            fb.once('_nc:netPing', function (msg) {
+                if (msg.permAddr === p) 
+                    done();
+            });
+
+            nc.ping(p, function () {});
         });
     });
 });
