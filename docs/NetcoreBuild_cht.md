@@ -113,10 +113,10 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 | Property     | Type    | Mandatory | Description                                                                                                                                                                        |
 |--------------|---------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | address      | Object  | Required  | 裝置位址紀錄物件 `{ permanent, dynamic }`，為必填。其中 `permanent` 與 `dynamic` 分別為永久位址及動態位置，皆為必填。`permanent` 位址只能是字串，而 `dynamic` 位址可以是字串或數字 |
-| role         | String  | Optional  | 裝置的網路角色，依據不同的協定可能有不同的字串來表示其地位，例如 zigbee 可能使用 'router'、'end-device'，而 BLE 可能使用 'central'、'peripheral'                                   |
+| role         | String  | Optional  | 裝置的網路角色，依據不同的協定可能有不同的字串來表示其地位，例如 zigbee 可能使用 `'router'`、`'end-device'`，而 BLE 可能使用 `'central'`、`'peripheral'`                           |
 | parent       | String  | Optional  | 裝置父節點的永久位址，如果不是 mesh 網路，所有裝置可能都是中央集權至 netcore，即 netcore 是所有節點的父節點，那麼該欄位請填字串 '0'，預設也是這個值                                |
-| maySleep     | Boolean | Optional  | 用於載明這個裝置是否可能進入睡眠狀態，預設是 false。如果你確定裝置可能會睡眠，請為該裝置的此欄位設為 true，因這會牽涉到 freebird 如何確認裝置是否上線的演算法                      |
-| sleepPeriod  | Number  | Optional  | 僅有當 maySleep 設為 true 時有效，當你明確知道裝置的睡眠周期，請設定該週期之秒數。 Freebird 會藉此調整它的線上狀態檢查演算法                                                       |
+| maySleep     | Boolean | Optional  | 用於載明這個裝置是否可能進入睡眠狀態，預設是 `false`。如果你確定裝置可能會睡眠，請為該裝置的此欄位設為 `true`，因這會牽涉到 freebird 如何確認裝置是否上線的演算法                  |
+| sleepPeriod  | Number  | Optional  | 僅有當 `maySleep` 設為 `true` 時有效，當你明確知道裝置的睡眠周期，請設定該週期之秒數。 Freebird 會藉此調整它的線上狀態檢查演算法                                                   |
 
 
 ### dev.set('attrs', devAttrsObj)
@@ -142,8 +142,8 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 
 | Property     | Type    | Mandatory | Description                                                                                                                        |
 |--------------|---------|-----------|------------------------------------------------------------------------------------------------------------------------------------|
-| profile      | String  | Optional  | 此物品的 profile，例如 `'HA'`                                                                                                      |
 | classId      | String  | Required  | 此物品的分類識別子，目前僅接受 IPSO 所定義的 [53 種智慧物件](https://github.com/PeterEB/smartobject/blob/master/docs/templates.md)，classId 請使用 Object Id 的字串值來填寫，例如 `'dIn'`, `'aIn'`, `'generic'`, `'temperature'`, `'humidity'` 等 |
+| profile      | String  | Optional  | 此物品的 profile，例如 `'HA'`                                                                                                      |
 
 * 目前接受的 classId 共有 51 種 (IPSO定義)，它們分別是字串：
     - `'dIn'` (數位輸入), `'dOut'` (數位輸出)  
@@ -159,3 +159,691 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
     - `'upDownControl'` (上下控制器), `'multipleAxisJoystick'` (多軸搖桿), `'rate'` (速率), `'pushButton'` (按鈕), `'multistateSelector'` (多狀態選擇器)
 
 * 有一些實際的感測器，若找不到對應，則採用 `'generic'` classId ，然後利用其實例屬性 `appType` 欄位來指明真正用途，例如 `appType = 'some kind of sensor'`。  
+
+<a name="APIs"></a>
+<br />
+********************************************
+## 6. APIs
+
+### 建構式
+* Netcore
+    - [new Netcore()](#API_Netcore)
+
+### 實作者提供
+
+* Netcore
+    - [_cookRawDev()](#API__cookRawDev)
+    - [_cookRawGad()](#API__cookRawGad)
+    - [start()](#API_start)
+    - [stop()](#API_stop)
+    - [reset()](#API_reset)
+    - [permitJoin()](#API_permitJoin)
+    - [remove()](#API_remove)
+    - [ban()](#API_ban)
+    - [unban()](#API_unban)
+    - [ping()](#API_ping)
+
+* Device
+    - [read()](#API_read)
+    - [write()](#API_write)
+    - [identify()](#API_identify)
+
+* Gadget
+    - [read()](#API_read)
+    - [write()](#API_write)
+    - [exec()](#API_exec)
+    - [readReportCfg()](#API_readReportCfg)
+    - [writeReportCfg()](#API_writeReportCfg)
+
+###  實作者呼叫
+
+* Netcore
+    - [registerNetDrivers()](#API_registerNetDrivers)
+    - [registerDevDrivers()](#API_registerDevDrivers)
+    - [registerGadDrivers()](#API_registerGadDrivers)
+    - [commitReady()](#API_commitReady)
+    - [commitDevNetChanging()](#API_commitDevNetChanging)
+    - [commitDevIncoming()](#API_commitDevIncoming)
+    - [commitDevLeaving()](#API_commitDevLeaving)
+    - [commitGadIncoming()](#API_commitGadIncoming)
+    - [commitDevReporting()](#API_commitDevReporting)
+    - [commitGadReporting()](#API_commitGadReporting)
+    - [dangerouslyCommitGadReporting()](#API_dangerouslyCommitGadReporting)
+
+<br />
+********************************************
+<br />
+## 建構式
+
+<a name ="API_Netcore"></a>
+********************************************
+### new Netcore(name, controller, protocol[, opt])
+
+**Arguments:**  
+
+1. `name` (_String_):
+2. `controller` (_Object_):
+3. `protocol` (_Object_):
+4. `opt` (_Object_):
+
+**Returns:**  
+
+* (_Object_): netcore  
+
+**Examples:**  
+  
+```js
+
+```
+
+<br />
+********************************************
+<br />
+## 實作者提供
+### Netcore
+
+<a name ="API__cookRawDev"></a>
+********************************************
+### _cookRawDev(dev, rawDev, done)
+
+**Arguments:**  
+
+1. `dev` (_Object_):
+2. `rawDev` (_Object_):
+3. `done` (_Function_):
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API__cookRawGad"></a>
+<br />
+********************************************
+### _cookRawGad(gad, rawGad, done)
+
+**Arguments:**  
+
+1. `gad` (_Object_):
+2. `rawGad` (_Object_):
+3. `done` (_Function_):
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_start"></a>
+<br />
+********************************************
+### start(callback)
+
+**Arguments:**  
+
+1. `callback` (_Function_): `function (err) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_stop"></a>
+<br />
+********************************************
+### stop(callback)
+
+**Arguments:**  
+
+1. `callback` (_Function_): `function (err) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_reset"></a>
+<br />
+********************************************
+### reset(mode, callback)
+
+**Arguments:**  
+
+1. `mode` (_Number_):
+2. `callback` (_Function_): `function (err) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_permitJoin"></a>
+<br />
+********************************************
+### permitJoin(duration, callback)
+
+**Arguments:**  
+
+1. `duration` (_Number_):
+2. `callback` (_Function_): `function (err, timeLeft) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_remove"></a>
+<br />
+********************************************
+### remove(permAddr, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `callback` (_Function_): `function (err, permAddr) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_ban"></a>
+<br />
+********************************************
+### ban(permAddr, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `callback` (_Function_): `function (err, permAddr) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_unban"></a>
+<br />
+********************************************
+### unban(permAddr, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `callback` (_Function_): `function (err, permAddr) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_ping"></a>
+<br />
+********************************************
+### ping(permAddr, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `callback` (_Function_): `function (err, time) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<br />
+********************************************
+<br />
+### Device  
+
+<a name ="API_read"></a>
+********************************************
+### read(permAddr, attrName, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `attrName` (_String_):
+3. `callback` (_Function_): `function (err, data) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_write"></a>
+<br />
+********************************************
+### write(permAddr, attrName, val, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `attrName` (_String_):
+3. `callback` (_Function_): `function (err[, data]) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_identify"></a>
+<br />
+********************************************
+### identify(permAddr, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `callback` (_Function_): `function (err, permAddr) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<br />
+********************************************
+<br />
+### Gadget
+
+<a name ="API_read"></a>
+********************************************
+### read(permAddr, auxId, attrName, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `auxId` (_String_ | _Number_):
+3. `attrName` (_String_):
+4. `callback` (_Function_): `function (err, data) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_write"></a>
+<br />
+********************************************
+### write(permAddr, auxId, attrName, val, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `auxId` (_String_ | _Number_):
+3. `attrName` (_String_):
+4. `callback` (_Function_): `function (err[, data]) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_exec"></a>
+<br />
+********************************************
+### exec(permAddr, auxId, attrName, args, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `auxId` (_String_ | _Number_):
+3. `attrName` (_String_):
+4. `args` (_Array_):
+5. `callback` (_Function_): `function (err, data) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_readReportCfg"></a>
+<br />
+********************************************
+### readReportCfg(permAddr, auxId, attrName, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `auxId` (_String_ | _Number_):
+3. `attrName` (_String_):
+4. `callback` (_Function_): `function (err, data) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_writeReportCfg"></a>
+<br />
+********************************************
+### writeReportCfg(permAddr, auxId, attrName, cfg, callback)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `auxId` (_String_ | _Number_):
+3. `attrName` (_String_):
+4. `cfg` (_Object_):
+5. `callback` (_Function_): `function (err, data) {}`.
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<br />
+********************************************
+<br />
+##  實作者呼叫
+### Netcore
+
+<a name ="API_registerNetDrivers"></a>
+********************************************
+### registerNetDrivers(netDrvs)
+
+**Arguments:**  
+
+1. `netDrvs` (_Object_):
+
+**Returns:**  
+
+* (_Object_): netcore  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_registerDevDrivers"></a>
+<br />
+********************************************
+### registerDevDrivers(devDrvs)
+
+**Arguments:**  
+
+1. `devDrvs` (_Object_):
+
+**Returns:**  
+
+* (_Object_): netcore  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_registerGadDrivers"></a>
+<br />
+********************************************
+### registerGadDrivers(gadDrvs)
+
+**Arguments:**  
+
+1. `gadDrvs` (_Object_):
+
+**Returns:**  
+
+* (_Object_): netcore  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_commitReady"></a>
+<br />
+********************************************
+### commitReady()
+
+**Arguments:**  
+
+* _none_  
+
+**Returns:**  
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_commitDevNetChanging"></a>
+<br />
+********************************************
+### commitDevNetChanging(permAddr, changes)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `changes` (_Object_):
+
+**Returns:**  
+
+* (_Boolean_): 
+
+* _none_  
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_commitDevIncoming"></a>
+<br />
+********************************************
+### commitDevIncoming(permAddr, rawDev)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `rawDev` (_Object_):
+
+**Returns:**  
+
+* (_Boolean_): 
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_commitDevLeaving"></a>
+<br />
+********************************************
+### commitDevLeaving(permAddr)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+
+**Returns:**  
+
+* (_Boolean_): 
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_commitGadIncoming"></a>
+<br />
+********************************************
+### commitGadIncoming(permAddr, auxId, rawGad)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `auxId` (_String_ | _Number_):
+3. `rawGad` (_Object_):
+
+**Returns:**  
+
+* (_Boolean_): 
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_commitDevReporting"></a>
+<br />
+********************************************
+### commitDevReporting(permAddr, devAttrs)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `devAttrs` (_Object_):
+
+**Returns:**  
+
+* (_Boolean_): 
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_commitGadReporting"></a>
+<br />
+********************************************
+### commitGadReporting(permAddr, auxId, gadAttrs)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `auxId` (_String_ | _Number_):
+2. `gadAttrs` (_Object_):
+
+**Returns:**  
+
+* (_Boolean_): 
+
+**Examples:**  
+  
+```js
+
+```
+
+<a name ="API_dangerouslyCommitGadReporting"></a>
+<br />
+********************************************
+### dangerouslyCommitGadReporting(permAddr, auxId, gadAttrs)
+
+**Arguments:**  
+
+1. `permAddr` (_String_):
+2. `auxId` (_String_ | _Number_):
+2. `gadAttrs` (_Object_):
+
+**Returns:**  
+
+* (_Boolean_): 
+
+**Examples:**  
+  
+```js
+
+```
