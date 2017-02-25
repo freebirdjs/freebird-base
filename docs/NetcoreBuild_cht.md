@@ -42,7 +42,7 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 6. 當有裝置離開網路，開發者有責任呼叫 `nc.commitDevLeaving()` 來告訴 netcore 是哪一個裝置離開了。  
 7. 當底層接收到有關 device 的屬性變化或通知時，必須使用 `nc.commitDevReporting()` 向 netcore 報告。  
 8. 當底層接收到有關 gadget (應用) 的屬性變化或通知時，必須使用 `nc.commitGadReporting()` 向 netcore 報告。  
-9. 當底層接收到有關 device 的 net 相關變化時，應調用 `nc.commitDevNetChanging()` 向 netcore 報告。此處所指之 net 相關變化包括 `{ role, parent, maySleep, sleepPeriod, address: { dynamic } }` 的其中任何一項屬性。  
+9. 當底層接收到有關 device 的 net 相關變化時，應調用 `nc.commitDevNetChanging()` 向 netcore 報告。此處所指之 net 相關變化包括 `{ role, parent, maySleep, sleepPeriod, status, address: { dynamic } }` 的其中任何一項屬性。  
 
 一旦開發者滿足了這些要求，netcore 就能在 freebird 框架中順利工作。總結來說，一個 netcore 實作者必須提供以下實作內容：  
 
@@ -68,7 +68,7 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 * `reset: function (mode, done) {}`
     - 重置網路控制器，其中 `mode` 為 `1` 表示硬重置，而 `0` 為軟重置 。完成停止程序後實作者需呼叫 `done(err)`。  
 * `permitJoin: function (duration, done) {}`
-    - 使網路控制器允許裝置加入網路，其中 `duration` 為開放之秒數，當設為 0 時表示立即關閉。當完成開放程序後，實作者需呼叫 `done(err, timeLeft)`，其中投入之參數 `timeLeft` 用以指示開放剩餘之秒數，傳回 0 表示立即關閉。  
+    - 使網路控制器允許裝置加入網路，其中 `duration` 為開放之秒數，當設為 `0` 時表示立即關閉。當完成開放程序後，實作者需呼叫 `done(err, timeLeft)`，其中投入之參數 `timeLeft` 用以指示開放剩餘之秒數，傳回 0 表示立即關閉。  
 * `remove: function (permAddr, done) {}`
     - 移除裝置，呼叫此方法應將裝置踢出網路，其中 `permAddr` 為裝置之永久位址。移除裝置後，實作者需呼叫 `done(err, permAddr)`，其中 `permAddr` 為被移除裝置之永久位址。  
 * `ban: function (permAddr, done) {}`
@@ -142,7 +142,7 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 
 | Property     | Type    | Mandatory | Description                                                                                                                        |
 |--------------|---------|-----------|------------------------------------------------------------------------------------------------------------------------------------|
-| classId      | String  | Required  | 此物品的分類識別子，目前僅接受 IPSO 所定義的 [53 種智慧物件](https://github.com/PeterEB/smartobject/blob/master/docs/templates.md)，classId 請使用 Object Id 的字串值來填寫，例如 `'dIn'`, `'aIn'`, `'generic'`, `'temperature'`, `'humidity'` 等 |
+| classId      | String  | Required  | 此物品的分類識別子，目前僅接受 IPSO 所定義的 [51 種智慧物件](https://github.com/PeterEB/smartobject/blob/master/docs/templates.md)，classId 請使用 Object Id 的字串值來填寫，例如 `'dIn'`, `'aIn'`, `'generic'`, `'temperature'`, `'humidity'` 等 |
 | profile      | String  | Optional  | 此物品的 profile，例如 `'HA'`                                                                                                      |
 
 * 目前接受的 classId 共有 51 種 (IPSO定義)，它們分別是字串：
@@ -214,17 +214,31 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 <br />
 ## 建構式
+### Netcore
 
 <a name ="API_Netcore"></a>
 ********************************************
 ### new Netcore(name, controller, protocol[, opt])
 
+產生新的 netcore 實例。建議使用 freebird-base 的 `createNetcore()` 方法來產生新的 netcore 實例。  
+
 **Arguments:**  
 
-1. `name` (_String_):
-2. `controller` (_Object_):
-3. `protocol` (_Object_):
-4. `opt` (_Object_):
+1. `name` (_String_): netcore 名稱。  
+2. `controller` (_Object_): 底層網路控制模組，例如 `ble-shepherd`。  
+3. `protocol` (_Object_): 使用的協定資訊。  
+
+    | Property | Type   | Mandatory | Description          |
+    |----------|--------|-----------|----------------------|
+    | phy      | String | Required  | Physic layer         |
+    | dll      | String | Optional  | Data link layer      |
+    | nwk      | String | Required  | Network layer        |
+    | tl       | String | Optional  | Transportation layer |
+    | sl       | String | Optional  | Session layer        |
+    | pl       | String | Optional  | Presentation layer   |
+    | apl      | String | Optional  | Application layer    |
+
+4. `opt` (_Object_): 預留使用。  
 
 **Returns:**  
 
@@ -233,7 +247,21 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var BShepherd = require('ble-shepherd'),
+    fbBase = require('freebird-base'),
+    Netcore = fbBase.Netcore,
+    controller = new BShepherd('noble');
 
+var nc = new Netcore('freebird-netcore-ble', controller, {
+    phy: 'ieee802.15.1',
+    nwk: 'ble',
+});
+
+// 建議使用 .createNetcore()
+var nc = fbBase.createNetcore('freebird-netcore-ble', controller, {
+    phy: 'ieee802.15.1',
+    nwk: 'ble'
+});
 ```
 
 <br />
@@ -246,11 +274,13 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### _cookRawDev(dev, rawDev, done)
 
+將底層 `rawDev` 資料物件的內容，以 `dev.set('net')` 及 `dev.set('attrs')` 填寫[**裝置屬性**](https://github.com/freebirdjs/freebird-base/blob/master/docs/NetcoreBuild_cht.md#Info_Dev)，最後呼叫 `done(err, dev)` 回傳給 netcore。  
+
 **Arguments:**  
 
-1. `dev` (_Object_):
-2. `rawDev` (_Object_):
-3. `done` (_Function_):
+1. `dev` (_Object_): deivce 實例。  
+2. `rawDev` (_Object_): 原始 device 資料物件。  
+3. `done` (_Function_): `function (err, dev) {}`。將 `dev` 回傳給 netcore。  
 
 **Returns:**  
 
@@ -259,7 +289,23 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+nc._cookRawDev = function (dev, rawDev, done) {
+    dev.set('net', {
+        role: 'router',
+        maySleep: false,
+        address: {  // 必填
+            permanent: rawDev.ieeeAddr,
+            dynamic: rawDev.nwkAddr,
+        }
+    });
 
+    dev.set('attrs', {
+        manufacturer: rawDev.manufacturerName,
+        model: rawDev.modelNum
+    });
+
+    done(null, dev);
+};
 ```
 
 <a name ="API__cookRawGad"></a>
@@ -267,11 +313,13 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### _cookRawGad(gad, rawGad, done)
 
+將底層 `rawGad` 資料物件的內容，以 `gad.set('panel')` 及 `gad.set('attrs')` 填寫[**物品屬性**](https://github.com/freebirdjs/freebird-base/blob/master/docs/NetcoreBuild_cht.md#Info_Gad)，最後呼叫 `done(err, gad)` 回傳給 netcore。  
+
 **Arguments:**  
 
-1. `gad` (_Object_):
-2. `rawGad` (_Object_):
-3. `done` (_Function_):
+1. `gad` (_Object_): gadget 實例。  
+2. `rawGad` (_Object_): 原始 gadget 資料物件。  
+3. `done` (_Function_): `function (err, gad) {}`。將 `gad` 回傳給 netcore。  
 
 **Returns:**  
 
@@ -280,7 +328,20 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+nc._cookRawGad = function (gad, rawGad, done) {
+    gad.set('panel', {
+        profile: 'home',
+        classId: 'presence'
+    });
 
+    gad.set('attrs', {
+        dInState: 5500,
+        counter: 5501,
+        counterReset: 5505
+    });
+
+    done(null, gad);
+};
 ```
 
 <a name ="API_start"></a>
@@ -288,9 +349,11 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### start(callback)
 
+啟動網路控制器。  
+
 **Arguments:**  
 
-1. `callback` (_Function_): `function (err) {}`.
+1. `callback` (_Function_): `function (err) {}`。  
 
 **Returns:**  
 
@@ -299,7 +362,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var netDrvs = {
+    start: function (callback) {
+        // ...實作
 
+        callback(null);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_stop"></a>
@@ -307,9 +377,11 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### stop(callback)
 
+停止網路控制器。  
+
 **Arguments:**  
 
-1. `callback` (_Function_): `function (err) {}`.
+1. `callback` (_Function_): `function (err) {}`。  
 
 **Returns:**  
 
@@ -318,7 +390,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var netDrvs = {
+    stop: function (callback) {
+        // ...實作
 
+        callback(null);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_reset"></a>
@@ -326,10 +405,12 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### reset(mode, callback)
 
+重置網路控制器。  
+
 **Arguments:**  
 
-1. `mode` (_Number_):
-2. `callback` (_Function_): `function (err) {}`.
+1. `mode` (_Number_): `mode` 為 `1` 表示硬重置，而 `0` 為軟重置 。  
+2. `callback` (_Function_): `function (err) {}`。  
 
 **Returns:**  
 
@@ -338,7 +419,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var netDrvs = {
+    reset: function (mode, callback) {
+        // ...實作
 
+        callback(null);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_permitJoin"></a>
@@ -346,10 +434,12 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### permitJoin(duration, callback)
 
+透過網路控制器允許裝置加入網路。  
+
 **Arguments:**  
 
-1. `duration` (_Number_):
-2. `callback` (_Function_): `function (err, timeLeft) {}`.
+1. `duration` (_Number_): 開放加入之秒數，當設為 `0` 時表示立即關閉。  
+2. `callback` (_Function_): `function (err, timeLeft) {}`。`timeLeft` (_Number_) 用以指示開放剩餘之秒數，傳回 `0` 表示立即關閉。  
 
 **Returns:**  
 
@@ -358,7 +448,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var netDrvs = {
+    permitJoin: function (duration, callback) {
+        // ...實作
 
+        callback(null, timeLeft);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_remove"></a>
@@ -366,10 +463,12 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### remove(permAddr, callback)
 
+移除裝置，透過網路控制器將該裝置踢出網路。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `callback` (_Function_): `function (err, permAddr) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `callback` (_Function_): `function (err, permAddr) {}`。`permAddr` (_String_) 為被移除裝置之永久位址。  
 
 **Returns:**  
 
@@ -378,7 +477,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var netDrvs = {
+    remove: function (permAddr, callback) {
+        // ...實作
 
+        callback(null, permAddr);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_ban"></a>
@@ -386,10 +492,12 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### ban(permAddr, callback)
 
+封鎖裝置，此驅動為 optional。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `callback` (_Function_): `function (err, permAddr) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `callback` (_Function_): `function (err, permAddr) {}`。`permAddr` (_String_) 為被封鎖裝置之永久位址。  
 
 **Returns:**  
 
@@ -398,7 +506,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var netDrvs = {
+    ban: function (permAddr, callback) {
+        // ...實作
 
+        callback(null, permAddr);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_unban"></a>
@@ -406,10 +521,12 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### unban(permAddr, callback)
 
+解除封鎖裝置，此驅動為 optional。
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `callback` (_Function_): `function (err, permAddr) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `callback` (_Function_): `function (err, permAddr) {}`。`permAddr` (_String_) 為被解除封鎖裝置之永久位址。  
 
 **Returns:**  
 
@@ -418,7 +535,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var netDrvs = {
+    unban: function (permAddr, callback) {
+        // ...實作
 
+        callback(null, permAddr);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_ping"></a>
@@ -426,10 +550,12 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### ping(permAddr, callback)
 
+測試裝置回應。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `callback` (_Function_): `function (err, time) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `callback` (_Function_): `function (err, time) {}`。`time` (_Number_) 為發出檢測至收到響應的 round-trip time。  
 
 **Returns:**  
 
@@ -438,7 +564,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var netDrvs = {
+    ping: function (permAddr, callback) {
+        // ...實作
 
+        callback(null, time);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <br />
@@ -450,11 +583,13 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### read(permAddr, attrName, callback)
 
+讀取裝置屬性值。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `attrName` (_String_):
-3. `callback` (_Function_): `function (err, data) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `attrName` (_String_): 屬性名稱。  
+3. `callback` (_Function_): `function (err, data) {}`。`data` (_Depends_) 為該屬性之值。  
 
 **Returns:**  
 
@@ -463,7 +598,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var devDrvs = {
+    read: function (permAddr, attrName, callback) {
+        // ...實作
 
+        callback(null, data);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_write"></a>
@@ -471,11 +613,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### write(permAddr, attrName, val, callback)
 
+寫入裝置屬性值。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `attrName` (_String_):
-3. `callback` (_Function_): `function (err[, data]) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `attrName` (_String_): 屬性名稱。  
+3. `val` (_Depends_): 欲寫入之值。  
+4. `callback` (_Function_): `function (err[, data]) {}`。`data` (_Depends_) 為該屬性成功寫入後之值，可選擇傳回或不傳回，建議應傳回。  
 
 **Returns:**  
 
@@ -484,7 +629,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var devDrvs = {
+    write: function (permAddr, attrName, val, callback) {
+        // ...實作
 
+        callback(null[, data]);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_identify"></a>
@@ -492,10 +644,12 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### identify(permAddr, callback)
 
+使裝置進入辨識模式，此驅動為 optional。當裝置進入辨識模式時，可能以閃爍 LED 或發出聲響來協助使用者辨認所選裝置。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `callback` (_Function_): `function (err, permAddr) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `callback` (_Function_): `function (err, permAddr) {}`。`permAddr` (_String_) 為進入辨識模式裝置之永久位址。  
 
 **Returns:**  
 
@@ -504,7 +658,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var devDrvs = {
+    identify: function (permAddr, callback) {
+        // ...實作
 
+        callback(null, permAddr);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <br />
@@ -516,12 +677,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### read(permAddr, auxId, attrName, callback)
 
+讀取遠端裝置上物品之屬性值。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `auxId` (_String_ | _Number_):
-3. `attrName` (_String_):
-4. `callback` (_Function_): `function (err, data) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
+3. `attrName` (_String_): 屬性名稱。  
+4. `callback` (_Function_): `function (err, data) {}`。`data` (_Depends_) 為該屬性之值。  
 
 **Returns:**  
 
@@ -530,7 +693,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var gadDrvs = {
+    read: function (permAddr, auxId, attrName, callback) {
+        // ...實作
 
+        callback(null, data);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_write"></a>
@@ -538,12 +708,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### write(permAddr, auxId, attrName, val, callback)
 
+遠端寫入屬性值至該物品。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `auxId` (_String_ | _Number_):
-3. `attrName` (_String_):
-4. `callback` (_Function_): `function (err[, data]) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
+3. `attrName` (_String_): 屬性名稱。  
+4. `callback` (_Function_): `function (err[, data]) {}`。`data` (_Depends_) 為該屬性成功寫入後之值，可選擇傳回或不傳回，建議應傳回。  
 
 **Returns:**  
 
@@ -552,7 +724,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var gadDrvs = {
+    write: function (permAddr, auxId, attrName, val, callback) {
+        // ...實作
 
+        callback(null[, data]);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_exec"></a>
@@ -560,13 +739,15 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### exec(permAddr, auxId, attrName, args, callback)
 
+遠端執行物品上之程序，此驅動為 optional。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `auxId` (_String_ | _Number_):
-3. `attrName` (_String_):
-4. `args` (_Array_):
-5. `callback` (_Function_): `function (err, data) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
+3. `attrName` (_String_): 屬性名稱。  
+4. `args` (_Array_): 執行遠端程序所需之參數陣列。  
+5. `callback` (_Function_): `function (err, result) {}`。`result` (_Depends_) 可為任意值，取決於遠端韌體實作。
 
 **Returns:**  
 
@@ -575,7 +756,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var gadDrvs = {
+    exec: function (permAddr, auxId, attrName, args, callback) {
+        // ...實作
 
+        callback(null, result);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_readReportCfg"></a>
@@ -583,12 +771,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### readReportCfg(permAddr, auxId, attrName, callback)
 
+讀取物品屬性之報告設定，此驅動為 optional。
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `auxId` (_String_ | _Number_):
-3. `attrName` (_String_):
-4. `callback` (_Function_): `function (err, data) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
+3. `attrName` (_String_): 屬性名稱。  
+4. `callback` (_Function_): `function (err, cfg) {}`。`cfg` (_Object_) 為該屬性之報告設定。
 
 **Returns:**  
 
@@ -597,7 +787,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var gadDrvs = {
+    readReportCfg: function (permAddr, auxId, attrName, callback) {
+        // ...實作
 
+        callback(null, cfg);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <a name ="API_writeReportCfg"></a>
@@ -605,13 +802,15 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### writeReportCfg(permAddr, auxId, attrName, cfg, callback)
 
+設定物品屬性之報告設定，此驅動為 optional。
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `auxId` (_String_ | _Number_):
-3. `attrName` (_String_):
-4. `cfg` (_Object_):
-5. `callback` (_Function_): `function (err, data) {}`.
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
+3. `attrName` (_String_): 屬性名稱。  
+4. `cfg` (_Object_): 該屬性的報告設定物件。  
+5. `callback` (_Function_): `function (err, result) {}`。`result` (_Boolean_) 用以表示設定成功 (true) 或失敗 (false)。  
 
 **Returns:**  
 
@@ -620,7 +819,14 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var gadDrvs = {
+    writeReportCfg: function (permAddr, auxId, attrName, cfg, callback) {
+        // ...實作
 
+        callback(null, result);  // 最後呼叫
+    },
+    ...
+};
 ```
 
 <br />
@@ -633,9 +839,22 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### registerNetDrivers(netDrvs)
 
+向 netcore 註冊網路驅動程式。  
+
 **Arguments:**  
 
-1. `netDrvs` (_Object_):
+1. `netDrvs` (_Object_): netcore 所需要的所有網路驅動程式。  
+
+    | Property   | Type     | Mandatory |
+    |------------|----------|-----------|
+    | start      | Function | Required  |
+    | stop       | Function | Required  |
+    | reset      | Function | Required  |
+    | permitJoin | Function | Required  |
+    | remove     | Function | Required  |
+    | ping       | Function | Required  |
+    | ban        | Function | Optional  |
+    | unban      | Function | Optional  |
 
 **Returns:**  
 
@@ -644,7 +863,16 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var netDrvs = {
+    start: function (callback) {},
+    stop: function (callback) {},
+    reset: function (mode, callback) {},
+    permitJoin: function (duration, callback) {},
+    remove: function (permAddr, callback) {},
+    ping: function (permAddr, callback) {}
+};
 
+nc.registerNetDrivers(netDrvs);
 ```
 
 <a name ="API_registerDevDrivers"></a>
@@ -652,9 +880,17 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### registerDevDrivers(devDrvs)
 
+向 netcore 註冊裝置操作驅動程式。  
+
 **Arguments:**  
 
-1. `devDrvs` (_Object_):
+1. `devDrvs` (_Object_): netcore 所需要的所有裝置操作驅動程式。  
+
+    | Property | Type     | Mandatory |
+    |----------|----------|-----------|
+    | read     | Function | Required  |
+    | write    | Function | Required  |
+    | identify | Function | Optional  |
 
 **Returns:**  
 
@@ -663,7 +899,12 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var devDrvs = {
+    read: function (permAddr, attrName, callback) {},
+    write: function (permAddr, attrName, val, callback) {}
+};
 
+nc.registerDevDrivers(devDrvs);
 ```
 
 <a name ="API_registerGadDrivers"></a>
@@ -671,9 +912,19 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### registerGadDrivers(gadDrvs)
 
+向 netcore 註冊物品操作驅動程式。  
+
 **Arguments:**  
 
-1. `gadDrvs` (_Object_):
+1. `gadDrvs` (_Object_): netcore 所需要的所有物品操作驅動程式。  
+
+    | Property       | Type     | Mandatory |
+    |----------------|----------|-----------|
+    | read           | Function | Required  |
+    | write          | Function | Required  |
+    | exec           | Function | Optional  |
+    | readReportCfg  | Function | Optional  |
+    | writeReportCfg | Function | Optional  |
 
 **Returns:**  
 
@@ -682,7 +933,12 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
+var gadDrvs = {
+    read: function (permAddr, auxId, attrName, callback) {},
+    write: function (permAddr, auxId, attrName, val, callback) {}
+};
 
+nc.registerGadDrivers(gadDrvs);
 ```
 
 <a name ="API_commitReady"></a>
@@ -690,6 +946,8 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### commitReady()
 
+每次當 netcore 啟動並準備好時，應呼叫此方法，以通知 netcore 它已經就緒。  
+
 **Arguments:**  
 
 * _none_  
@@ -701,7 +959,7 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 **Examples:**  
   
 ```js
-
+nc.commitReady();
 ```
 
 <a name ="API_commitDevNetChanging"></a>
@@ -709,21 +967,23 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### commitDevNetChanging(permAddr, changes)
 
+當底層接收到有關 device 的 net 相關變化時呼叫。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `changes` (_Object_):
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `changes` (_Object_): 改變的屬性，為 `{ role, parent, maySleep, sleepPeriod, status, address: { dynamic } }` 其中任何一項。  
 
 **Returns:**  
 
-* (_Boolean_): 
+* (_Boolean_): 是否成功通知 freebird 框架。  
 
 * _none_  
 
 **Examples:**  
   
 ```js
-
+nc.commitDevNetChanging('0x0123456789', { status: 'online' });
 ```
 
 <a name ="API_commitDevIncoming"></a>
@@ -731,19 +991,21 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### commitDevIncoming(permAddr, rawDev)
 
+當底層有新裝置加入網路時呼叫此方法通知 netcore。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `rawDev` (_Object_):
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `rawDev` (_Object_): 新裝置的原始資料。  
 
 **Returns:**  
 
-* (_Boolean_): 
+* (_Boolean_): 是否成功通知 freebird 框架。  
 
 **Examples:**  
   
 ```js
-
+nc.commitDevIncoming('0x0123456789', rawDev);
 ```
 
 <a name ="API_commitDevLeaving"></a>
@@ -751,18 +1013,20 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### commitDevLeaving(permAddr)
 
+當裝置離開網路時呼叫。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
 
 **Returns:**  
 
-* (_Boolean_): 
+* (_Boolean_): 是否成功通知 freebird 框架。  
 
 **Examples:**  
   
 ```js
-
+nc.commitDevLeaving('0x0123456789');
 ```
 
 <a name ="API_commitGadIncoming"></a>
@@ -770,20 +1034,22 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### commitGadIncoming(permAddr, auxId, rawGad)
 
+當底層有新裝置加入網路時，實作者依據某些規則，將裝置上的應用一一產生對應的物品並通知 netcore。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `auxId` (_String_ | _Number_):
-3. `rawGad` (_Object_):
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
+3. `rawGad` (_Object_): 新物品的原始資料。  
 
 **Returns:**  
 
-* (_Boolean_): 
+* (_Boolean_): 是否成功通知 freebird 框架。  
 
 **Examples:**  
   
 ```js
-
+nc.commitGadIncoming('0x0123456789', 'temperature/0', rawGad);
 ```
 
 <a name ="API_commitDevReporting"></a>
@@ -791,19 +1057,21 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### commitDevReporting(permAddr, devAttrs)
 
+底層接收到有關 device 的屬性變化或通知時，呼叫此方法通知 netcore。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `devAttrs` (_Object_):
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `devAttrs` (_Object_): 發生變化之 device 屬性。  
 
 **Returns:**  
 
-* (_Boolean_): 
+* (_Boolean_): 是否成功通知 freebird 框架。  
 
 **Examples:**  
   
 ```js
-
+nc.commitDevReporting('0x0123456789', { manufacturer: 'xxx' });
 ```
 
 <a name ="API_commitGadReporting"></a>
@@ -811,20 +1079,22 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### commitGadReporting(permAddr, auxId, gadAttrs)
 
+底層接收到有關 gadget 的屬性變化或通知時，呼叫此方法通知 netcore。  
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `auxId` (_String_ | _Number_):
-2. `gadAttrs` (_Object_):
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
+2. `gadAttrs` (_Object_): 發生變化之 gadget 屬性。  
 
 **Returns:**  
 
-* (_Boolean_): 
+* (_Boolean_): 是否成功通知 freebird 框架。  
 
 **Examples:**  
-  
+  dInState
 ```js
-
+nc.commitGadReporting('0x0123456789', { dInState: 4500 });
 ```
 
 <a name ="API_dangerouslyCommitGadReporting"></a>
@@ -832,18 +1102,20 @@ Freebird 使用兩種統一資料模型來表示實際的**裝置 (device)**與*
 ********************************************
 ### dangerouslyCommitGadReporting(permAddr, auxId, gadAttrs)
 
+底層接收到 gadget 的屬性變化時，呼叫此方法會直接合併 `gadAttrs` 物件至 gadget 實例。
+
 **Arguments:**  
 
-1. `permAddr` (_String_):
-2. `auxId` (_String_ | _Number_):
-2. `gadAttrs` (_Object_):
+1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
+2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
+2. `gadAttrs` (_Object_): 新增的屬性值。  
 
 **Returns:**  
 
-* (_Boolean_): 
+* (_Boolean_): 是否成功通知 freebird 框架。  
 
 **Examples:**  
   
 ```js
-
+nc.commitGadReporting('0x0123456789', { newAattr: 'xxx' });
 ```
