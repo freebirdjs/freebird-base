@@ -978,8 +978,6 @@ nc.commitReady();
 
 * (_Boolean_): 是否成功通知 freebird 框架。  
 
-* _none_  
-
 **Examples:**  
   
 ```js
@@ -1092,7 +1090,7 @@ nc.commitDevReporting('0x0123456789', { manufacturer: 'xxx' });
 * (_Boolean_): 是否成功通知 freebird 框架。  
 
 **Examples:**  
-  dInState
+  
 ```js
 nc.commitGadReporting('0x0123456789', { dInState: 4500 });
 ```
