@@ -715,7 +715,8 @@ var gadDrvs = {
 1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
 2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
 3. `attrName` (_String_): 屬性名稱。  
-4. `callback` (_Function_): `function (err[, data]) {}`。`data` (_Depends_) 為該屬性成功寫入後之值，可選擇傳回或不傳回，建議應傳回。  
+3. `val` (_Depends_): 欲寫入之值。  
+5. `callback` (_Function_): `function (err[, data]) {}`。`data` (_Depends_) 為該屬性成功寫入後之值，可選擇傳回或不傳回，建議應傳回。  
 
 **Returns:**  
 
@@ -1083,7 +1084,7 @@ nc.commitDevReporting('0x0123456789', { manufacturer: 'xxx' });
 
 1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
 2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
-2. `gadAttrs` (_Object_): 發生變化之 gadget 屬性。  
+3. `gadAttrs` (_Object_): 發生變化之 gadget 屬性。  
 
 **Returns:**  
 
@@ -1106,7 +1107,7 @@ nc.commitGadReporting('0x0123456789', { dInState: 4500 });
 
 1. `permAddr` (_String_): 裝置永久位址，如 `'0x0123456789'`。  
 2. `auxId` (_String_ | _Number_): 物品之輔助 id。  
-2. `gadAttrs` (_Object_): 新增的屬性值。  
+3. `gadAttrs` (_Object_): 新增的屬性值。  
 
 **Returns:**  
 
