@@ -62,53 +62,41 @@ When the developer meets the above requirements. Netcore will be able to work in
 
 #### Arguments and Description for each Method of the Network Drivers 
 * start: `function(done) {}`
-    - `done(err)` should be called after done
+    - Start low-level controller. Called `done(err)` after done.
 * stop: `function(done) {}`
-    - `done(err)` should be called after done
+    - Stop low-level controller. Called `done(err)` after done.
 * reset: `function(mode, done) {}`
-    - `done(err)` should be called after done
+    - Reset low-level controller. Given `mode` with `0` for a soft reset and `1` for a hard reset. Called `done(err)` after done.
 * permitJoin: `function(duration, done) {}`
-    - `done(err, timeLeft)` should be called after done
-    - `timeLeft (_Number_)`: Time left for joining in seconds, e.g., 180.
+    - Let low-level controller allow devices to join its network. Where `duration` is duration in seconds for the netcore to allow devices to join the network. Set it to 0 will immediately close the admission. Called `done(err, timeLeft)` after done. Where `timeLeft` is time left for joining in seconds.
 * remove: `function(permAddr, done) {}`
-    - `done(err, permAddr)` should be called after done
-    - `permAddr (_String_)`: permAddr, e.g., '0x12345678'.
+    - Remove device from the network. Where `permAddr` is the device permanent address. Called `done(err, permAddr)` after done. 
 * ban: `function(permAddr, done) {}`
-    - `done(err, permAddr)` should be called after done
-    - `permAddr (_String_)`: permAddr, e.g., '0x12345678'.
+    - Ban the device from the network. Where `permAddr` is the device permanent address. Called `done(err, permAddr)` after done. This method is optional.
 * unban: `function(permAddr, done) {}` 
-    - `done(err, permAddr)` should be called after done
-    - `permAddr (_String_)`: permAddr, e.g., '0x12345678'.
-* ping: `function(permAddr, done) {}, done(err, time), `
-    - `done(err, time)` should be called after done
-    - `time (_Number_)`: round-trip time in milliseconds, e.g., 16.
+    - Unban the device. Where `permAddr` is the device permanent address. Called `done(err, permAddr)` after done. This method is optional.
+* ping: `function(permAddr, done) {}`
+    - Ping the remote device. Where `permAddr` is the device permanent address. Called `done(err, time)` after done. Where `time` is the round-trip time in milliseconds.
 
 #### Arguments and Description for each Method of the Device Drivers 
 * read: `function(permAddr, attrName, done) {}`
-    - `done(err, val)` should be called after done
-    - `val (_Depends_)`: value read. Type denpends, e.g., `'hello'`, `12`, `false`.
+    - Read device attribute from the remote device. Where `permAddr` is the device permanent address and `attrName` is attribute name. Called `done(err, val)` after done.
 * write: `function(permAddr, attrName, val, done) {}, ),`
-    - `done(err, val)`
-    - `val (_Depends_)`: value written (optional, Type denpends, ex: 'hello', 12, false)
+    - Remotely write a value to an attribute on the device. Where `permAddr` is the device permanent address, `attrName` is attribute name and `val` is attribute value to write to the device. Called `done(err, val)` after done.
 * identify: `function(permAddr, done) {}`
-    - `done(err)`
+    - Identify a device in the network. Where `permAddr` is the device permanent address. Called `done(err)` after done. This method is optional.
 
 #### Arguments and Description for each Method of the Gadget Drivers 
 * read: `function(permAddr, auxId, attrName, done) {}`
-    - `done(err, val)`
-    - `val (_Depends_)`: value read (Type denpends, ex: 'hello', 12, false)
+    - Read an attribute from a gadget on the remote device. Where `permAddr` is the device permanent address, `auxId` is auxiliary id to identify a gadget on the device and `attrName` is attribute name. Called `done(err, val)` after done.
 * write: `function(permAddr, auxId, attrName, val, done) {}`
-    - `done(err, val)`
-    - `val (_Depends_)`: value written (optional, Type denpends, ex: 'hello', 12, false)
+    - Remotely write the value to an attribute on the gadget. Where `permAddr` is the device permanent address, `auxId` is auxiliary id to identify a gadget on the device, `attrName` is attribute name and `val` is attribute value to write to the gadget.. Called `done(err, val)` after done.
 * exec: `function(permAddr, auxId, attrName, args, done) {}`
-    - `done(err, result)`
-    - `result (_Depends_)`: can be anything, depends on firmware
+    - Remotely invoke the procedure on this gadget. Where `permAddr` is the device permanent address, `auxId` is auxiliary id to identify a gadget on the device, `attrName` is attribute name and `args` is arguments to invoke with. Called `done(err, result)` after done. This method is optional.
 * writeReportCfg: `function(permAddr, auxId, attrName, cfg, done) {}`
-    - `done(err, result)`
-    - `result (_Depends_)`: set succeeds? (Boolean, true or false)
+    - Remotely get the report settings from the gadget. Where `permAddr` is the device permanent address, `auxId` is auxiliary id to identify a gadget on the device, `attrName` is attribute name and `cfg` is report configuration. Called `done(err, result)` after done. This method is optional.
 * readReportCfg: `function(permAddr, auxId, attrName, done) {}`
-    - `done(err, cfg)`
-    - `cfg (_Object_)`: config object (Object, ex: { pmin: 10, pmax: 60, gt: 200 })
+    - Write the report configuration to a gadget on the remote device. Where `permAddr` is the device permanent address, `auxId` is auxiliary id to identify a gadget on the device and `attrName` is attribute name. Called `done(err, cfg)` after done. This method is optional.
 
 <a name="Info_Dev"></a>
 <br />
@@ -118,6 +106,8 @@ When the developer meets the above requirements. Netcore will be able to work in
 To set network information for a device, use its method `dev.set('net', netInfoObj)` to do this; To set attributes for a device, use its method `dev.set('attrs', devAttrsObj)` to do this.
 
 ### dev.set('net', netInfoObj)
+
+* The object `netInfoObj` accepts the fields as follows. Where only `address` is required. `address` is an object with permanent address (`permanent`) and dynamic address (`dynamic`).
 
 | Property     | Type    | Mandatory | Description                                   |
 |--------------|---------|-----------|-----------------------------------------------|
@@ -129,6 +119,8 @@ To set network information for a device, use its method `dev.set('net', netInfoO
 
 
 ### dev.set('attrs', devAttrsObj)
+
+* All of the propertys in `devAttrsObj` are optional. But should be filled in as much as possible. In order to meet these fields, you may need to remotely read the device attribute a few times.
 
 | Property     | Type    | Mandatory | Description                                   |
 |--------------|---------|-----------|-----------------------------------------------|
@@ -146,6 +138,8 @@ To set network information for a device, use its method `dev.set('net', netInfoO
 To set panel information for a gadget, use its method `gad.set('panel', panelInfoObj)` to do this.
 
 ### gad.set('panel', panelInfoObj)
+
+* Panel information means that an object seems to have a brand to show what it is. The object `panelInfoObj` currently has only two fields. One is `classId`  and the other is `profile`. `classId` is optional. Because it will show what the gadget is. e.g., a lamp, a temperature sensor, or a power switch.
 
 | Property     | Type    | Mandatory | Description                                   |
 |--------------|---------|-----------|-----------------------------------------------|
@@ -353,7 +347,7 @@ nc._cookRawGad = function (gad, rawGad, done) {
 ********************************************
 ### start(callback)
 
-Start the netcore.
+Start low-level controller.
 
 **Arguments:**  
 
@@ -381,7 +375,7 @@ var netDrvs = {
 ********************************************
 ### stop(callback)
 
-Stop the netcore.
+Stop low-level controller.
 
 **Arguments:**  
 
@@ -409,7 +403,7 @@ var netDrvs = {
 ********************************************
 ### reset(mode, callback)
 
-Reset the network controller.
+Reset low-level controller.
 
 **Arguments:**  
 
@@ -438,7 +432,7 @@ var netDrvs = {
 ********************************************
 ### permitJoin(duration, callback)
 
-Let the netcore allow devices to join its network. 
+Let low-level controller allow devices to join its network. 
 
 **Arguments:**  
 
@@ -593,7 +587,7 @@ Read device attribute from the remote device.
 
 1. `permAddr` (_String_): Device permanent address.
 2. `attrName` (_String_): Attribute name. 
-3. `callback` (_Function_): `function (err, data) {}`. `data` (_Depends_) is the attribute value.  
+3. `callback` (_Function_): `function (err, val) {}`. `val` (_Depends_) is the attribute value.  
 
 **Returns:**  
 
@@ -617,14 +611,14 @@ var devDrvs = {
 ********************************************
 ### write(permAddr, attrName, val, callback)
 
-Remotely write a value to an attribute on this device.
+Remotely write a value to an attribute on the device.
 
 **Arguments:**  
 
 1. `permAddr` (_String_): Device permanent address.
 2. `attrName` (_String_): Attribute name.  
 3. `val` (_Depends_): Attribute value to write to the device.  
-4. `callback` (_Function_): `function (err[, data]) {}`. `data` (_Depends_) is the written value. 
+4. `callback` (_Function_): `function (err[, val]) {}`. `val` (_Depends_) is the written value. 
 **Returns:**  
 
 * _none_  
@@ -687,7 +681,7 @@ Read an attribute from a gadget on the remote device.
 1. `permAddr` (_String_): Device permanent address.
 2. `auxId` (_String_ | _Number_): Auxiliary id to identify a gadget on the device.
 3. `attrName` (_String_): Attribute name.  
-4. `callback` (_Function_): `function (err, data) {}`. `data` (_Depends_) is the attribute value.  
+4. `callback` (_Function_): `function (err, val) {}`. `val` (_Depends_) is the attribute value.  
 
 **Returns:**  
 
@@ -711,7 +705,7 @@ var gadDrvs = {
 ********************************************
 ### write(permAddr, auxId, attrName, val, callback)
 
-Remotely write the value to an attribute on this gadget.
+Remotely write the value to an attribute on the gadget.
 
 **Arguments:**  
 
@@ -719,7 +713,7 @@ Remotely write the value to an attribute on this gadget.
 2. `auxId` (_String_ | _Number_): Auxiliary id to identify a gadget on the device.
 3. `attrName` (_String_): Attribute name.  
 4. `val` (_Depends_): Attribute value to write to the gadget.
-5. `callback` (_Function_): `function (err[, data]) {}`. `data` (_Depends_) is the written value. 
+5. `callback` (_Function_): `function (err[, val]) {}`. `val` (_Depends_) is the written value. 
 
 **Returns:**  
 
