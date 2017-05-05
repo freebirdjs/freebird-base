@@ -1,6 +1,6 @@
 {
   "name": "freebird-base",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Base classes for freebird",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,21 @@
     "type": "git",
     "url": "git+https://github.com/freebirdjs/freebird-base.git"
   },
-  "author": "Simen Li",
+  "author": "Simen Li <simenkid@gmail.com>",
+  "contributors": [
+    {
+      "name": "Hedy Wang",
+      "email": "hedywings@gmail.com"
+    },
+    {
+      "name": "Jack Wu",
+      "email": "jackchased@gmail.com"
+    },
+    {
+      "name": "Peter Yi",
+      "email": "<peter.eb9@gmail.com>"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/freebirdjs/freebird-base/issues"
