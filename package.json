@@ -4,7 +4,7 @@
   "description": "Base classes for freebird",
   "main": "index.js",
   "scripts": {
-    "test": "nyc mocha -u bdd --reporter spec"
+    "test": "nyc mocha -u bdd --reporter spec --exit"
   },
   "repository": {
     "type": "git",
@@ -36,10 +36,10 @@
     "proving": "^0.1.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.2.0",
     "chance": "^1.0.4",
-    "mocha": "^2.5.3",
+    "mocha": "^6.1.4",
     "nyc": "^14.1.1",
-    "sinon": "^1.17.5"
+    "sinon": "^7.3.2"
   }
 }
